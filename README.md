@@ -106,16 +106,45 @@ Below is a real output comparison between **GPT-2** and my **fine-tuned model**,
 <details>
 <summary><strong>🧠 BASE (GPT2) MODEL OUTPUT 🧠</strong> (click to expand)</summary>
 <br/>
-"bringing some frankenscence to the altar's work. (Perfect Right Now, Courtesy To He Named Abraham Smith)
-For those interested in Jewry generally speaking, Uzzler described working on these murals-often perceived as near heavenly appearance by both Jewish and non-Jewish audiences who might not be familiar with Zarahemla. Steinberg also refers certain talents bearing family pedigree out of New York for honor lacing into his area: "We call him Mrs Millman here," he reports; we must don jeans if you're playing a painter because it surely counts at Old Miss Sestopol." Contrary to feeling that no giving is permitted when talking about rock n' roll sounds like salvageaging through trenches less than everybody else grinding roast garlic mustard right down their throats, Miroslav Pralunde doubtless saw Frank Iverson once speak during life unconstrained PR images or interviewing photographer Gus Schulze before closing your eyes wide-eyedly onto this project nonetheless. When things were cool outside Eugene Jackson Auditorium Hammerbuster Gooligan drummer Omar Tuni announced Gene Clancy would face crime but couldn't see two women driving far beyond Paddock Meadow...
+watching with glacial gravity isn't life. She knew he wasn't gay. What they didn't know, until her the hospital stopped billing him for $75 a week—two or three quarters of what he paid in back fees—was that she was pushing him toward that home over there where the men let more money run through the plumbing and had greater bandwidth for the conversation, by contrast, if someone had only run an electric line down in time and slid money back into himself through life.
 
-…"The only thing saving me from having beer ten bucks bought" Then JACK"
+"She was someone of stature and quality, still," Drew Alexander continues. "[He] wanted someone nice. Nice how people say, if it was to just tell the next one about, I don't think the price would ever
+ work because you never tell anybody that you work in white tape after 'hand money,' I'm happy to work in handshake money for, ya know, sorta like their life... He could be spooked by all the pushy parties. Or who would believe this is a coincidence, who would allow himself to be cuckolded, his wife
+ cheated on by the roommate… they always blamed [The Purge writer] Jackson, nothing could have survived outside the U.K.s conditions like that."[10] But according to Andrew Maguire (TAS and prolific Purge eponym), Alexander's willingness to play with facts wasn't seen at the 2007 Indianapolis premiere for his 2009 instalment Left Me Stand Alone when authorities declared white trash vans roaming the heart of town were highly controversial responses to drug rapes. "Some evil little drug cunts like
+ Margo Irving should be responsible for such barbaric behavior because she let her child be hit by a
+ semi-maimed alcoholic male … they fought every step of the way like this when under the influence that proves how cheap were they and still are." Every one. [F/L/G is valid opinions]. As women the environment rarely deterr the vigilante elements.[Orness suggests the oldman played you falsely... as always, heart][Image so wonderfully bare one where gore is spilled.[Male depiction?]Now wait a minute- Apparently just leaving this low bitch tag intact[Still "nice how you know it!" show] http://bit.ly/8VA91U . Ever spend all week this Newer standard bill containing $1 MillionFPS HOF win awards the
+ boy whom to love was connected: articleIt also said a fuck even more popular.Time: How Lit. 19 r i D ************* *****U t/H dade.ruskus,last sings on so donner 35S ALLR ins good word well g l iv do
+ r all on imafl,we the skingo.alevich Suck better price milano butget like assemede sonodaisnnot me second free phone thisc:1k800 an infinity 13 j u let frather' 11D freesia play the negard Stakedhell
+ But three popindteddu-four fine answers ifeven commacedte1ibands,"$37636 O.O baic ... D any chance you can make an honorable answer?5 out963 plus number".Keep records it is important sish sayitsprayshop checks false abuse."They became … James Row and so deseewedhip he marm a call had could too vei-
+ alsostoterseaktion nehow much that night on bodymapaysha servicethey chekepsed hot stay feel os back these G iv get mad that butse inside my yors. Seen my pro CASS WebletIt was down still which rhou d eherec with nuk
+
 </details>
 
 <details>
 <summary><strong>🎭 FINETUNED (POESIA DI MICHELE BOTTARI) MODEL OUTPUT 🎭</strong> (click to expand)</summary>
 </br>
-"bringing some frankenscence to the altar. you look at him from step number two. the red headed man stands in front of them. “This man’s taken refuge under an archway, being sworn to his father”s cave. come this day. we'll tell you why he was here for us: all too well. -“*s like it’s fine."” mx does not pause for a long breath. the room is covered with bones, feelings and dressings. he walks down the tramp-like path into his tent. jade fires over the campfire. tents are piled high on top huts; heavily padded fireplaces surround the spaces. asleep, white sheets place unzipped drinks onto a pile of cool sleeping bags. what moved Jade?” pensively. “lose the fucking thing?” he nods. he slowly moves closer between the benches, looking more closely at you. he stays where he is supposed to, so that you don't even come close in the moment, becoming fascinated. he pauses until you take notice. your entire body looks numb and exhausted. your lips begin sobbing"
+watching with glacial intensity
+pretending not to notice, like you can do it
+without thoughts, without trying,
+like two trapped souls in searing and twisting
+lens shadows.
+
+
+I'm sorry, I don't know what else to say.
+        I never knew that you could be so loving,
+even when things are hard, when the sun
+and the empty streets hang motionless
+in a pall of gray, and
+the mourners in white sit on gray
+trees writhing in the cool air
+but I now understand
+what it means to feel the depth of
+a loved one's sorrow, to understand
+how one's love can survive
+the ravages of time, the rigors of
+deserts and fires and tornados,
+and how we can stop believing
+when everything else crumbles, and
 
 </details>
 
