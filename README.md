@@ -108,14 +108,14 @@ Below is a real output comparison between **GPT-2** and my **fine-tuned model**,
 <br/>
 watching with glacial gravity isn't life. She knew he wasn't gay. What they didn't know, until her the hospital stopped billing him for $75 a week—two or three quarters of what he paid in back fees—was that she was pushing him toward that home over there where the men let more money run through the plumbing and had greater bandwidth for the conversation, by contrast, if someone had only run an electric line down in time and slid money back into himself through life.
 
-"She was someone of stature and quality, still," Drew Alexander continues. "[He] wanted someone nice. Nice how people say, if it was to just tell the next one about, I don't think the price would ever
- work because you never tell anybody that you work in white tape after 'hand money,' I'm happy to work in handshake money for, ya know, sorta like their life... He could be spooked by all the pushy parties. Or who would believe this is a coincidence, who would allow himself to be cuckolded, his wife
+"She was someone of stature and quality, still," Drew Alexander continues. "[He] wanted someone nice. Nice how people say, if it was to just tell the next one about, I don't think the price would ever<br>
+ work because you never tell anybody that you work in white tape after 'hand money,' I'm happy to work in handshake money for, ya know, sorta like their life... He could be spooked by all the pushy parties. Or who would believe this is a coincidence, who would allow himself to be cuckolded, his wife<br>
  cheated on by the roommate… they always blamed [The Purge writer] Jackson, nothing could have survived outside the U.K.s conditions like that."[10] But according to Andrew Maguire (TAS and prolific Purge eponym), Alexander's willingness to play with facts wasn't seen at the 2007 Indianapolis premiere for his 2009 instalment Left Me Stand Alone when authorities declared white trash vans roaming the heart of town were highly controversial responses to drug rapes. "Some evil little drug cunts like
- Margo Irving should be responsible for such barbaric behavior because she let her child be hit by a
- semi-maimed alcoholic male … they fought every step of the way like this when under the influence that proves how cheap were they and still are." Every one. [F/L/G is valid opinions]. As women the environment rarely deterr the vigilante elements.[Orness suggests the oldman played you falsely... as always, heart][Image so wonderfully bare one where gore is spilled.[Male depiction?]Now wait a minute- Apparently just leaving this low bitch tag intact[Still "nice how you know it!" show] http://bit.ly/8VA91U . Ever spend all week this Newer standard bill containing $1 MillionFPS HOF win awards the
- boy whom to love was connected: articleIt also said a fuck even more popular.Time: How Lit. 19 r i D ************* *****U t/H dade.ruskus,last sings on so donner 35S ALLR ins good word well g l iv do
- r all on imafl,we the skingo.alevich Suck better price milano butget like assemede sonodaisnnot me second free phone thisc:1k800 an infinity 13 j u let frather' 11D freesia play the negard Stakedhell
- But three popindteddu-four fine answers ifeven commacedte1ibands,"$37636 O.O baic ... D any chance you can make an honorable answer?5 out963 plus number".Keep records it is important sish sayitsprayshop checks false abuse."They became … James Row and so deseewedhip he marm a call had could too vei-
+ Margo Irving should be responsible for such barbaric behavior because she let her child be hit by a<br>
+ semi-maimed alcoholic male … they fought every step of the way like this when under the influence that proves how cheap were they and still are." Every one. [F/L/G is valid opinions]. As women the environment rarely deterr the vigilante elements.[Orness suggests the oldman played you falsely... as always, heart][Image so wonderfully bare one where gore is spilled.[Male depiction?]Now wait a minute- Apparently just leaving this low bitch tag intact[Still "nice how you know it!" show] http://bit.ly/8VA91U . Ever spend all week this Newer standard bill containing $1 MillionFPS HOF win awards the<br>
+ boy whom to love was connected: articleIt also said a fuck even more popular.Time: How Lit. 19 r i D ************* *****U t/H dade.ruskus,last sings on so donner 35S ALLR ins good word well g l iv do<br>
+ r all on imafl,we the skingo.alevich Suck better price milano butget like assemede sonodaisnnot me second free phone thisc:1k800 an infinity 13 j u let frather' 11D freesia play the negard Stakedhell<br>
+ But three popindteddu-four fine answers ifeven commacedte1ibands,"$37636 O.O baic ... D any chance you can make an honorable answer?5 out963 plus number".Keep records it is important sish sayitsprayshop checks false abuse."They became … James Row and so deseewedhip he marm a call had could too vei-<br>
  alsostoterseaktion nehow much that night on bodymapaysha servicethey chekepsed hot stay feel os back these G iv get mad that butse inside my yors. Seen my pro CASS WebletIt was down still which rhou d eherec with nuk
 
 </details>
@@ -123,28 +123,28 @@ watching with glacial gravity isn't life. She knew he wasn't gay. What they didn
 <details>
 <summary><strong>🎭 FINETUNED (POESIA DI MICHELE BOTTARI) MODEL OUTPUT 🎭</strong> (click to expand)</summary>
 </br>
-watching with glacial intensity
-pretending not to notice, like you can do it
-without thoughts, without trying,
-like two trapped souls in searing and twisting
-lens shadows.
+watching with glacial intensity <br>
+pretending not to notice, like you can do it <br>
+without thoughts, without trying, <br>
+like two trapped souls in searing and twisting <br>
+lens shadows. <br>
 
 
-I'm sorry, I don't know what else to say.
-        I never knew that you could be so loving,
-even when things are hard, when the sun
-and the empty streets hang motionless
-in a pall of gray, and
-the mourners in white sit on gray
-trees writhing in the cool air
-but I now understand
-what it means to feel the depth of
-a loved one's sorrow, to understand
-how one's love can survive
-the ravages of time, the rigors of
-deserts and fires and tornados,
-and how we can stop believing
-when everything else crumbles, and
+I'm sorry, I don't know what else to say. <br>
+        I never knew that you could be so loving, <br>
+even when things are hard, when the sun <br>
+and the empty streets hang motionless <br>
+in a pall of gray, and <br>
+the mourners in white sit on gray <br>
+trees writhing in the cool air <br>
+but I now understand <br>
+what it means to feel the depth of <br>
+a loved one's sorrow, to understand <br>
+how one's love can survive <br>
+the ravages of time, the rigors of <br>
+deserts and fires and tornados, <br>
+and how we can stop believing <br>
+when everything else crumbles, and <br>
 
 </details>
 
