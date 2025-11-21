@@ -45,20 +45,128 @@ This repo is intentionally diverse — it contains a portfolio of practical, min
 
 ---
 
+## 🤖 **New: Mercury — Local Speech-Enabled LLM Agent**
+
+A new addition to the repository: **Mercury**, a fully local, speech-enabled LLM agent built on my merged GPT-2 fine-tuned poetry model.
+
+This agent demonstrates how to combine **local model inference**, **offline STT**, **memory-bounded conversational context**, and **agent-style prompting** into a cohesive interactive tool. It also reflects real model-ops considerations like device-aware loading, error handling, and multimodal input.
+
+---
+
+## 📁 Directory: `gpt2-files/local-agent-001/`
+
+```text
+local-agent-001/
+├── main.py                          # Full agent (text + optional voice input)
+├── main-voice-input-only.py         # Voice-only simplified entry point
+├── requirements.txt                 # Dependencies (transformers, vosk, sounddevice, torch, etc.)
+├── test_cuda.py                     # Quick GPU/torch diagnostic
+
+├── agent-mercury/                   # Agent logic, utilities, prompt handling
+│   └── ...                          # (Modularized helper scripts)
+
+├── models/
+│   └── full_merged_gpt2-finetuned-poetry-mercury-04--copy-attempt/
+│       ├── config.json
+│       ├── generation_config.json
+│       ├── merges.txt
+│       ├── model.safetensors
+│       └── vocab.json               # Fine-tuned + merged GPT-2 weights
+
+└── vosk-model-en-us-0.22/           # Offline speech-recognition model for voice mode
+```
+
+---
+
+## 🧠 Mercury Agent Overview
+
+Mercury is powered by the **fine-tuned GPT-2 poetry model** from this repo, combined with:
+
+- **Offline speech recognition** using Vosk  
+- **Dynamic conversation memory** via bounded `deque`  
+- **Personality-driven system prompt** (“ancient poet and insightful assistant”)  
+- **Ghost-word cleanup** for noisy speech transcripts  
+- **Device-aware model loading** (GPU if available, CPU fallback)  
+- **Robust generation loop** with sampling + repetition penalties  
+- **Command interface** for managing agent state
+
+This brings together multiple areas of experimentation from the repo — generation, fine-tuning, evaluation logic, and applied inference.
+
+---
+
+## ▶️ Running the Agent
+
+### **Text + Voice Mode (full agent)** - (Note: this one is under construction)
+```bash
+python main.py
+```
+
+### **Voice-Only Mode** - (Note: this one is the most operational currently)
+```bash
+python main-voice-input-only.py
+```
+
+---
+
+## 🎤 Voice Commands
+
+When running the full agent (`main.py`):
+
+- `/voice` — Toggle voice input (requires Vosk model loaded)  
+- `/clear` — Reset conversation memory  
+- `/exit` — Quit cleanly  
+- `/quit` or `/bye` — Same as above  
+
+---
+
+## 🧩 Example Functionality
+
+- Listens for offline speech, cleans filler words, and converts to text  
+- Builds a prompt using a sliding window of conversation memory  
+- Generates responses using the fine-tuned GPT-2 model  
+- Removes prompt leakage and ensures clean assistant output  
+- Falls back to typed input if the microphone is silent  
+- Warns and adjusts automatically if CUDA is unavailable
+
+---
+
 ## 📁 **Repository Structure**
 
 ```text
 📁 scritti/
 ├── 📄 README.md
 ├── 📄 First_Edition_GenPs-001_10_14_25.txt
+
 ├── 📁 gpt2-files/
 │   ├── 📁 generation/
 │   │   ├── 📄 gpt2-generate-iambic-pentameter-003.py
 │   │   ├── 📄 gpt2-generation-haiku_form-002.py
 │   │   ├── 📄 interactive-poetry-chat-in-terminal-002--gpt2-with-comparison.py
 │   │   └── 📄 the-gpt2-fine-tuning-script-thats-the-best-tweaked-002-unfreeze-top-layers--chatbot-compare.py
-│   └── 📁 tuning/
-│       └── 📄 the-gpt2-fine-tuning-script-thats-the-best-tweaked-003-unfreeze-top-layers---keep-source-line-breaks.py
+│   │
+│   ├── 📁 tuning/
+│   │   └── 📄 the-gpt2-fine-tuning-script-thats-the-best-tweaked-003-unfreeze-top-layers---keep-source-line-breaks.py
+│   │
+│   └── 📁 local-agent-001/
+│       ├── 📄 main.py
+│       ├── 📄 main-voice-input-only.py
+│       ├── 📄 requirements.txt
+│       ├── 📄 test_cuda.py
+│       │
+│       ├── 📁 agent-mercury/
+│       │   └── ... (agent logic, prompt handling, utilities)
+│       │
+│       ├── 📁 models/
+│       │   └── 📁 full_merged_gpt2-finetuned-poetry-mercury-04--copy-attempt/
+│       │       ├── 📄 config.json
+│       │       ├── 📄 generation_config.json
+│       │       ├── 📄 merges.txt
+│       │       ├── 📄 model.safetensors
+│       │       └── 📄 vocab.json
+│       │
+│       └── 📁 vosk-model-en-us-0.22/
+│           └── ... (offline STT model files)
+
 └── 📁 llama-files/
     ├── 📁 generation/
     │   └── 📄 interactive-poetry-chat-in-terminal-for-llama3-002-with-comparison.py
