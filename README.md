@@ -47,6 +47,7 @@ This repo is intentionally diverse — it contains a portfolio of practical, min
 
 ## 📁 **Repository Structure**
 
+```text
 📁 scritti/
 ├── 📄 README.md
 ├── 📄 First_Edition_GenPs-001_10_14_25.txt
@@ -63,7 +64,7 @@ This repo is intentionally diverse — it contains a portfolio of practical, min
     │   └── 📄 interactive-poetry-chat-in-terminal-for-llama3-002-with-comparison.py
     └── 📁 tuning/
         └── 📄 fine-tuning-script-for-llama-3-q4-001.py
-
+```
 
 ### **`First_Edition_GenPs-001_10_14_25.txt`** — Results examples
 Examples of results from using these scripts for fine-tuning experiments.
