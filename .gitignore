@@ -1,6 +1,7 @@
 # Ignore local agent models
 gpt2-files/local-agent-001/models/
 gpt2-files/local-agent-001/vosk-model-en-us-0.22/
+gpt2-files/local-agent-001/agent-mercury/
 
 # Ignore all safetensors and model weights
 *.safetensors
