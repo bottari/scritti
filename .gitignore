@@ -1,0 +1,19 @@
+# Ignore local agent models
+gpt2-files/local-agent-001/models/
+gpt2-files/local-agent-001/vosk-model-en-us-0.22/
+
+# Ignore all safetensors and model weights
+*.safetensors
+*.bin
+*.pt
+
+# Ignore python cache
+__pycache__/
+*.pyc
+
+# Ignore virtual environments
+venv/
+.env/
+
+# Ignore logs
+*.log
