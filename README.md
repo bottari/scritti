@@ -101,7 +101,7 @@ Together, they illustrate how I bridge **AI governance ↔ applied engineering**
 
 ## 🔥 **Featured Work: GPT-2 Fine-Tuning (Before vs After)**
 
-Below is a real output comparison between **GPT-2** and my **fine-tuned model**, showing my results. Please note the generated output is not optimized for narrative coherence, but instead it is optimized for stylistic control. (I prefer surreal and boderline nonsensical poetry.)
+Below is a real output comparison between **GPT-2** and my **fine-tuned model** using the same input prompt and generation settings. The fine-tuned model was trained to capture a distinct poetic style, producing surreal and borderline nonsensical imagery rather than conventional narrative, demonstrating the effect of stylistic fine-tuning.
 
 <details>
 <summary><strong>🧠 BASE (GPT2) MODEL OUTPUT 🧠</strong> (click to expand)</summary>
