@@ -47,22 +47,23 @@ This repo is intentionally diverse — it contains a portfolio of practical, min
 
 ## 📁 **Repository Structure**
 
-scritti/
-├── README.md
-├── First_Edition_GenPs-001_10_14_25.txt
-├── gpt2-files/
-│   ├── generation/
-│   │   ├── gpt2-generate-iambic-pentameter-003.py
-│   │   ├── gpt2-generation-haiku_form-002.py
-│   │   ├── interactive-poetry-chat-in-terminal-002--gpt2-with-comparison.py
-│   │   └── the-gpt2-fine-tuning-script-thats-the-best-tweaked-002-unfreeze-top-layers--chatbot-compare.py
-│   └── tuning/
-│       └── the-gpt2-fine-tuning-script-thats-the-best-tweaked-003-unfreeze-top-layers---keep-source-line-breaks.py
-└── llama-files/
-├── generation/
-│   └── interactive-poetry-chat-in-terminal-for-llama3-002-with-comparison.py
-└── tuning/
-└── fine-tuning-script-for-llama-3-q4-001.py
+📁 scritti/
+├── 📄 README.md
+├── 📄 First_Edition_GenPs-001_10_14_25.txt
+├── 📁 gpt2-files/
+│   ├── 📁 generation/
+│   │   ├── 📄 gpt2-generate-iambic-pentameter-003.py
+│   │   ├── 📄 gpt2-generation-haiku_form-002.py
+│   │   ├── 📄 interactive-poetry-chat-in-terminal-002--gpt2-with-comparison.py
+│   │   └── 📄 the-gpt2-fine-tuning-script-thats-the-best-tweaked-002-unfreeze-top-layers--chatbot-compare.py
+│   └── 📁 tuning/
+│       └── 📄 the-gpt2-fine-tuning-script-thats-the-best-tweaked-003-unfreeze-top-layers---keep-source-line-breaks.py
+└── 📁 llama-files/
+    ├── 📁 generation/
+    │   └── 📄 interactive-poetry-chat-in-terminal-for-llama3-002-with-comparison.py
+    └── 📁 tuning/
+        └── 📄 fine-tuning-script-for-llama-3-q4-001.py
+
 
 ### **`First_Edition_GenPs-001_10_14_25.txt`** — Results examples
 Examples of results from using these scripts for fine-tuning experiments.
