@@ -5,7 +5,6 @@ import sounddevice as sd
 import vosk
 import queue
 import json
-import threading
 import re
 
 # -----------------------------
@@ -15,11 +14,12 @@ MODEL_PATH = r"models\full_merged_gpt2-finetuned-poetry-mercury-04--copy-attempt
 
 print("Loading tokenizer...")
 tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
+tokenizer.pad_token = tokenizer.eos_token
 
 print("Loading model...")
 model = AutoModelForCausalLM.from_pretrained(
     MODEL_PATH,
-    dtype=torch.float16,  # GPU FP16
+    dtype=torch.float16,
     low_cpu_mem_usage=True
 ).to("cuda")
 
@@ -32,71 +32,66 @@ SYSTEM_PROMPT = (
 )
 
 # -----------------------------
-# Conversation memory
+# Memory
 # -----------------------------
 MAX_MEMORY = 5
 conversation_history = []
 
 # -----------------------------
-# Text-to-speech setup (interruptible)
+# Text-to-speech (fixed)
 # -----------------------------
-tts_engine = pyttsx3.init()
-tts_engine.setProperty('rate', 180)
-tts_engine.setProperty('volume', 1.0)
-
-speech_queue = queue.Queue()
-stop_signal = threading.Event()
-shutdown_signal = threading.Event()
-
-def tts_worker():
-    while not shutdown_signal.is_set():
-        try:
-            text = speech_queue.get(timeout=0.1)
-        except queue.Empty:
-            continue
-        if text is None:
-            break
-
-        stop_signal.clear()
-        chunks = re.split(r'(?<=[.!?]) +', text)
-        for chunk in chunks:
-            if stop_signal.is_set() or shutdown_signal.is_set():
-                break
-            tts_engine.say(chunk)
-            tts_engine.runAndWait()
-
-tts_thread = threading.Thread(target=tts_worker, daemon=True)
-tts_thread.start()
-
 def speak(text):
-    stop_speech()
-    speech_queue.put(text)
+    """
+    Speaks the full text reliably, sentence by sentence.
+    """
+    engine = pyttsx3.init()
+    engine.setProperty("rate", 180)
+    engine.setProperty("volume", 1.0)
 
-def stop_speech():
-    stop_signal.set()
-    with speech_queue.mutex:
-        speech_queue.queue.clear()
+    # Split text into sentences for safe TTS
+    chunks = re.split(r'(?<=[.!?]) +', text)
+    for chunk in chunks:
+        if chunk.strip():
+            engine.say(chunk)
+            engine.runAndWait()  # process each chunk immediately
+
+    engine.stop()
 
 # -----------------------------
 # Offline STT setup using Vosk
 # -----------------------------
-VOSK_MODEL_PATH = r"C:\Users\micha\Desktop\projects\local-agent-001\vosk-model-en-us-0.22"
+VOSK_MODEL_PATH = r"C:\Users\micha\Desktop\projects\local-agent-001\vosk-model-en-us-0.22"  # path to model folder
 model_vosk = vosk.Model(VOSK_MODEL_PATH)
 q = queue.Queue()
 
 def audio_callback(indata, frames, time, status):
     if status:
-        print(status, flush=True)
+        print(status)
     q.put(bytes(indata))
 
 def listen_vosk():
+    """
+    Listens offline using Vosk.
+    Prints partial results in real-time.
+    Returns final recognized text, or empty string if timeout/typing fallback.
+    """
     rec = vosk.KaldiRecognizer(model_vosk, 16000)
     print("Listening (offline)... Speak now.")
 
-    with sd.RawInputStream(samplerate=16000, blocksize=8000, dtype='int16',
-                           channels=1, callback=audio_callback):
+    final_text = ""
+    with sd.RawInputStream(
+        samplerate=16000,
+        blocksize=4000,
+        dtype='int16',
+        channels=1,
+        callback=audio_callback
+    ):
         while True:
-            data = q.get()
+            try:
+                data = q.get(timeout=2)  # wait for audio, fallback to typing
+            except queue.Empty:
+                return ""  # fallback to text input
+
             if rec.AcceptWaveform(data):
                 result = json.loads(rec.Result())
                 text = result.get("text", "")
@@ -106,16 +101,16 @@ def listen_vosk():
             else:
                 partial = json.loads(rec.PartialResult())
                 if partial.get("partial"):
-                    print(f"[Partial] {partial['partial']}", end="\r", flush=True)
+                    final_text = partial["partial"]
+                    print(f"\r[You said] {final_text}", end="", flush=True)
 
 # -----------------------------
-# Agent function
+# Agent logic
 # -----------------------------
 def run_agent(user_input):
     conversation_history.append(f"User: {user_input}")
-
-    memory = "\n".join(conversation_history[-MAX_MEMORY:])
-    prompt = f"{SYSTEM_PROMPT}\n{memory}\nAssistant:"
+    short_memory = conversation_history[-MAX_MEMORY:]
+    prompt = f"{SYSTEM_PROMPT}\n" + "\n".join(short_memory) + "\nAssistant:"
 
     inputs = tokenizer(prompt, return_tensors="pt").to("cuda")
 
@@ -129,15 +124,12 @@ def run_agent(user_input):
         pad_token_id=tokenizer.eos_token_id
     )
 
-    text = tokenizer.decode(output[0], skip_special_tokens=True)
+    # Extract only new text (exclude prompt)
+    new_tokens = output[0][inputs["input_ids"].shape[1]:]
+    reply = tokenizer.decode(new_tokens, skip_special_tokens=True).strip()
 
-    if "Assistant:" in text:
-        assistant_reply = text.split("Assistant:")[-1].strip()
-    else:
-        assistant_reply = text.strip()
-
-    conversation_history.append(f"Assistant: {assistant_reply}")
-    return assistant_reply
+    conversation_history.append(f"Assistant: {reply}")
+    return reply
 
 # -----------------------------
 # Main loop
@@ -145,30 +137,23 @@ def run_agent(user_input):
 if __name__ == "__main__":
     print("Mercury agent ready! Speak or type (say 'exit' to quit).\n")
 
-    try:
-        while True:
-            try:
-                user_input = listen_vosk()
-            except KeyboardInterrupt:
-                break
-            except Exception as e:
-                print(f"STT error: {e}")
-                user_input = input(">>> ")
+    while True:
+        # Try voice input first
+        try:
+            user_input = listen_vosk()
+        except Exception as e:
+            print(f"STT error: {e}")
+            user_input = ""
 
-            if not user_input:
-                user_input = input(">>> ")
+        # Fallback to typing if no speech
+        if not user_input:
+            user_input = input(">>> ")
 
-            if user_input.lower() in ["exit", "quit"]:
-                break
+        if user_input.lower() in ("exit", "quit"):
+            break
 
-            stop_speech()
-            response = run_agent(user_input)
-            print("\nMercury:", response, "\n")
-            speak(response)
+        response = run_agent(user_input)
+        print("\nMercury:", response, "\n")
+        speak(response)
 
-    finally:
-        stop_speech()
-        shutdown_signal.set()
-        speech_queue.put(None)  # unblock TTS thread
-        tts_thread.join()
-        print("Mercury exited safely.")
+    print("Mercury exited safely.")

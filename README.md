@@ -287,7 +287,7 @@ COHERENCE METHOD SUMMARY
 
 A new addition to the repository: **Mercury**, a fully local, speech-enabled LLM agent built on my merged GPT-2 fine-tuned poetry model.
 
-This agent demonstrates how to combine **local model inference**, **offline STT**, **memory-bounded conversational context**, and **agent-style prompting** into a cohesive interactive tool. It also reflects real model-ops considerations like device-aware loading, error handling, and multimodal input.
+This agent demonstrates how to combine **local model inference**, **offline STT & TTS**, **memory-bounded conversational context**, and **agent-style prompting** into a cohesive interactive tool. It also reflects real model-ops considerations like device-aware loading, error handling, and multimodal input.
 
 ---
 
@@ -295,8 +295,8 @@ This agent demonstrates how to combine **local model inference**, **offline STT*
 
 ```text
 local-agent-001/
-├── main.py                          # Full agent (text + optional voice input)
-├── main-voice-input-only.py         # Voice-only simplified entry point
+├── main.py                          # Full agent (text + voice input, TTS output)
+├── main-voice-input-only.py         # Voice input and text input, no TTS output
 ├── requirements.txt                 # Dependencies (transformers, vosk, sounddevice, torch, etc.)
 ├── test_cuda.py                     # Quick GPU/torch diagnostic
 
@@ -334,26 +334,15 @@ This brings together multiple areas of experimentation from the repo — generat
 
 ## ▶️ Running the Agent
 
-### **Text + Voice Mode (full agent)** - (Note: this one is under construction)
+### **Voice + text output & voice + text input mode (full agent)**
 ```bash
 python main.py
 ```
 
-### **Voice-Only Mode** - (Note: this one is the most operational currently)
+### **Text output & voice + text input mode**
 ```bash
 python main-voice-input-only.py
 ```
-
----
-
-## 🎤 Voice Commands
-
-When running the full agent (`main.py`):
-
-- `/voice` — Toggle voice input (requires Vosk model loaded)  
-- `/clear` — Reset conversation memory  
-- `/exit` — Quit cleanly  
-- `/quit` or `/bye` — Same as above  
 
 ---
 
