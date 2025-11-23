@@ -488,7 +488,8 @@ Together, they illustrate how I bridge **AI governance ↔ applied engineering**
 Technical Program Manager — AI Governance & Applied AI Operations  
 📧 [mfbottari@gmail.com](mailto:mfbottari@gmail.com)  
 🔗 [LinkedIn](https://linkedin.com/in/michael-bottari)  
-💻 [GitHub](https://github.com/bottari)
+💻 [GitHub](https://github.com/bottari)  
+📺 [YouTube / Trochee Lab](https://www.youtube.com/@trochee_lab)
 
 ---
 
