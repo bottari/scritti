@@ -1,7 +1,11 @@
-# Ignore local agent models
-gpt2-files/local-agent-001/models/
-gpt2-files/local-agent-001/vosk-model-en-us-0.22/
-gpt2-files/local-agent-001/agent-mercury/
+# Ignore everything in local-agent-001
+gpt2-files/local-agent-001/*
+
+# Except these files
+!gpt2-files/local-agent-001/main.py
+!gpt2-files/local-agent-001/main-voice-input-only.py
+!gpt2-files/local-agent-001/requirements.txt
+!gpt2-files/local-agent-001/test_cuda.py
 
 # Ignore all safetensors and model weights
 *.safetensors
