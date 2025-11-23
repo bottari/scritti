@@ -295,8 +295,8 @@ This agent demonstrates how to combine **local model inference**, **offline STT 
 
 ```text
 local-agent-001/
-├── main.py                          # Full agent (text + voice input, TTS output)
-├── main-voice-input-only.py         # Voice input and text input, no TTS output
+├── main.py                          # Full agent (voice + text output & voice + text input)
+├── main-voice-input-only.py         # Text output & voice + text input mode
 ├── requirements.txt                 # Dependencies (transformers, vosk, sounddevice, torch, etc.)
 ├── test_cuda.py                     # Quick GPU/torch diagnostic
 
