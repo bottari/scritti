@@ -106,42 +106,41 @@ Below is an example of output from the haiku generation script.
 
 HAIKU GENERATOR - Sample First, Assemble ALL Possible (with spaCy)
 
-Prompt: " 
-fleece lid of eternity
-near silvery dunes
-"
+Prompt: " <br>
+fleece lid<br>
+"<br>
 
-Attempt #5
+Attempt #4
 
 [1] Generating poetic text...
 
-Generated text (full):
-fleece lid of eternity near silvery dunes I watched as you made the path taking in everything from end to end you even paused for a moment at the bottom of that sand dune, almost looking up didn't think anyone would look at you like that but no one did and now we are here together again, gathering dust
+Generated text (full):<br>
+fleece lid wristband crinkled  open to the light,  fingertips tracing smooth blue strokes  through tangled leaf tissue  gently pulling apart  a reddish featherfall flecked red against  blue.  �Leaves swaying unsteady  against a summer wind,  taken from their source, deep in  the woods of Vermont.
 
 [2] Extracting phrases from generated text (using spaCy)...
 
-Found 23 phrases:
-  1. (2 syl) I watched
-  2. (2 syl) you made
-  3. (4 syl) the path taking
-  4. (7 syl) the path taking everything
-  5. (2 syl) you paused
-  6. (5 syl) anyone would look
-  7. (3 syl) no one did
-  8. (4 syl) silvery dunes
-  9. (2 syl) the path
-  10. (3 syl) a moment
-  11. (3 syl) the bottom
-  12. (3 syl) that sand dune
-  13. (2 syl) no one
-  14. (5 syl) of eternity
-  15. (5 syl) near silvery dunes
-  16. (2 syl) from end
-  17. (2 syl) to end
-  18. (4 syl) for a moment
-  19. (4 syl) at the bottom
-  20. (4 syl) of that sand dune
-  ... and 3 more
+Found 21 phrases:
+  1. (6 syl) fleece lid wristband crinkled
+  2. (5 syl) fingertips pulling
+  3. (11 syl) fingertips pulling a reddish featherfall
+  4. (4 syl) fleece lid wristband
+  5. (2 syl) the light
+  6. (3 syl) smooth blue strokes
+  7. (5 syl) tangled leaf tissue
+  8. (6 syl) a reddish featherfall
+  9. (4 syl) a summer wind
+  10. (2 syl) their source
+  11. (2 syl) the woods
+  12. (3 syl) to the light
+  13. (6 syl) through tangled leaf tissue
+  14. (3 syl) against blue
+  15. (6 syl) against a summer wind
+  16. (3 syl) from their source
+  17. (3 syl) in the woods
+  18. (3 syl) of Vermont
+  19. (12 syl) Leaves swaying unsteady  against a summer wind
+  20. (5 syl) taken from their source
+  ... and 1 more
 
 [3] Searching for ALL 5-7-5 combinations...
 
@@ -149,81 +148,35 @@ Found 23 phrases:
 
 🌿 ALL GENERATED HAIKUS:
 
-Haiku #1 (5-7-5):
-  anyone would look<br>
-  the path taking everything<br>
-  of eternity<br>
+Haiku #1 (5-7-5):<br>
+  fingertips pulling<br>
+  deep in  the woods of Vermont<br>
+  tangled leaf tissue<br>
 
-Haiku #2 (5-7-5):
-  anyone would look<br>
-  the path taking everything<br>
-  near silvery dunes<br>
+Haiku #2 (5-7-5):<br>
+  fingertips pulling<br>
+  deep in  the woods of Vermont<br>
+  taken from their source<br>
 
-Haiku #3 (5-7-5):
-  of eternity<br>
-  the path taking everything<br>
-  anyone would look<br>
+Haiku #3 (5-7-5):<br>
+  tangled leaf tissue<br>
+  deep in  the woods of Vermont<br>
+  fingertips pulling<br>
 
-Haiku #4 (5-7-5):
-  of eternity<br>
-  the path taking everything<br>
-  near silvery dunes<br>
+Haiku #4 (5-7-5):<br>
+  tangled leaf tissue<br>
+  deep in  the woods of Vermont<br>
+  taken from their source<br>
 
-Haiku #5 (5-7-5):
-  near silvery dunes<br>
-  the path taking everything<br>
-  anyone would look<br>
+Haiku #5 (5-7-5):<br>
+  taken from their source<br>
+  deep in  the woods of Vermont<br>
+  fingertips pulling<br>
 
-Haiku #6 (5-7-5):
-  near silvery dunes<br>
-  the path taking everything<br>
-  of eternity<br>
-
-🌿 SUMMARY: Found 8 total haiku(s) across all attempts
-
-Showing 8 unique haiku(s):
-
-#1:
-  of eternity<br>
-  a momentary reprieve<br>
-  near silvery dunes<br>
-
-#2:
-  near silvery dunes<br>
-  a momentary reprieve<br>
-  of eternity<br>
-
-#3:
-  anyone would look<br>
-  the path taking everything<br>
-  of eternity<br>
-
-#4:
-  anyone would look<br>
-  the path taking everything<br>
-  near silvery dunes<br>
-
-#5:
-  of eternity<br>
-  the path taking everything<br>
-  anyone would look<br>
-
-#6:
-  of eternity<br>
-  the path taking everything<br>
-  near silvery dunes<br>
-
-#7:
-  near silvery dunes<br>
-  the path taking everything<br>
-  anyone would look<br>
-
-#8:
-  near silvery dunes<br>
-  the path taking everything<br>
-  of eternity<br>
-
-✓ Saved 8 unique haikus to: haiku-output-20251122_201751.txt
+Haiku #6 (5-7-5):<br>
+  taken from their source<br>
+  deep in  the woods of Vermont<br>
+  tangled leaf tissue<br>
 <br>
 </details>
 
