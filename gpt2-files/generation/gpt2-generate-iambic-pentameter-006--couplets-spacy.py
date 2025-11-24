@@ -13,7 +13,7 @@ import spacy
 # =========================================================
 MODEL_NAME = "gpt2"
 ADAPTER_PATH = r"C:\Users\micha\Desktop\projects\mercury\gpt2-finetuned-poetry-mercury-04\final_model"
-PROMPT = "Awake, my"
+PROMPT = "There's a stellar wind that"
 MAX_GENERATION_ATTEMPTS = 25
 TOKENS_TO_GENERATE = 400  # Increased for more candidates
 MAX_RECONSTRUCTION_ATTEMPTS = 15
@@ -33,12 +33,12 @@ except LookupError:
 
 print("Loading SpaCy model...")
 try:
-    nlp = spacy.load("en_core_web_sm")
+    nlp = spacy.load("en_core_web_lg")
 except OSError:
     print("Downloading SpaCy model...")
     import subprocess
-    subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"])
-    nlp = spacy.load("en_core_web_sm")
+    subprocess.run(["python", "-m", "spacy", "download", "en_core_web_lg"])
+    nlp = spacy.load("en_core_web_lg")
 
 # =========================================================
 #                 METER AND RHYME ANALYSIS
@@ -179,7 +179,7 @@ def check_iambic_pentameter(word_sequence, allow_trochaic_substitution=True):
 #         SENTENCE AND PHRASE EXTRACTION
 # =========================================================
 
-def generate_free_text(model, tokenizer, prompt, num_tokens=300):
+def generate_free_text(model, tokenizer, prompt, num_tokens=400):
     """Generate poetry."""
     
     # Add poetry-like context to encourage verse generation
@@ -193,10 +193,10 @@ def generate_free_text(model, tokenizer, prompt, num_tokens=300):
             max_new_tokens=num_tokens,
             do_sample=True,
             top_p=0.85,  # Slightly higher for more diversity
-            top_k=50,    # Add top_k for better quality
-            temperature=0.9,  # Slightly higher for creativity
-            repetition_penalty=1.25,  # Increased to reduce repetition
-            no_repeat_ngram_size=2,  # Prevent repeating 3-grams
+            top_k=0,    
+            temperature=0.9,
+            repetition_penalty=1.25,
+            no_repeat_ngram_size=2,
             pad_token_id=tokenizer.eos_token_id
         )
     
@@ -317,8 +317,28 @@ def extract_coherent_phrases(text):
                         'type': 'verb_phrase',
                         'grammatical': True
                     })
-    
-    return phrases
+    # At the end of extract_coherent_phrases(), before returning
+    # Limit the number of phrases to avoid combinatorial explosion
+    max_phrases_per_type = {
+        'sentence': 20,
+        'clause': 15,
+        'noun_phrase': 30,
+        'verb_phrase': 20
+    }
+
+    filtered_phrases = []
+    type_counts = {}
+
+    for phrase in phrases:
+        ptype = phrase['type']
+        count = type_counts.get(ptype, 0)
+        
+        if count < max_phrases_per_type.get(ptype, 20):
+            filtered_phrases.append(phrase)
+            type_counts[ptype] = count + 1
+
+    print(f"[Optimization] Reduced from {len(phrases)} to {len(filtered_phrases)} phrases")
+    return filtered_phrases
 
 def adjust_phrase_to_iambic(phrase, target_syllables=10):
     """
@@ -417,64 +437,411 @@ def adjust_phrase_to_iambic(phrase, target_syllables=10):
     
     return adjusted
 
-def find_combinable_phrases(phrases, target_syllables=10):
+def validate_sentence_structure(text):
     """
-    Find pairs or groups of phrases that can combine to form iambic pentameter.
+    Check if a text forms a grammatically valid sentence.
+    Returns (is_valid, confidence_score)
+    """
+    doc = nlp(text)
+    
+    # Must have exactly one sentence
+    sentences = list(doc.sents)
+    if len(sentences) != 1:
+        return False, 0
+    
+    # Find the root verb
+    root = None
+    for token in doc:
+        if token.dep_ == "ROOT":
+            root = token
+            break
+    
+    if not root:
+        return False, 0
+    
+    # Root should typically be a verb
+    if root.pos_ not in ("VERB", "AUX"):
+        return False, 20
+    
+    # Check for subject
+    has_subject = any(child.dep_ in ("nsubj", "nsubjpass", "csubj") 
+                     for child in root.children)
+    
+    if not has_subject:
+        # Some valid constructions don't need explicit subjects (imperatives)
+        if root.pos_ == "VERB" and root.tag_ == "VB":  # Base form verb (imperative)
+            has_subject = True
+        else:
+            return False, 30
+    
+    # Check for weird dependency patterns that indicate fragments
+    # Look for orphaned prepositions or conjunctions
+    for token in doc:
+        # Preposition without object
+        if token.pos_ == "ADP":
+            has_object = any(child.dep_ == "pobj" for child in token.children)
+            if not has_object:
+                return False, 40
+        
+        # Conjunction at start without proper coordination
+        if token.i == 0 and token.pos_ == "CCONJ":
+            return False, 30
+    
+    # Check for pronouns without clear antecedents at sentence start
+    # (This catches things like "her ear any memory blocks")
+    if len(doc) > 0:
+        first_token = doc[0]
+        if first_token.pos_ == "PRON" and first_token.dep_ not in ("nsubj", "nsubjpass"):
+            # Possessive pronoun without being attached to something meaningful
+            if first_token.dep_ == "poss":
+                # Check if what it modifies makes sense
+                head = first_token.head
+                if head.dep_ not in ("nsubj", "dobj", "pobj", "attr"):
+                    return False, 40
+    
+    # Check for multiple determiners or strange sequences
+    prev_pos = None
+    for token in doc:
+        if token.pos_ == "DET" and prev_pos == "DET":
+            return False, 30
+        prev_pos = token.pos_
+    
+    return True, 100
+
+def calculate_enhanced_grammatical_score(candidate):
+    """
+    Enhanced grammatical scoring that actually validates coherence.
+    """
+    text = candidate['text']
+    doc = nlp(text)
+    
+    # First check: Is this a valid sentence structure?
+    is_valid, base_score = validate_sentence_structure(text)
+    
+    if not is_valid:
+        return base_score  # Return low score for invalid structures
+    
+    score = base_score
+    
+    # Check for complete thought
+    has_verb = any(token.pos_ == "VERB" for token in doc)
+    has_noun = any(token.pos_ in ("NOUN", "PROPN", "PRON") for token in doc)
+    
+    if not (has_verb and has_noun):
+        score -= 30
+    
+    # Bonus for natural word order (SVO or variations)
+    # Penalty for very unusual orders
+    root = [token for token in doc if token.dep_ == "ROOT"]
+    if root:
+        root_token = root[0]
+        children_deps = [child.dep_ for child in root_token.children]
+        
+        # Good: subject before verb, object after
+        subj_idx = None
+        obj_idx = None
+        
+        for i, token in enumerate(doc):
+            if token.dep_ in ("nsubj", "nsubjpass") and token.head == root_token:
+                subj_idx = i
+            if token.dep_ in ("dobj", "attr") and token.head == root_token:
+                obj_idx = i
+        
+        root_idx = root_token.i
+        
+        # Natural order: subject before verb, object after
+        if subj_idx is not None and subj_idx < root_idx:
+            score += 10
+        if obj_idx is not None and obj_idx > root_idx:
+            score += 10
+    
+    # Penalize fragments or nonsensical phrases
+    # Check if the sentence would make sense to a reader
+    # Use SpaCy's similarity with a "template" good sentence
+    
+    return min(100, max(0, score))
+
+def find_combinable_phrases(phrases, target_syllables=10, max_combinations=100):
+    """
+    OPTIMIZED: Only combine phrases that form coherent sentences.
+    Limits search space and batches NLP operations.
     """
     combinations = []
     
-    for i, phrase1 in enumerate(phrases):
-        if phrase1['syllables'] >= target_syllables:
-            continue
-        
+    # PRE-FILTER: Group phrases by syllable count for O(1) lookup
+    phrases_by_syllables = {}
+    for phrase in phrases:
+        syl = phrase['syllables']
+        if syl not in phrases_by_syllables:
+            phrases_by_syllables[syl] = []
+        phrases_by_syllables[syl].append(phrase)
+    
+    # LIMIT: Only check the most promising phrases (highest quality)
+    # Sort by grammatical indicators before combining
+    phrases_to_check = sorted(
+        [p for p in phrases if p['syllables'] < target_syllables],
+        key=lambda x: x['syllables'],
+        reverse=True
+    )[:50]  # Only check top 50 phrases
+    
+    candidates_to_validate = []  # Collect all candidates first
+    
+    for phrase1 in phrases_to_check:
         needed = target_syllables - phrase1['syllables']
         
-        # Look for a second phrase that fills the gap
-        for j, phrase2 in enumerate(phrases[i+1:], start=i+1):
-            if phrase2['syllables'] == needed:
-                # Try combining
-                combined_words = phrase1['words'] + phrase2['words']
-                is_iambic, pattern, has_sub, sub_pos = check_iambic_pentameter(combined_words)  # FIX: unpack 4 values
-                
-                if is_iambic:
-                    combined_text = phrase1['text'] + ' ' + phrase2['text']
-                    combinations.append({
-                        'text': combined_text,
-                        'words': combined_words,
-                        'syllables': target_syllables,
-                        'stress': pattern,
-                        'iambic': True,
-                        'components': [phrase1, phrase2],
-                        'type': 'combined',
-                        'trochaic_substitution': has_sub,
-                        'substitution_positions': sub_pos
-                    })
+        # O(1) lookup instead of O(n) iteration
+        matching_phrases = phrases_by_syllables.get(needed, [])
+        
+        for phrase2 in matching_phrases[:20]:  # Limit to 20 matches per phrase
+            combined_words = phrase1['words'] + phrase2['words']
+            combined_text = phrase1['text'] + ' ' + phrase2['text']
             
-            # Also try if phrase2 is smaller than needed
-            elif phrase2['syllables'] < needed:
-                remaining = needed - phrase2['syllables']
+            # Quick iambic check BEFORE expensive NLP
+            is_iambic, pattern, has_sub, sub_pos = check_iambic_pentameter(combined_words)
+            
+            if is_iambic:
+                candidates_to_validate.append({
+                    'text': combined_text,
+                    'words': combined_words,
+                    'pattern': pattern,
+                    'has_sub': has_sub,
+                    'sub_pos': sub_pos,
+                    'components': [phrase1, phrase2]
+                })
+        
+        # THREE-PHRASE COMBINATIONS (limited)
+        if needed >= 3 and len(candidates_to_validate) < max_combinations:
+            # Only try 3-phrase if we haven't found enough 2-phrase combos
+            for syl2 in range(2, needed - 1):
+                syl3 = needed - syl2
                 
-                # Look for a third phrase
-                for k, phrase3 in enumerate(phrases[j+1:], start=j+1):
-                    if phrase3['syllables'] == remaining:
+                phrases2 = phrases_by_syllables.get(syl2, [])[:10]
+                phrases3 = phrases_by_syllables.get(syl3, [])[:10]
+                
+                for phrase2 in phrases2:
+                    for phrase3 in phrases3:
                         combined_words = phrase1['words'] + phrase2['words'] + phrase3['words']
-                        is_iambic, pattern, has_sub, sub_pos = check_iambic_pentameter(combined_words)  # FIX: unpack 4 values
+                        combined_text = phrase1['text'] + ' ' + phrase2['text'] + ' ' + phrase3['text']
+                        
+                        is_iambic, pattern, has_sub, sub_pos = check_iambic_pentameter(combined_words)
                         
                         if is_iambic:
-                            combined_text = phrase1['text'] + ' ' + phrase2['text'] + ' ' + phrase3['text']
-                            combinations.append({
+                            candidates_to_validate.append({
                                 'text': combined_text,
                                 'words': combined_words,
-                                'syllables': target_syllables,
-                                'stress': pattern,
-                                'iambic': True,
-                                'components': [phrase1, phrase2, phrase3],
-                                'type': 'combined',
-                                'trochaic_substitution': has_sub,
-                                'substitution_positions': sub_pos
+                                'pattern': pattern,
+                                'has_sub': has_sub,
+                                'sub_pos': sub_pos,
+                                'components': [phrase1, phrase2, phrase3]
                             })
+                            
+                        if len(candidates_to_validate) >= max_combinations:
+                            break
+                    if len(candidates_to_validate) >= max_combinations:
+                        break
+                if len(candidates_to_validate) >= max_combinations:
+                    break
     
+    print(f"[Optimization] Found {len(candidates_to_validate)} iambic candidates, validating...")
+    
+    # BATCH VALIDATION: Process all texts at once with SpaCy pipe
+    if candidates_to_validate:
+        texts = [c['text'] for c in candidates_to_validate]
+        
+        # Use nlp.pipe for batch processing (much faster)
+        docs = list(nlp.pipe(texts, batch_size=50))
+        
+        for candidate, doc in zip(candidates_to_validate, docs):
+            # Quick validation using already-processed doc
+            is_valid, validity_score = validate_sentence_structure_from_doc(doc)
+            
+            if is_valid:
+                combinations.append({
+                    'text': candidate['text'],
+                    'words': candidate['words'],
+                    'syllables': target_syllables,
+                    'stress': candidate['pattern'],
+                    'iambic': True,
+                    'components': candidate['components'],
+                    'type': 'combined',
+                    'trochaic_substitution': candidate['has_sub'],
+                    'substitution_positions': candidate['sub_pos'],
+                    'validity_score': validity_score
+                })
+    
+    print(f"[Optimization] {len(combinations)} valid combinations after filtering")
     return combinations
+
+def validate_sentence_structure_from_doc(doc):
+    """
+    Validate sentence structure from an already-processed SpaCy doc.
+    STRICTER version that catches more nonsense.
+    """
+    # Must have exactly one sentence
+    sentences = list(doc.sents)
+    if len(sentences) != 1:
+        return False, 0
+    
+    # Find the root verb
+    root = None
+    for token in doc:
+        if token.dep_ == "ROOT":
+            root = token
+            break
+    
+    if not root:
+        return False, 0
+    
+    # Root should typically be a verb
+    if root.pos_ not in ("VERB", "AUX"):
+        return False, 20
+    
+    # Check for subject
+    has_subject = any(child.dep_ in ("nsubj", "nsubjpass", "csubj") 
+                     for child in root.children)
+    
+    if not has_subject:
+        if root.pos_ == "VERB" and root.tag_ == "VB":
+            has_subject = True
+        else:
+            return False, 30
+    
+    # NEW: Check for multiple main verbs without coordination
+    # (catches "begins bounces" type errors)
+    main_verbs = [token for token in doc if token.pos_ == "VERB" and token.dep_ not in ("aux", "auxpass", "xcomp", "ccomp", "advcl", "relcl", "acl")]
+    
+    if len(main_verbs) > 1:
+        # Check if they're properly coordinated
+        coordinated = False
+        for verb in main_verbs[1:]:
+            # Check if connected via conjunction
+            if any(child.dep_ == "cc" for child in verb.children) or any(child.pos_ == "CCONJ" for child in doc):
+                coordinated = True
+                break
+        
+        if not coordinated:
+            # Multiple uncoordinated verbs = sentence fragment mash
+            return False, 25
+    
+    # NEW: Check for broken noun phrases
+    # (catches "our area screeching" where "area" and "screeching" aren't properly related)
+    for token in doc:
+        if token.pos_ == "NOUN":
+            # Check its modifiers
+            modifiers = [child for child in token.children]
+            for mod in modifiers:
+                # Verb modifying noun should be in specific relationships
+                if mod.pos_ == "VERB" and mod.dep_ not in ("acl", "relcl", "ccomp"):
+                    # Participles/gerunds should be properly attached
+                    if mod.tag_ not in ("VBG", "VBN") or mod.dep_ not in ("amod", "acl"):
+                        return False, 35
+    
+    # Check for weird dependency patterns
+    for token in doc:
+        if token.pos_ == "ADP":
+            has_object = any(child.dep_ == "pobj" for child in token.children)
+            if not has_object:
+                return False, 40
+        
+        if token.i == 0 and token.pos_ == "CCONJ":
+            return False, 30
+    
+    # Check pronouns
+    if len(doc) > 0:
+        first_token = doc[0]
+        if first_token.pos_ == "PRON" and first_token.dep_ not in ("nsubj", "nsubjpass"):
+            if first_token.dep_ == "poss":
+                head = first_token.head
+                if head.dep_ not in ("nsubj", "dobj", "pobj", "attr"):
+                    return False, 40
+    
+    # NEW: Check for orphaned words (words not properly connected to the tree)
+    for token in doc:
+        if token.dep_ == "dep":  # Generic dependency = likely error
+            return False, 35
+    
+    return True, 100
+
+
+def score_candidates_with_enhanced_grammar(candidates):
+    """
+    OPTIMIZED: Batch process all candidates at once with SpaCy pipe.
+    """
+    if not candidates:
+        return candidates
+    
+    print(f"[Optimization] Batch scoring {len(candidates)} candidates...")
+    
+    # Extract texts
+    texts = [c['text'] for c in candidates]
+    
+    # Batch process with SpaCy (MUCH faster than individual calls)
+    docs = list(nlp.pipe(texts, batch_size=100))
+    
+    # Score each candidate using pre-processed docs
+    for candidate, doc in zip(candidates, docs):
+        # Use enhanced scoring with already-processed doc
+        enhanced_score = calculate_enhanced_grammatical_score_from_doc(doc)
+        candidate['grammatical_score'] = enhanced_score
+        candidate['semantic_vector'] = doc.vector if doc.has_vector else None
+    
+    print(f"[Optimization] Scoring complete")
+    return candidates
+
+
+def calculate_enhanced_grammatical_score_from_doc(doc):
+    """
+    Calculate score from already-processed SpaCy doc.
+    Now includes a "makes sense" check.
+    """
+    # Validate structure
+    is_valid, base_score = validate_sentence_structure_from_doc(doc)
+    
+    if not is_valid:
+        return base_score
+    
+    score = base_score
+    
+    # Check for complete thought
+    has_verb = any(token.pos_ == "VERB" for token in doc)
+    has_noun = any(token.pos_ in ("NOUN", "PROPN", "PRON") for token in doc)
+    
+    if not (has_verb and has_noun):
+        score -= 30
+    
+    # Bonus for natural word order
+    root = [token for token in doc if token.dep_ == "ROOT"]
+    if root:
+        root_token = root[0]
+        
+        subj_idx = None
+        obj_idx = None
+        
+        for token in doc:
+            if token.dep_ in ("nsubj", "nsubjpass") and token.head == root_token:
+                subj_idx = token.i
+            if token.dep_ in ("dobj", "attr") and token.head == root_token:
+                obj_idx = token.i
+        
+        root_idx = root_token.i
+        
+        if subj_idx is not None and subj_idx < root_idx:
+            score += 10
+        if obj_idx is not None and obj_idx > root_idx:
+            score += 10
+    
+    # NEW: "Makes sense" heuristic
+    # Penalize if dependency tree looks broken
+    total_tokens = len(doc)
+    if total_tokens > 0:
+        # Count tokens with "weird" dependencies
+        weird_deps = sum(1 for token in doc if token.dep_ in ("dep", "ROOT") and token.pos_ not in ("VERB", "AUX"))
+        weird_ratio = weird_deps / total_tokens
+        
+        if weird_ratio > 0.2:  # More than 20% weird dependencies
+            score -= 30
+    
+    return min(100, max(0, score))
 
 # =========================================================
 #         Avoid Repetitive Words
@@ -487,7 +854,7 @@ def has_repeated_words(words):
     Returns True if problematic repetition found.
     """
     # Words that are OK to repeat
-    allowed_repeats = {'the', 'a', 'an', 'and', 'or', 'but', 'to', 'of', 'in', 'on', 'at', 'for', 'with', 'is', 'are', 'was', 'were', 'it', 'its', "it's", 'that', 'this', 'as', 'by', 'from', 'be', 'not','he', 'she', 'or', 'they', 'we', 'you', 'his', 'hers', 'me', 'my', 'your', 'our', 'so', 'if', 'then'}
+    allowed_repeats = {'the', 'a', 'an', 'and', 'or', 'but', 'to', 'of', 'in', 'on', 'at', 'for', 'with', 'is', 'are', 'was', 'were', 'it', 'its', "it's", 'that', 'this', 'as', 'by', 'from', 'be', 'not','he', 'she', 'or', 'they', 'we', 'you', 'his', 'hers', 'me', 'my', 'your', 'our', 'us', 'so', 'if', 'then'}
     
     # Count each word (lowercase, excluding allowed repeats)
     word_counts = {}
@@ -503,6 +870,21 @@ def has_repeated_words(words):
     
     return False, None
 
+def score_candidates_with_enhanced_grammar(candidates):
+    """
+    Re-score all candidates with enhanced grammatical validation.
+    Replace the original grammatical_score calculation.
+    """
+    for candidate in candidates:
+        # Use enhanced scoring
+        enhanced_score = calculate_enhanced_grammatical_score(candidate)
+        candidate['grammatical_score'] = enhanced_score
+        
+        # Add semantic vector for similarity checks
+        doc = nlp(candidate['text'])
+        candidate['semantic_vector'] = doc.vector if doc.has_vector else None
+    
+    return candidates
 
 # =========================================================
 #         COUPLET RECONSTRUCTION
@@ -526,6 +908,8 @@ def find_iambic_pentameter_lines(text):
     
     candidates = []
     
+    candidates = score_candidates_with_enhanced_grammar(candidates)
+
     # Try to adjust existing phrases to iambic pentameter
     print("\n[Analysis] Adjusting phrases to fit iambic pentameter...")
     for phrase in phrases:
@@ -684,7 +1068,7 @@ def lines_too_similar(line1_words, line2_words, threshold=0.5):
     
     return False, overlap
 
-def find_rhyming_couplet(candidates, require_rhyme=True, min_grammatical_score=80):
+def find_rhyming_couplet(candidates, require_rhyme=True, min_grammatical_score=95):
     """
     Find a pair of iambic pentameter lines that rhyme.
     Ensures lines don't repeat the same n-grams.
@@ -961,7 +1345,7 @@ print("✓ Uses SpaCy to identify grammatical structures")
 print("✓ Adjusts phrases minimally to fit iambic pentameter")
 print("✓ Combines shorter phrases when needed")
 print("✓ Scores lines by grammaticality and semantic coherence")
-print("✓ Only accepts lines with high grammatical scores (≥80/100)")
+print("✓ Only accepts lines with high grammatical scores (≥95/100)")
 print("✓ Rejects pairs with identical end words")
 print("✓ Allows trochaic substitution (up to 2 feet)")
 print("✓ Much more coherent than word-pool reconstruction!")
