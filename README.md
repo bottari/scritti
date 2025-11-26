@@ -478,7 +478,7 @@ python main-voice-input-only.py
 │       │   └── ... (safetenors, config, etc go here; excluded from public repo)
 │       │
 │       └── 📁 vosk-model-en-us-0.22/
-│           └── ... (offline STT model files)
+│           └── ... (offline STT model files; excluded from repo)
 └── 📁 llama-files/
     ├── 📁 generation/
     │   ├── 📄 interactive-poetry-chat-in-terminal-for-llama3-002-with-comparison.py
