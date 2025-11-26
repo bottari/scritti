@@ -27,7 +27,7 @@ This repo is intentionally diverse — it contains a portfolio of practical, min
 - Python tooling (Pandas, tokenization, JSON parsing, I/O utilities)  
 - Prompt orchestration logic  
 - Custom evaluation metrics (e.g., work on iambic pentameter scoring and haiku creation)  
-- GPT-2 fine-tuning experiments with partial layer unfreezing  
+- Llama 3.1 8B and GPT-2 fine-tuning experiments with partial layer unfreezing  and LoRA
 - Quantization and optimization on limited hardware (16GB VRAM)  
 - Dataset formatting utilities (for supervised fine-tuning or RAG prep)
 
@@ -50,48 +50,137 @@ This repo is intentionally diverse — it contains a portfolio of practical, min
 Below is a real output comparison between **GPT-2** and my **fine-tuned model** using the same input prompt and generation settings. The fine-tuned model was trained to capture a distinct poetic style, producing surreal and borderline nonsensical imagery rather than conventional narrative, demonstrating the effect of stylistic fine-tuning.
 
 <details>
-<summary><strong>🧠 BASE (GPT2) MODEL OUTPUT 🧠</strong> (click to expand)</summary>
+<summary><strong>🧠 BASE (GPT2-Large) MODEL OUTPUT 🧠</strong> (click to expand)</summary>
 <br/>
-watching with glacial gravity isn't life. She knew he wasn't gay. What they didn't know, until her the hospital stopped billing him for $75 a week—two or three quarters of what he paid in back fees—was that she was pushing him toward that home over there where the men let more money run through the plumbing and had greater bandwidth for the conversation, by contrast, if someone had only run an electric line down in time and slid money back into himself through life.
+fleece lid of eternity
 
-"She was someone of stature and quality, still," Drew Alexander continues. "[He] wanted someone nice. Nice how people say, if it was to just tell the next one about, I don't think the price would ever<br>
- work because you never tell anybody that you work in white tape after 'hand money,' I'm happy to work in handshake money for, ya know, sorta like their life... He could be spooked by all the pushy parties. Or who would believe this is a coincidence, who would allow himself to be cuckolded, his wife<br>
- cheated on by the roommate… they always blamed [The Purge writer] Jackson, nothing could have survived outside the U.K.s conditions like that."[10] But according to Andrew Maguire (TAS and prolific Purge eponym), Alexander's willingness to play with facts wasn't seen at the 2007 Indianapolis premiere for his 2009 instalment Left Me Stand Alone when authorities declared white trash vans roaming the heart of town were highly controversial responses to drug rapes. "Some evil little drug cunts like
- Margo Irving should be responsible for such barbaric behavior because she let her child be hit by a<br>
- semi-maimed alcoholic male … they fought every step of the way like this when under the influence that proves how cheap were they and still are." Every one. [F/L/G is valid opinions]. As women the environment rarely deterr the vigilante elements.[Orness suggests the oldman played you falsely... as always, heart][Image so wonderfully bare one where gore is spilled.[Male depiction?]Now wait a minute- Apparently just leaving this low bitch tag intact[Still "nice how you know it!" show] http://bit.ly/8VA91U . Ever spend all week this Newer standard bill containing $1 MillionFPS HOF win awards the<br>
- boy whom to love was connected: articleIt also said a fuck even more popular.Time: How Lit. 19 r i D ************* *****U t/H dade.ruskus,last sings on so donner 35S ALLR ins good word well g l iv do<br>
- r all on imafl,we the skingo.alevich Suck better price milano butget like assemede sonodaisnnot me second free phone thisc:1k800 an infinity 13 j u let frather' 11D freesia play the negard Stakedhell<br>
- But three popindteddu-four fine answers ifeven commacedte1ibands,"$37636 O.O baic ... D any chance you can make an honorable answer?5 out963 plus number".Keep records it is important sish sayitsprayshop checks false abuse."They became … James Row and so deseewedhip he marm a call had could too vei-<br>
- alsostoterseaktion nehow much that night on bodymapaysha servicethey chekepsed hot stay feel os back these G iv get mad that butse inside my yors. Seen my pro CASS WebletIt was down still which rhou d eherec with nuk
+$11.00
 
+We're selling fleece lids of eternity - just in time for the holidays! We've worked hard to bring you this wonderful product and now it's available for purchase. It comes with a free lifetime warranty so you can be sure that your lids are well-maintained.
+
+A beautiful fleece cover made from 100% cotton. We use premium quality, polyester fabric to ensure a long life and superior durability. The cover is cut to fit snugly around your head, and is perfect for those who don't like sleeves or are more comfortable with a hood.
+
+The cover is sewn with two layers of fine, durable thread (100% nylon).
+
+It features a unique magnetic clasp that allows you to easily change your lids (which are sewn on separately) when needed.
+
+Our goal was to create a product that you could trust to last and will never break. We know our customers will be very happy with their purchase.
+
+You'll need an HTML5 capable browser to see this content. Play Replay with sound Play with
+
+sound 00:00 00:00
+
+All orders are shipped through USPS First Class Mail (usually takes about 2-3 weeks). All packages will come with tracking information.
+
+We have several options to customize your fleece cover. You can add a logo, or simply change any of the colors you'd like. Simply put the order number (
+
+------------------------------------------------------------
+Base model generation complete. Switching models...
 </details>
 
 <details>
 <summary><strong>🎭 FINETUNED (POESIA DI MICHELE BOTTARI) MODEL OUTPUT 🎭</strong> (click to expand)</summary>
 </br>
-watching with glacial intensity <br>
-pretending not to notice, like you can do it <br>
-without thoughts, without trying, <br>
-like two trapped souls in searing and twisting <br>
-lens shadows. <br>
-<br>
-<br>
-I'm sorry, I don't know what else to say. <br>
-        I never knew that you could be so loving, <br>
-even when things are hard, when the sun <br>
-and the empty streets hang motionless <br>
-in a pall of gray, and <br>
-the mourners in white sit on gray <br>
-trees writhing in the cool air <br>
-but I now understand <br>
-what it means to feel the depth of <br>
-a loved one's sorrow, to understand <br>
-how one's love can survive <br>
-the ravages of time, the rigors of <br>
-deserts and fires and tornados, <br>
-and how we can stop believing <br>
-when everything else crumbles, and <br>
+fleece lid of eternity
+with infinite tiny wings
 
+found myself face to face
+with an old woman 
+with a cart full 
+of little kids 
+and I couldn’t speak
+and she wouldn’t let me 
+in, and then she 
+stopped talking and 
+kissed my forehead, and 
+we just lay there
+looking at each other, and
+I felt bad for even thinking about it,
+but I did, and now 
+it’s past midnight and 
+everyone’s asleep, and
+I don’t want to go back
+to the city, it’s not safe, and 
+my mind keeps racing, trying to find 
+the exit, but I only make it farther and 
+further into the miasma.
+
+0305 hours
+
+facing the blackness
+with quivering palms
+
+and ankles bound
+with a redneck bitch 
+who won’t stop calling me Baby
+until I give in and 
+move to Texas, where 
+they let you 
+kiss the women’s restroom walls
+as easily as you can walk
+through the streets. 
+
+11:30 am
+
+making the bed
+with one shoulder tied
+as if I were going to break it
+
+sooner or later I will
+and then what will I have 
+but a broken body, a scattered mind
+<br>
+</details>
+
+---
+
+## 🔥 **Featured Work: Llama 3.1 8B Fine-Tuning (Before vs After)**
+
+Below is a real output comparison between **Llama 3.1** and my **fine-tuned model** using the same input prompt and generation settings. 
+
+<details>
+<summary><strong>🧠 BASE (Llama 3.1 8B) MODEL OUTPUT 🧠</strong> (click to expand)</summary>
+<br>
+l<br>
+A 3-year-old boy presented with a history of fever, cough and breathlessness for the last one week. His chest x-ray revealed bilateral reticulonodular opacities. The most likely diagnosis is:<br>
+A. Pulmonary alveolar proteinosis<br>
+B. Pneumocystis jiroveci pneumonia (PCP)<br>
+C. Wegener's granulomatous vasculitis<br>
+D. Tuberculosis<br>
+Answer: D<br>
+<br>
+</details>
+
+<details>
+<summary><strong>🎭 FINETUNED (POESIA DI MICHELE BOTTARI) MODEL OUTPUT 🎭</strong> (click to expand)</summary>
+<br>
+a fleece lid
+
+and we poured a drink
+toast to the squalor of things, our lives
+like maggoty fruit in an overturned bin.
+
+I wanted you then, with your wild hair and thin dress,
+your voice like a knife slicing through fog.
+
+now I want only the quiet that surrounds us when you sleep.
+Your face is angelic even with the wrinkles, even with the pillow indentations.
+
+We must do this every day, or else the world will lose its shape—its center—and spin off into nothingness. 
+
+I tie my shoes and leave the room, careful notto wake her. 
+The house is too small for me, but it’s all we have. 
+
+***
+
+the car drives slow on dirt roads, no headlights, just enough moonlight to guide the way. 
+A slight chill in October air. 
+I had almost forgotten what freedom feels like.  
+
+***
+
+we stop at a lake, one I’ve been to before, though it
+<br>
 </details>
 
 ---
@@ -115,7 +204,7 @@ Attempt #4
 [1] Generating poetic text...
 
 Generated text (full):<br>
-fleece lid wristband crinkled  open to the light,  fingertips tracing smooth blue strokes  through tangled leaf tissue  gently pulling apart  a reddish featherfall flecked red against  blue.  �Leaves swaying unsteady  against a summer wind,  taken from their source, deep in  the woods of Vermont.
+fleece lid wristband crinkled  open to the light,  fingertips tracing smooth blue strokes  through tangled leaf tissue  gently pulling apart  a reddish featherfall flecked red against  blue.  Leaves swaying unsteady  against a summer wind,  taken from their source, deep in  the woods of Vermont.
 
 [2] Extracting phrases from generated text (using spaCy)...
 
@@ -285,7 +374,7 @@ COHERENCE METHOD SUMMARY
 
 ## 🤖 **New: Agent Mercury — Local Speech-Enabled LLM Agent**
 
-A new addition to the repository: **Mercury**, a fully local, speech-enabled LLM agent built on my merged GPT-2 fine-tuned poetry model.
+A new addition to the repository: **Agent Mercury**, a fully local, speech-enabled LLM agent built on my merged GPT-2 fine-tuned poetry model.
 
 This agent demonstrates how to combine **local model inference**, **offline STT & TTS**, **memory-bounded conversational context**, and **agent-style prompting** into a cohesive interactive tool. It also reflects real model-ops considerations like device-aware loading, error handling, and multimodal input.
 
@@ -368,10 +457,13 @@ python main-voice-input-only.py
 │   ├── 📁 generation/
 │   │   ├── 📄 gpt2-generate-iambic-pentameter-006--couplets-spacy.py
 │   │   ├── 📄 gpt2-generation-haiku_form-004-smaller-phrases--as-many-as-possible.py
-│   │   └── 📄 interactive-poetry-chat-in-terminal-002--gpt2-with-comparison.py
+│   │   ├── 📄 interactive-poetry-chat-in-terminal-002--gpt2-with-comparison.py
+│   │   ├── 📄 the-gpt2-fine-tuning-script-thats-the-best-tweaked-002-unfreeze-top-layers--chatbot-compare
+│   │   └── 📄 updated-gpt2-large-comparison-poetry-generator-keeping-line-breaks.py
 │   │
 │   ├── 📁 tuning/
-│   │   └── 📄 the-gpt2-fine-tuning-script-thats-the-best-tweaked-003-unfreeze-top-layers---keep-source-line-breaks.py
+│   │   ├── 📄 the-gpt2-fine-tuning-script-thats-the-best-tweaked-003-unfreeze-top-layers---keep-source-line-breaks.py
+│   │   └── 📄 updated-the-gpt2-fine-tuning-script-thats-the-best-keep-source-line-breaks-001.py
 │   │
 │   └── 📁 local-agent-001/
 │       ├── 📄 main-voice-input-only.py
@@ -380,24 +472,21 @@ python main-voice-input-only.py
 │       ├── 📄 test_cuda.py
 │       │
 │       ├── 📁 agent-mercury/
-│       │   └── ... (agent logic, prompt handling, utilities)
+│       │   └── ... (agent logic, prompt handling, utilities, etc go here; excluded from public repo)
 │       │
 │       ├── 📁 models/
-│       │   └── 📁 full_merged_gpt2-finetuned-poetry-mercury-04--copy-attempt/
-│       │       ├── 📄 config.json
-│       │       ├── 📄 generation_config.json
-│       │       ├── 📄 merges.txt
-│       │       ├── 📄 model.safetensors
-│       │       └── 📄 vocab.json
+│       │   └── ... (safetenors, config, etc go here; excluded from public repo)
 │       │
 │       └── 📁 vosk-model-en-us-0.22/
 │           └── ... (offline STT model files)
-
 └── 📁 llama-files/
     ├── 📁 generation/
-    │   └── 📄 interactive-poetry-chat-in-terminal-for-llama3-002-with-comparison.py
+    │   ├── 📄 interactive-poetry-chat-in-terminal-for-llama3-002-with-comparison.py
+    │   └── 📄 new-llama-poetry-generation-adapteronly-001.py
     └── 📁 tuning/
-        └── 📄 fine-tuning-script-for-llama-3-q4-001.py
+        ├── 📄 fine-tuning-script-for-llama-3-q4-001.py
+        └── 📄 new-llama-training-poetry-001.py
+        
 ```
 
 ### **`First_Edition_GenPs-001_10_14_25.txt`** — Results examples
@@ -407,9 +496,9 @@ Examples of results from using these scripts for fine-tuning and generation expe
 - **`generation/`**: Scripts for generating poetry in various forms (iambic pentameter, haiku) and interactive chat interfaces with model comparison
 - **`tuning/`**: Fine-tuning scripts with partial layer unfreezing and line break preservation
 
-### **`/llama-files/`** — Llama 3 experiments  
-- **`generation/`**: Interactive poetry chat terminal for Llama 3 with comparison functionality
-- **`tuning/`**: Fine-tuning scripts optimized for Llama 3 with 4-bit quantization
+### **`/llama-files/`** — Llama 3.1 8B experiments  
+- **`generation/`**: Interactive poetry chat terminal for Llama 3.1 with comparison functionality
+- **`tuning/`**: Fine-tuning scripts optimized for Llama 3.1 with 4-bit and 8-bit quantization
 
 ---
 
