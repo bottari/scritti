@@ -52,9 +52,9 @@ Below is a real output comparison between **GPT-2** and my **fine-tuned model** 
 <details>
 <summary><strong>🧠 BASE (GPT2-Large) MODEL OUTPUT 🧠</strong> (click to expand)</summary>
 <br/>
-fleece lid of eternity
+fleece lid of eternity<br>
 <br>
-$11.00
+$11.00<br>
 <br>
 We're selling fleece lids of eternity - just in time for the holidays! We've worked hard to bring you this wonderful product and now it's available for purchase. It comes with a free lifetime warranty so you can be sure that your lids are well-maintained.
 <br>
@@ -149,7 +149,7 @@ The island has been privately owned since 1907 by the family of Jean-Jacques de 
 trembling drenched white<br>
 with fever<br>
 and/or confusion<br>
-
+<br>
 you tremble and hide<br>
 the shoes you've worn dancing<br>
 <br>
