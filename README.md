@@ -377,7 +377,7 @@ local-agent-001/
 ├── test_cuda.py                     # Quick GPU/torch diagnostic
 ├── agent-mercury/                   # Virtual environment (excluded via .gitignore)
 ├── models/
-│   └── full_merged_gpt2-finetuned-poetry-mercury-04--copy-attempt/     # For example, no included in public repo 
+│   └── full_merged_gpt2-finetuned-poetry-mercury-04--copy-attempt/    # For example, not included in public repo 
 │       ├── config.json
 │       ├── generation_config.json
 │       ├── merges.txt
