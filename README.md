@@ -53,29 +53,26 @@ Below is a real output comparison between **GPT-2** and my **fine-tuned model** 
 <summary><strong>🧠 BASE (GPT2-Large) MODEL OUTPUT 🧠</strong> (click to expand)</summary>
 <br/>
 fleece lid of eternity
-
+<br>
 $11.00
-
+<br>
 We're selling fleece lids of eternity - just in time for the holidays! We've worked hard to bring you this wonderful product and now it's available for purchase. It comes with a free lifetime warranty so you can be sure that your lids are well-maintained.
-
+<br>
 A beautiful fleece cover made from 100% cotton. We use premium quality, polyester fabric to ensure a long life and superior durability. The cover is cut to fit snugly around your head, and is perfect for those who don't like sleeves or are more comfortable with a hood.
-
+<br>
 The cover is sewn with two layers of fine, durable thread (100% nylon).
-
+<br>
 It features a unique magnetic clasp that allows you to easily change your lids (which are sewn on separately) when needed.
-
+<br>
 Our goal was to create a product that you could trust to last and will never break. We know our customers will be very happy with their purchase.
-
+<br>
 You'll need an HTML5 capable browser to see this content. Play Replay with sound Play with
-
+<br>
 sound 00:00 00:00
-
+<br>
 All orders are shipped through USPS First Class Mail (usually takes about 2-3 weeks). All packages will come with tracking information.
-
+<br>
 We have several options to customize your fleece cover. You can add a logo, or simply change any of the colors you'd like. Simply put the order number (
-
-------------------------------------------------------------
-Base model generation complete. Switching models...
 </details>
 
 <details>
@@ -105,7 +102,7 @@ my mind keeps racing, trying to find<br>
 the exit, but I only make it farther and<br> 
 further into the miasma.<br>
 <br>
-0305 hours
+0305 hours<br>
 <br>
 facing the blackness<br>
 with quivering palms<br>
@@ -120,7 +117,7 @@ kiss the women’s restroom walls<br>
 as easily as you can walk<br>
 through the streets.<br>
 <br>
-11:30 am
+11:30 am<br>
 <br>
 making the bed<br>
 with one shoulder tied<br>
@@ -152,26 +149,24 @@ The island has been privately owned since 1907 by the family of Jean-Jacques de 
 trembling drenched white<br>
 with fever<br>
 and/or confusion<br>
-with fever<br>
-and/or confusion<br>
 
 you tremble and hide<br>
 the shoes you've worn dancing<br>
 <br>
-*
+*<br>
 <br>
 The original sin of this world<br>
 is its inability to include<br>
 all alliterations,<br>
 and so I must alter it.<br>
 <br>
-*
+*<br>
 <br>
-Her face in repose looks like a piano.
-
-We drank too much wine for this to be happening, I thought.
-I hadn't told her my feelings then, and now we're drinking again,
-and maybe I'll
+Her face in repose looks like a piano.<br>
+<br>
+We drank too much wine for this to be happening, I thought.<br>
+I hadn't told her my feelings then, and now we're drinking again,<br>
+and maybe I'll<br>
 <br>
 </details>
 
@@ -272,8 +267,8 @@ Below is an example of output from the iambic pentameter couplet script. Note th
 <br>
 [Fine-tuned] ATTEMPT 5/25
 
-[Fine-tuned] Generating 400 tokens...
-[Fine-tuned] Generated text:
+[Fine-tuned] Generating 400 tokens...<br>
+[Fine-tuned] Generated text:<br>
 , not seeing anything. there's nothing left but a dim light on the back of her head and an air chill in her lungs as she closes eyes to contemplate the pain of it all, trying desperately for clarity. i couldn't stay still if i wanted some sleep, let alone those nights ahead…and when i woke up around 8:30am with my body shaking by the sudden urge from inside me that was too much like death and I had no place else than home. we were going out together….then something happened next door/door again. “well, then why didn’t you just open the window? because everyone is scared they'll get attacked or killed....”“it‘s true. so many people are afraid to come into their homes during quiet hours such how do anyone know who can help them escape while also getting shot down! [she doesn´re sure.]but...you're gonna leave your phone behind?"‌he nods hhopefully thinking about what he said before his friend picked him off-guard looking drunk maybe remembering this guy would have seen someone coming look after us until midnight once more..there‗s always been these moments where both parties  try harder to make sense; sometimes one forgets things even though everything goes better between them anyways.…somehow suddenly remembering another person could be confusing."did you think somebody might sneak over here under lights ?so fast~doppelgängrichterweimar really want security cameras???this guy isn¬ve ready!]․a little voice calls through our windowws wondering aloud whether whatever wasno making contact with anybody should arrive sooner ratherthan later anyway, which leaves no room anymore for any attempts at concealment.[1]definitely possible since sintra hasn—tted far enough above sea level thus now(to avoid hitting shore).— ”that sounds familiar. hes standing close beside lissey (meantfor reference... 
 
 
