@@ -80,55 +80,55 @@ Base model generation complete. Switching models...
 
 <details>
 <summary><strong>🎭 FINETUNED (POESIA DI MICHELE BOTTARI) MODEL OUTPUT 🎭</strong> (click to expand)</summary>
-</br>
-fleece lid of eternity
-with infinite tiny wings
-
-found myself face to face
-with an old woman 
-with a cart full 
-of little kids 
-and I couldn’t speak
-and she wouldn’t let me 
-in, and then she 
-stopped talking and 
-kissed my forehead, and 
-we just lay there
-looking at each other, and
-I felt bad for even thinking about it,
-but I did, and now 
-it’s past midnight and 
-everyone’s asleep, and
-I don’t want to go back
-to the city, it’s not safe, and 
-my mind keeps racing, trying to find 
-the exit, but I only make it farther and 
-further into the miasma.
-
+<br>
+fleece lid of eternity<br>
+with infinite tiny wings<br>
+<br>
+found myself face to face<br>
+with an old woman<br>
+with a cart full<br>
+of little kids<br>
+and I couldn’t speak<br>
+and she wouldn’t let me<br> 
+in, and then she<br>
+stopped talking and<br>
+kissed my forehead, and<br> 
+we just lay there<br>
+looking at each other, and<br>
+I felt bad for even thinking about it,<br>
+but I did, and now<br>
+it’s past midnight and<br> 
+everyone’s asleep, and<br>
+I don’t want to go back<br>
+to the city, it’s not safe, and<br>
+my mind keeps racing, trying to find<br> 
+the exit, but I only make it farther and<br> 
+further into the miasma.<br>
+<br>
 0305 hours
-
-facing the blackness
-with quivering palms
-
-and ankles bound
-with a redneck bitch 
-who won’t stop calling me Baby
-until I give in and 
-move to Texas, where 
-they let you 
-kiss the women’s restroom walls
-as easily as you can walk
-through the streets. 
-
+<br>
+facing the blackness<br>
+with quivering palms<br>
+<br>
+and ankles bound<br>
+with a redneck bitch<br> 
+who won’t stop calling me Baby<br>
+until I give in and<br>
+move to Texas, where<br>
+they let you<br>
+kiss the women’s restroom walls<br>
+as easily as you can walk<br>
+through the streets.<br>
+<br>
 11:30 am
-
-making the bed
-with one shoulder tied
-as if I were going to break it
-
-sooner or later I will
-and then what will I have 
-but a broken body, a scattered mind
+<br>
+making the bed<br>
+with one shoulder tied<br>
+as if I were going to break it<br>
+<br>
+sooner or later I will<br>
+and then what will I have<br>
+but a broken body, a scattered mind<br>
 <br>
 </details>
 
@@ -141,45 +141,37 @@ Below is a real output comparison between **Llama 3.1** and my **fine-tuned mode
 <details>
 <summary><strong>🧠 BASE (Llama 3.1 8B) MODEL OUTPUT 🧠</strong> (click to expand)</summary>
 <br>
-l<br>
-A 3-year-old boy presented with a history of fever, cough and breathlessness for the last one week. His chest x-ray revealed bilateral reticulonodular opacities. The most likely diagnosis is:<br>
-A. Pulmonary alveolar proteinosis<br>
-B. Pneumocystis jiroveci pneumonia (PCP)<br>
-C. Wegener's granulomatous vasculitis<br>
-D. Tuberculosis<br>
-Answer: D<br>
+In a boat on Lake Geneva, you can come across an island with its own village and chapel. The Isle of St. Peter is located in Switzerland near Montreux.<br>
+The island has been privately owned since 1907 by the family of Jean-Jacques de Senarclens d’Aigremont who bought it from Prince Albert I. In order to preserve this natural site as well as possible, only a few people are allowed on the small area during daytime hours: the
 <br>
 </details>
 
 <details>
 <summary><strong>🎭 FINETUNED (POESIA DI MICHELE BOTTARI) MODEL OUTPUT 🎭</strong> (click to expand)</summary>
 <br>
-a fleece lid
+trembling drenched white<br>
+with fever<br>
+and/or confusion<br>
+with fever<br>
+and/or confusion<br>
 
-and we poured a drink
-toast to the squalor of things, our lives
-like maggoty fruit in an overturned bin.
+you tremble and hide<br>
+the shoes you've worn dancing<br>
+<br>
+*
+<br>
+The original sin of this world<br>
+is its inability to include<br>
+all alliterations,<br>
+and so I must alter it.<br>
+<br>
+*
+<br>
+Her face in repose looks like a piano.
 
-I wanted you then, with your wild hair and thin dress,
-your voice like a knife slicing through fog.
-
-now I want only the quiet that surrounds us when you sleep.
-Your face is angelic even with the wrinkles, even with the pillow indentations.
-
-We must do this every day, or else the world will lose its shape—its center—and spin off into nothingness. 
-
-I tie my shoes and leave the room, careful notto wake her. 
-The house is too small for me, but it’s all we have. 
-
-***
-
-the car drives slow on dirt roads, no headlights, just enough moonlight to guide the way. 
-A slight chill in October air. 
-I had almost forgotten what freedom feels like.  
-
-***
-
-we stop at a lake, one I’ve been to before, though it
+We drank too much wine for this to be happening, I thought.
+I hadn't told her my feelings then, and now we're drinking again,
+and maybe I'll
 <br>
 </details>
 
