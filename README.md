@@ -375,10 +375,13 @@ local-agent-001/
 ├── main-voice-input-only.py         # Text output & voice + text input mode
 ├── requirements.txt                 # Dependencies (transformers, vosk, sounddevice, torch, etc.)
 ├── test_cuda.py                     # Quick GPU/torch diagnostic
-
 ├── agent-mercury/                   # Agent logic, utilities, prompt handling
-│   └── ...                          # (Modularized helper scripts)
-
+│   ├── Include/
+│   ├── Lib/
+│   ├── Library/
+│   ├── Scripts/                     # (Modularized helper scripts)
+│   ├── share/
+│   └── pyvenv.cfg
 ├── models/
 │   └── full_merged_gpt2-finetuned-poetry-mercury-04--copy-attempt/
 │       ├── config.json
@@ -386,7 +389,6 @@ local-agent-001/
 │       ├── merges.txt
 │       ├── model.safetensors
 │       └── vocab.json               # Fine-tuned + merged GPT-2 weights
-
 └── vosk-model-en-us-0.22/           # Offline speech-recognition model for voice mode
 ```
 
@@ -408,7 +410,7 @@ This brings together multiple areas of experimentation from the repo — generat
 
 ---
 
-## ▶️ Running the Agent
+## ▶️ Code Reference: Agent Entry Point
 
 ### **Voice + text output & voice + text input mode (full agent)**
 ```bash
@@ -442,15 +444,15 @@ python main-voice-input-only.py
 
 ├── 📁 gpt2-files/
 │   ├── 📁 generation/
-│   │   ├── 📄 gpt2-generate-iambic-pentameter-006--couplets-spacy.py
-│   │   ├── 📄 gpt2-generation-haiku_form-004-smaller-phrases--as-many-as-possible.py
-│   │   ├── 📄 interactive-poetry-chat-in-terminal-002--gpt2-with-comparison.py
-│   │   ├── 📄 the-gpt2-fine-tuning-script-thats-the-best-tweaked-002-unfreeze-top-layers--chatbot-compare
+│   │   ├── 📄 gpt2-generation-haiku_form.py
+│   │   ├── 📄 gpt2-generation-iambic-pentameter-couplets-spacy.py
+│   │   ├── 📄 interactive-poetry-chat-in-terminal-gpt2-with-comparison.py
+│   │   ├── 📄 the-gpt2-fine-tuning-tweaked-unfreeze-top-layers-chatbot-compare.py
 │   │   └── 📄 updated-gpt2-large-comparison-poetry-generator-keeping-line-breaks.py
 │   │
 │   ├── 📁 tuning/
-│   │   ├── 📄 the-gpt2-fine-tuning-script-thats-the-best-tweaked-003-unfreeze-top-layers---keep-source-line-breaks.py
-│   │   └── 📄 updated-the-gpt2-fine-tuning-script-thats-the-best-keep-source-line-breaks-001.py
+│   │   ├── 📄 gpt2_large-fine-tuning-unfreeze-top-layers-keep-source-line-breaks.py
+│   │   └── 📄 updated-gpt2-fine-tuning-unfreeze-top-layers-keep-source-line-breaks.py
 │   │
 │   └── 📁 local-agent-001/
 │       ├── 📄 main-voice-input-only.py
@@ -459,7 +461,7 @@ python main-voice-input-only.py
 │       ├── 📄 test_cuda.py
 │       │
 │       ├── 📁 agent-mercury/
-│       │   └── ... (agent logic, prompt handling, utilities, etc go here; excluded from public repo)
+│       │   └── ... (agent logic, prompt handling, utilities, etc go here; mostly excluded from public repo)
 │       │
 │       ├── 📁 models/
 │       │   └── ... (safetenors, config, etc go here; excluded from public repo)
@@ -468,8 +470,8 @@ python main-voice-input-only.py
 │           └── ... (offline STT model files; excluded from repo but avaiable publicly)
 └── 📁 llama-files/
     ├── 📁 generation/
-    │   ├── 📄 interactive-poetry-chat-in-terminal-for-llama3-002-with-comparison.py
-    │   └── 📄 new-llama-poetry-generation-adapteronly-001.py
+    │   ├── 📄 interactive-poetry-chat-in-terminal-for-llama-with-comparison.py
+    │   └── 📄 new-llama-poetry-generation-adapteronly.py
     └── 📁 tuning/
         ├── 📄 fine-tuning-script-for-llama-3-q4-001.py
         └── 📄 new-llama-training-poetry-003.py

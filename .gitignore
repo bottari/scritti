@@ -17,6 +17,7 @@ __pycache__/
 *.pyc
 
 # Ignore virtual environments
+gpt2-files/local-agent-001/agent-mercury/
 venv/
 .env/
 
