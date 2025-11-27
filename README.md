@@ -465,14 +465,14 @@ python main-voice-input-only.py
 │       │   └── ... (safetenors, config, etc go here; excluded from public repo)
 │       │
 │       └── 📁 vosk-model-en-us-0.22/
-│           └── ... (offline STT model files; excluded from repo)
+│           └── ... (offline STT model files; excluded from repo but avaiable publicly)
 └── 📁 llama-files/
     ├── 📁 generation/
     │   ├── 📄 interactive-poetry-chat-in-terminal-for-llama3-002-with-comparison.py
     │   └── 📄 new-llama-poetry-generation-adapteronly-001.py
     └── 📁 tuning/
         ├── 📄 fine-tuning-script-for-llama-3-q4-001.py
-        └── 📄 new-llama-training-poetry-001.py
+        └── 📄 new-llama-training-poetry-003.py
         
 ```
 

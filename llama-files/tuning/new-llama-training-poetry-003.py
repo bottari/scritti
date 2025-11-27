@@ -11,37 +11,35 @@ from transformers import (
     BitsAndBytesConfig
 )
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training, TaskType
-from huggingface_hub import login # Added for explicit login
+from huggingface_hub import login
 
 # --- CRITICAL ENVIRONMENT CONFIGURATION FOR WINDOWS ---
 os.environ["DS_BUILD_EXTENSIONS"] = "0"
-# Enable memory optimizations
 os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
 # -----------------------------------------------------
 
 
 # --- CONFIGURATION ---
-# 1. GET ACCESS: Go to https://huggingface.co/meta-llama/Llama-3.1-8B and click "Accept License"
-# 2. PASTE TOKEN: Paste your token here (Settings -> Access Tokens -> Read) to bypass CLI issues
 HF_TOKEN = "" 
 
 MODEL_NAME = "meta-llama/Llama-3.1-8B" 
 DATASET_PATH = r"C:\Users\micha\Desktop\projects\mercury\poetry_txt"
-OUTPUT_DIR = "D:/models/llama3-8b-poetry-mercury-25-qlora-014"
+# Use absolute path and ensure it exists
+OUTPUT_DIR = r"D:\models\llama3-8b-poetry-mercury-26-qlora-8bit-019"
+os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-# Training Parameters - Note 16GB VRAM (RTX 5070 Ti) Limitation
-MAX_LENGTH = 256 
-PER_DEVICE_TRAIN_BATCH_SIZE = 1  # Keep at 1
-GRADIENT_ACCUMULATION_STEPS = 4
-NUM_EPOCHS = 10
-LEARNING_RATE = 2e-4 
+# Training Parameters - Anti-Overfitting Configuration
+MAX_LENGTH = 128
+PER_DEVICE_TRAIN_BATCH_SIZE = 1
+GRADIENT_ACCUMULATION_STEPS = 8
+NUM_EPOCHS = 8
+LEARNING_RATE = 5e-5
 
-# LoRA Config - REDUCED for stability
+# LoRA Config - Regularization to prevent overfitting
 LORA_R = 64
-LORA_ALPHA = 256
-LORA_DROPOUT = 0.05
+LORA_ALPHA = 128
+LORA_DROPOUT = 0.1
 
-# Suppress warnings
 warnings.filterwarnings("ignore")
 
 # --- UTILITIES ---
@@ -123,16 +121,14 @@ if __name__ == "__main__":
     setup_auth()
     print_diagnostics()
     
-    # 1. QUANTIZATION CONFIG
+    # 1. QUANTIZATION CONFIG - 8-BIT
+    print("🔧 Using 8-bit quantization")
     bnb_config = BitsAndBytesConfig(
-        load_in_4bit=True,
-        bnb_4bit_use_double_quant=True,
-        bnb_4bit_quant_type="nf4",
-        bnb_4bit_compute_dtype=torch.bfloat16
+        load_in_8bit=True,
     )
 
     # 2. LOAD MODEL & TOKENIZER
-    print(f"🔄 Loading {MODEL_NAME} in 4-bit...")
+    print(f"🔄 Loading {MODEL_NAME} in 8-bit...")
     try:
         model = AutoModelForCausalLM.from_pretrained(
             MODEL_NAME,
@@ -162,24 +158,33 @@ if __name__ == "__main__":
         r=LORA_R,
         lora_alpha=LORA_ALPHA,
         lora_dropout=LORA_DROPOUT,
-        bias="none",
+        bias="all",
         task_type="CAUSAL_LM",
-        target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj", "lm_head", "embed_tokens"]
+        target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
     )
     
     model = get_peft_model(model, peft_config)
     model.print_trainable_parameters()
 
-    # 4. LOAD & PROCESS DATA
+    # 4. LOAD & PROCESS DATA WITH TRAIN/VAL SPLIT
     raw_dataset = load_text_corpus_from_folder(DATASET_PATH)
     
-    lm_datasets = raw_dataset.map(
+    print(f"📊 Splitting data: 90% train, 10% validation...")
+    split_dataset = raw_dataset.train_test_split(test_size=0.1, seed=42)
+    
+    train_dataset = split_dataset['train'].map(
+        lambda x: tokenize_function(x, tokenizer, MAX_LENGTH),
+        batched=True,
+        remove_columns=["text"]
+    )
+    
+    eval_dataset = split_dataset['test'].map(
         lambda x: tokenize_function(x, tokenizer, MAX_LENGTH),
         batched=True,
         remove_columns=["text"]
     )
 
-    # 5. TRAINING ARGUMENTS - OPTIMIZED FOR STABILITY
+    # 5. TRAINING ARGUMENTS - AGGRESSIVE MEMORY OPTIMIZATION + REGULARIZATION
     training_args = TrainingArguments(
         output_dir=OUTPUT_DIR,
         per_device_train_batch_size=PER_DEVICE_TRAIN_BATCH_SIZE,
@@ -189,34 +194,63 @@ if __name__ == "__main__":
         fp16=False,
         bf16=True, 
         logging_steps=10,
-        save_strategy="steps",
-        save_steps=200,
-        save_total_limit=5,
-        optim="paged_adamw_32bit",
+        save_strategy="no",  # ⚠️ CRITICAL: Disable automatic checkpoint saving (causing disk freeze)
+        optim="paged_adamw_8bit",
         gradient_checkpointing=True,
-        warmup_ratio=0.03,
-        lr_scheduler_type="constant",
-        # NEW: Memory optimization settings
-        torch_empty_cache_steps=10,  # Clear cache every 10 steps
-        dataloader_num_workers=0,    # Disable multiprocessing (can cause memory spikes)
-        dataloader_pin_memory=False, # Reduce memory overhead
+        gradient_checkpointing_kwargs={"use_reentrant": False},
+        warmup_ratio=0.1,
+        lr_scheduler_type="cosine",
+        weight_decay=0.01,
+        torch_empty_cache_steps=5,
+        dataloader_num_workers=0,
+        dataloader_pin_memory=False,
         remove_unused_columns=False,
+        max_grad_norm=0.3,
+        eval_strategy="steps",
+        eval_steps=100,
+        load_best_model_at_end=False,  # Disable this since we're not saving checkpoints
+        metric_for_best_model="loss",
     )
 
     trainer = Trainer(
         model=model,
-        train_dataset=lm_datasets,
+        train_dataset=train_dataset,
+        eval_dataset=eval_dataset,
         args=training_args,
         data_collator=DataCollatorForLanguageModeling(tokenizer, mlm=False),
     )
 
     # 6. TRAIN
-    print("\n🚀 Starting QLoRA Training...")
+    print("\n🚀 Starting QLoRA Training with 8-bit quantization + anti-overfitting...")
+    print(f"📊 LoRA rank: {LORA_R}, alpha: {LORA_ALPHA}, dropout: {LORA_DROPOUT}")
+    print(f"🎯 Epochs: {NUM_EPOCHS}, LR: {LEARNING_RATE}")
+    print(f"⚠️  WATCH validation loss - stop early if it stops decreasing!")
     trainer.train()
 
-    # 7. SAVE
+    # 7. SAVE - MINIMAL AND DIRECT
     print(f"\n💾 Saving adapter to {OUTPUT_DIR}...")
-    trainer.model.save_pretrained(OUTPUT_DIR)
-    tokenizer.save_pretrained(OUTPUT_DIR)
+    print("⏳ Writing to disk (do NOT interrupt)...")
     
-    print("\n✨ Done!")
+    try:
+        # Force everything off GPU first
+        trainer.model = trainer.model.cpu()
+        torch.cuda.empty_cache()
+        torch.cuda.synchronize()
+        
+        # Give the system a moment
+        import time
+        time.sleep(2)
+        
+        # Simple, direct save
+        trainer.model.save_pretrained(OUTPUT_DIR, safe_serialization=True)
+        tokenizer.save_pretrained(OUTPUT_DIR)
+        
+        print("✅ Adapter saved successfully!")
+        print(f"✅ Location: {OUTPUT_DIR}")
+        print("\n✨ Training complete!")
+        
+    except Exception as e:
+        print(f"❌ Save failed: {e}")
+        import traceback
+        traceback.print_exc()
+        raise
