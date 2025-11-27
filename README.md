@@ -433,9 +433,10 @@ python main-voice-input-only.py
 
 ```text
 📁 scritti/
+│ 
 ├── 📄 README.md
 ├── 📄 First_Edition_GenPs-001_10_14_25.txt
-
+│ 
 ├── 📁 gpt2-files/
 │   ├── 📁 generation/
 │   │   ├── 📄 gpt2-generation-haiku_form.py
@@ -462,6 +463,7 @@ python main-voice-input-only.py
 │       │
 │       └── 📁 vosk-model-en-us-0.22/
 │           └── ... (offline STT model files; excluded from repo but avaiable publicly)
+│ 
 └── 📁 llama-files/
     ├── 📁 generation/
     │   ├── 📄 interactive-poetry-chat-in-terminal-for-llama-with-comparison.py
