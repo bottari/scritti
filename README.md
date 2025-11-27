@@ -1,7 +1,7 @@
 # 🌒 **scritti**  
 ### *Applied LLM Experimentation, Evaluation, and Fine-Tuning*  
 
-[![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)  
+[![Python](https://img.shields.io/badge/Python-3.12+-blue.svg)](https://www.python.org/)  
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)  
 [![LLM R&D](https://img.shields.io/badge/Focus-LLM%20Evaluation%20%26%20Fine--Tuning-purple.svg)]()  
 [![AI Governance](https://img.shields.io/badge/Discipline-AI%20Governance-orange.svg)]()
@@ -383,7 +383,7 @@ local-agent-001/
 │       ├── merges.txt
 │       ├── model.safetensors
 │       └── vocab.json               # Fine-tuned + merged GPT-2 weights
-└── vosk-model-en-us-0.22/           # # Offline STT model (excluded via .gitignore)
+└── vosk-model-en-us-0.22/           # Offline STT model (excluded via .gitignore)
 ```
 
 ---
@@ -438,6 +438,7 @@ python main-voice-input-only.py
 ├── 📄 First_Edition_GenPs-001_10_14_25.txt
 │ 
 ├── 📁 gpt2-files/
+│   │ 
 │   ├── 📁 generation/
 │   │   ├── 📄 gpt2-generation-haiku_form.py
 │   │   ├── 📄 gpt2-generation-iambic-pentameter-couplets-spacy.py
@@ -465,9 +466,11 @@ python main-voice-input-only.py
 │           └── ... (offline STT model files; excluded from repo but avaiable publicly)
 │ 
 └── 📁 llama-files/
+    │ 
     ├── 📁 generation/
     │   ├── 📄 interactive-poetry-chat-in-terminal-for-llama-with-comparison.py
     │   └── 📄 new-llama-poetry-generation-adapteronly.py
+    │ 
     └── 📁 tuning/
         ├── 📄 fine-tuning-script-for-llama-3-q4-001.py
         └── 📄 new-llama-training-poetry-003.py
