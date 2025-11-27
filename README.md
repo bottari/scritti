@@ -56,21 +56,21 @@ fleece lid of eternity<br>
 <br>
 $11.00<br>
 <br>
-We're selling fleece lids of eternity - just in time for the holidays! We've worked hard to bring you this wonderful product and now it's available for purchase. It comes with a free lifetime warranty so you can be sure that your lids are well-maintained.
+We're selling fleece lids of eternity - just in time for the holidays! We've worked hard to bring you this wonderful product and now it's available for purchase. It comes with a free lifetime warranty so you can be sure that your lids are well-maintained.<br>
 <br>
-A beautiful fleece cover made from 100% cotton. We use premium quality, polyester fabric to ensure a long life and superior durability. The cover is cut to fit snugly around your head, and is perfect for those who don't like sleeves or are more comfortable with a hood.
+A beautiful fleece cover made from 100% cotton. We use premium quality, polyester fabric to ensure a long life and superior durability. The cover is cut to fit snugly around your head, and is perfect for those who don't like sleeves or are more comfortable with a hood.<br>
 <br>
-The cover is sewn with two layers of fine, durable thread (100% nylon).
+The cover is sewn with two layers of fine, durable thread (100% nylon).<br>
 <br>
-It features a unique magnetic clasp that allows you to easily change your lids (which are sewn on separately) when needed.
+It features a unique magnetic clasp that allows you to easily change your lids (which are sewn on separately) when needed.<br>
 <br>
-Our goal was to create a product that you could trust to last and will never break. We know our customers will be very happy with their purchase.
+Our goal was to create a product that you could trust to last and will never break. We know our customers will be very happy with their purchase.<br>
 <br>
-You'll need an HTML5 capable browser to see this content. Play Replay with sound Play with
+You'll need an HTML5 capable browser to see this content. Play Replay with sound Play with<br>
 <br>
-sound 00:00 00:00
+sound 00:00 00:00<br>
 <br>
-All orders are shipped through USPS First Class Mail (usually takes about 2-3 weeks). All packages will come with tracking information.
+All orders are shipped through USPS First Class Mail (usually takes about 2-3 weeks). All packages will come with tracking information.<br>
 <br>
 We have several options to customize your fleece cover. You can add a logo, or simply change any of the colors you'd like. Simply put the order number (
 </details>
