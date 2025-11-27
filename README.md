@@ -371,25 +371,19 @@ This agent demonstrates how to combine **local model inference**, **offline STT 
 
 ```text
 local-agent-001/
-├── main.py                          # Full agent (voice + text output & voice + text input)
+├── main.py                          # Full agent logic (voice + text output & voice + text input)
 ├── main-voice-input-only.py         # Text output & voice + text input mode
 ├── requirements.txt                 # Dependencies (transformers, vosk, sounddevice, torch, etc.)
 ├── test_cuda.py                     # Quick GPU/torch diagnostic
-├── agent-mercury/                   # Agent logic, utilities, prompt handling
-│   ├── Include/
-│   ├── Lib/
-│   ├── Library/
-│   ├── Scripts/                     # (Modularized helper scripts)
-│   ├── share/
-│   └── pyvenv.cfg
+├── agent-mercury/                   # Virtual environment (excluded via .gitignore)
 ├── models/
-│   └── full_merged_gpt2-finetuned-poetry-mercury-04--copy-attempt/
+│   └── full_merged_gpt2-finetuned-poetry-mercury-04--copy-attempt/     # For example, no included in public repo 
 │       ├── config.json
 │       ├── generation_config.json
 │       ├── merges.txt
 │       ├── model.safetensors
 │       └── vocab.json               # Fine-tuned + merged GPT-2 weights
-└── vosk-model-en-us-0.22/           # Offline speech-recognition model for voice mode
+└── vosk-model-en-us-0.22/           # # Offline STT model (excluded via .gitignore)
 ```
 
 ---
@@ -461,7 +455,7 @@ python main-voice-input-only.py
 │       ├── 📄 test_cuda.py
 │       │
 │       ├── 📁 agent-mercury/
-│       │   └── ... (agent logic, prompt handling, utilities, etc go here; mostly excluded from public repo)
+│       │   └── ... (virtual environment files; excluded from public repo)
 │       │
 │       ├── 📁 models/
 │       │   └── ... (safetenors, config, etc go here; excluded from public repo)
