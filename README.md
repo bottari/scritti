@@ -19,6 +19,12 @@ While my day-job focuses on *risk management, evaluation pipelines, and GenAI pr
 
 ---
 
+## 🏛️ **Philosophy**
+
+My philosophy is rooted in the punk-rock conviction that if the current infrastructure doesn't serve the vision, you build your own. I value the visceral over the performative. I don’t manage processes, I architect solutions that preserve the integrity of the original idea. I believe in the power of transparency in data, in art, and in character.
+
+---
+
 ## 🧩 **What This Repository Demonstrates**
 
 This repo is intentionally diverse — it contains a portfolio of practical, minimally-packaged scripts that demonstrate:
@@ -133,7 +139,7 @@ but a broken body, a scattered mind<br>
 
 ## 🔥 **Featured Work: Llama 3.1 8B Fine-Tuning (Before vs After)**
 
-Below is a real output comparison between **Llama 3.1** and my **fine-tuned model** using the same input prompt and generation settings. 
+Below is a real output comparison between **Llama 3.1** and my **fine-tuned model** using the same input prompt (i.e., "walking") and generation settings. 
 
 <details>
 <summary><strong>🧠 BASE (Llama 3.1 8B) MODEL OUTPUT 🧠</strong> (click to expand)</summary>
