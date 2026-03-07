@@ -425,20 +425,6 @@ This brings together multiple areas of experimentation from the repo — generat
 
 ---
 
-## ▶️ Code Reference: Agent Entry Point
-
-### **Voice + text output & voice + text input mode (full agent)**
-```bash
-python main.py
-```
-
-### **Text output & voice + text input mode**
-```bash
-python main-voice-input-only.py
-```
-
----
-
 ## 🧩 Example Functionality
 
 - Listens for offline speech, cleans filler words, and converts to text  
@@ -546,6 +532,7 @@ Together, they illustrate how I bridge **AI governance ↔ applied engineering**
 
 ## 🧰 **Key Technologies Used**
 
+- Codex
 - Python (tooling, parsing, orchestration)
 - PyTorch
 - Transformers (Hugging Face)
@@ -555,28 +542,6 @@ Together, they illustrate how I bridge **AI governance ↔ applied engineering**
 - Quantization / 8-bit loading
 - Dataset cleaning and text normalization
 - Prompt engineering & stylistic constraints
-
----
-
-## 🛠️ **Tooltips / Code Glossary**
-
-**🔧 LoRA** <sub>Low-Rank Adaptation: freezes base model weights and learns small rank-decomposition matrices for efficient fine-tuning.</sub>
-
-**🎚️ Top-k / Top-p Sampling** <sub>Decoding strategies that control randomness by limiting token selection to the highest-probability candidates.</sub>
-
-**🧱 Unfreezing Layers** <sub>Gradually enabling gradient updates in deeper transformer blocks to increase control without overfitting.</sub>
-
-**🧮 Iambic Pentameter Metric** <sub>A custom evaluator that counts unstressed/stressed syllable alternation — an experiment in stylistic constraint scoring.</sub>
-
----
-
-## 🗺️ **Project Roadmap**
-
-- Add automated metric visualizations
-- Add a full reproducible fine-tuning pipeline
-- Add more evaluation scripts (e.g., perplexity tracking)
-- Add a prompt-stability benchmarking suite
-- Add LoRA-based adapters for Llama 3.1 8B
 
 ---
 
