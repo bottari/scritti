@@ -561,7 +561,7 @@ Together, they illustrate how I bridge **AI governance ↔ applied engineering**
 ## 👤 **About Me**
 
 **Michael Bottari**  
-Technical Program Manager — AI Governance & Applied AI Operations  
+Technical Program Manager — AI Operations & Systems Architecture  
 📧 [mfbottari@gmail.com](mailto:mfbottari@gmail.com)  
 🔗 [LinkedIn](https://linkedin.com/in/michael-bottari)  
 💻 [GitHub](https://github.com/bottari)  
