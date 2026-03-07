@@ -30,24 +30,39 @@ My philosophy is rooted in the punk-rock conviction that if the current infrastr
 This repo is intentionally diverse — it contains a portfolio of practical, minimally-packaged scripts that demonstrate:
 
 ### 🛠️ Technical Engineering Capabilities
-- Python tooling (Pandas, tokenization, JSON parsing, I/O utilities)  
-- Prompt orchestration logic  
-- Custom evaluation metrics (e.g., work on iambic pentameter scoring and haiku creation)  
-- Llama 3.1 8B and GPT-2 fine-tuning experiments with partial layer unfreezing  and LoRA
-- Quantization and optimization on limited hardware (16GB VRAM)  
-- Dataset formatting utilities (for supervised fine-tuning or RAG prep)
+- **Model Comparison Frameworks:** Flask-based UIs for human-centric qualitative analysis.
+- **Python Tooling:** Pandas for metric calculation, JSON parsing, and custom I/O utilities.
+- **Custom Evaluation Metrics:** Work on iambic pentameter scoring and haiku verification.
+- **Fine-Tuning:** Llama 3.1 8B and GPT-2 experiments with LoRA and partial layer unfreezing.
+- **Quantization:** Optimization for local execution on limited hardware (16GB VRAM).
 
 ### 🧪 AI Governance & Model Lifecycle Relevance
-- Understanding of *why* models behave incoherently  
-- Ability to perform controlled prompt-based evaluations  
-- Failure-mode analysis (semantic drift, instability, overfitting)  
-- Logging patterns that mirror internal evaluation pipelines  
-- Experiment reproducibility practices  
+- **HITL Pipelines:** Designing interfaces that bridge raw model output with human judgment.
+- **Failure-Mode Analysis:** Identifying semantic drift, instability, and overfitting.
+- **Logging Patterns:** Data structures that mirror enterprise-grade evaluation pipelines.
+- **Experiment Reproducibility:** Maintaining prompt-to-output linkage for downstream analysis.
 
 ### 📈 Program Management & Systems Thinking
 - Translating ambiguous goals into measurable experiments  
 - Structuring AI workflows with clear inputs/outputs  
 - Aligning fine-tuning work with model safety/evaluation concerns  
+
+---
+
+## ⚖️ New: Human Evaluation & Side-by-Side Comparison
+
+The latest evolution of **scritti** moves beyond automated metrics into **Human-in-the-Loop (HITL) evaluation**. I have implemented a Flask-based review application to perform rigorous side-by-side (A/B) testing between different model architectures.
+
+### **The Workflow**
+1.  **Orchestration:** Run identical prompts through both a **Llama 3.1 (QLoRA)** and a **GPT-2 (Fine-tuned)** model.
+2.  **Blind Review:** Use the Flask UI (`poem_review_app/`) to compare outputs without knowing which model produced which result.
+3.  **Qualitative Scoring:** Models are rated on a 1-5 scale across three dimensions:
+    * **Originality:** Does it avoid clichés and "LLM-isms"?
+    * **Emotion:** Does the output evoke the intended mood?
+    * **Imagery:** How vivid and specific is the sensory language?
+4.  **Audit Trail:** Results are captured in structured JSON, preserving the link between Prompt ID, Model Version, and Reviewer Scores.
+
+> **Why this matters for AI Governance:** This mimics production-grade RLHF and red-teaming workflows, creating a consistent A/B evaluation process that can be audited for model drift or stylistic alignment.
 
 ---
 
@@ -443,7 +458,19 @@ python main-voice-input-only.py
 ├── 📄 README.md
 ├── 📄 First_Edition_GenPs-001_10_14_25.txt
 │ 
-├── 📁 gpt2-files/
+│
+├── 📁 analysis/
+│   ├── 📄 calculate_metrics.py       # Aggregate scoring logic
+│   └── 📄 metrics.py                 # Core evaluation functions
+│ 
+├── 📁 poem_review_app/               # Flask Human Evaluation Tool
+│   ├── 📄 app.py                     # Review UI Backend
+│   ├── 📄 prompts.json               # Shared prompt source
+│   ├── 📄 outputs.json               # Model results for review
+│   ├── 📄 results.json               # Captured human ratings
+│   └── 📁 templates/                 # UI HTML files
+│
+│├── 📁 gpt2-files/
 │   │ 
 │   ├── 📁 generation/
 │   │   ├── 📄 gpt2-generation-haiku_form.py
@@ -475,7 +502,8 @@ python main-voice-input-only.py
     │ 
     ├── 📁 generation/
     │   ├── 📄 interactive-poetry-chat-in-terminal-for-llama-with-comparison.py
-    │   └── 📄 new-llama-poetry-generation-adapteronly.py
+    │   ├── 📄 new-llama-poetry-generation-adapteronly.py
+    │   └── 📄 generate_poetry_with_llama3_gpt2_qlora.py  # A/B Generator
     │ 
     └── 📁 tuning/
         ├── 📄 fine-tuning-script-for-llama-3-q4-001.py
@@ -579,29 +607,3 @@ Technical Program Manager — AI Governance & Applied AI Operations
 ## 📝 **License**
 
 MIT License — feel free to fork, study, and experiment.
-
-
-## Human Evaluation Workflow (New)
-This repository now includes a structured side-by-side human evaluation loop for model comparison.
-What is new:
-- Compare two different model families on identical prompts:
-  - Llama 3.1 base + QLoRA adapter
-  - GPT-2 fine-tuned checkpoint
-- Review both outputs in one Flask UI and score each model 1-5 on:
-  - originality
-  - emotion
-  - imagery
-Current workflow files:
-- Prompt source: poem_review_app/prompts.json
-- Generator: llama-files/generation/generate_poetry_with_llama3_gpt2_qlora.py
-- Reviewer app: poem_review_app/app.py
-- Side-by-side outputs for UI: poem_review_app/outputs.json
-- Flat outputs for analysis: poem_review_app/poem_review_app_outputs/outputs_flat.json
-- Collected ratings: poem_review_app/results.json
-- Metrics script: analysis/metrics.py
-Why this matters:
-- Creates a consistent A/B evaluation process instead of isolated single-model checks.
-- Preserves prompt linkage with shared poem IDs for downstream analysis.
-- Produces review data that can be audited by reviewer, model, and poem ID.
----
-
