@@ -579,3 +579,29 @@ Technical Program Manager — AI Governance & Applied AI Operations
 ## 📝 **License**
 
 MIT License — feel free to fork, study, and experiment.
+
+
+## Human Evaluation Workflow (New)
+This repository now includes a structured side-by-side human evaluation loop for model comparison.
+What is new:
+- Compare two different model families on identical prompts:
+  - Llama 3.1 base + QLoRA adapter
+  - GPT-2 fine-tuned checkpoint
+- Review both outputs in one Flask UI and score each model 1-5 on:
+  - originality
+  - emotion
+  - imagery
+Current workflow files:
+- Prompt source: poem_review_app/prompts.json
+- Generator: llama-files/generation/generate_poetry_with_llama3_gpt2_qlora.py
+- Reviewer app: poem_review_app/app.py
+- Side-by-side outputs for UI: poem_review_app/outputs.json
+- Flat outputs for analysis: poem_review_app/poem_review_app_outputs/outputs_flat.json
+- Collected ratings: poem_review_app/results.json
+- Metrics script: analysis/metrics.py
+Why this matters:
+- Creates a consistent A/B evaluation process instead of isolated single-model checks.
+- Preserves prompt linkage with shared poem IDs for downstream analysis.
+- Produces review data that can be audited by reviewer, model, and poem ID.
+---
+

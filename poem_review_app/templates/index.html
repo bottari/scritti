@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Poem Comparison Review</title>
+  <style>
+    body {
+      font-family: Georgia, "Times New Roman", serif;
+      margin: 0;
+      background: #f6f3ee;
+      color: #1d1d1d;
+    }
+    .wrap {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    h1, h2, h3 { margin-top: 0; }
+    label {
+      display: block;
+      font-weight: bold;
+      margin-top: 0.75rem;
+    }
+    input, select {
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: 0.35rem;
+      padding: 0.55rem;
+      border: 1px solid #bbb;
+      border-radius: 6px;
+      font: inherit;
+    }
+    button {
+      margin-top: 1rem;
+      border: 0;
+      border-radius: 6px;
+      background: #114b5f;
+      color: #fff;
+      padding: 0.65rem 1rem;
+      cursor: pointer;
+      font: inherit;
+    }
+    .error {
+      color: #7f1d1d;
+      background: #fee2e2;
+      border: 1px solid #fecaca;
+      padding: 0.6rem;
+      border-radius: 6px;
+      margin-bottom: 0.75rem;
+    }
+    .meta {
+      color: #444;
+      margin-bottom: 0.75rem;
+    }
+    .columns {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    }
+    .poem-box {
+      background: #faf7f2;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      padding: 0.75rem;
+      white-space: pre-wrap;
+      min-height: 180px;
+    }
+    .scores {
+      display: grid;
+      gap: 0.75rem;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="card">
+      <h1>Side-by-Side Poem Review</h1>
+      <p>Review both model outputs and score each one from 1 (low) to 5 (high).</p>
+
+      {% if setup_error %}
+      <div class="error">{{ setup_error }}</div>
+      {% elif not reviewer %}
+      <form method="get">
+        <label for="reviewer">Reviewer name</label>
+        <input id="reviewer" name="reviewer" type="text" required>
+        <button type="submit">Start Reviewing</button>
+      </form>
+      {% elif not item %}
+      <h2>All done, {{ reviewer }}.</h2>
+      <p>You have reviewed all {{ total_items }} side-by-side comparison item(s).</p>
+      {% else %}
+
+      {% if error %}
+      <div class="error">{{ error }}</div>
+      {% endif %}
+
+      <div class="meta"><strong>Reviewer:</strong> {{ reviewer }}</div>
+      <div class="meta"><strong>Comparison ID:</strong> {{ item.id }}</div>
+      <h3>Prompt</h3>
+      <p>{{ item.prompt }}</p>
+
+      <form method="post">
+        <input type="hidden" name="reviewer" value="{{ reviewer }}">
+        <input type="hidden" name="comparison_id" value="{{ item.id }}">
+
+        <div class="columns">
+          <section class="card">
+            <h3>Model 1: {{ item.outputs[0].model }}</h3>
+            <div class="poem-box">{{ item.outputs[0].poem }}</div>
+            <div class="scores">
+              <div>
+                <label for="m1_originality">Originality</label>
+                <select id="m1_originality" name="m1_originality" required>
+                  <option value="">Choose</option>
+                  <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+                </select>
+              </div>
+              <div>
+                <label for="m1_emotion">Emotion</label>
+                <select id="m1_emotion" name="m1_emotion" required>
+                  <option value="">Choose</option>
+                  <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+                </select>
+              </div>
+              <div>
+                <label for="m1_imagery">Imagery</label>
+                <select id="m1_imagery" name="m1_imagery" required>
+                  <option value="">Choose</option>
+                  <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+                </select>
+              </div>
+            </div>
+          </section>
+
+          <section class="card">
+            <h3>Model 2: {{ item.outputs[1].model }}</h3>
+            <div class="poem-box">{{ item.outputs[1].poem }}</div>
+            <div class="scores">
+              <div>
+                <label for="m2_originality">Originality</label>
+                <select id="m2_originality" name="m2_originality" required>
+                  <option value="">Choose</option>
+                  <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+                </select>
+              </div>
+              <div>
+                <label for="m2_emotion">Emotion</label>
+                <select id="m2_emotion" name="m2_emotion" required>
+                  <option value="">Choose</option>
+                  <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+                </select>
+              </div>
+              <div>
+                <label for="m2_imagery">Imagery</label>
+                <select id="m2_imagery" name="m2_imagery" required>
+                  <option value="">Choose</option>
+                  <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+                </select>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <button type="submit">Submit Both Reviews and Load Next</button>
+      </form>
+      {% endif %}
+    </section>
+  </main>
+</body>
+</html>

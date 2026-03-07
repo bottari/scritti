@@ -1,0 +1,114 @@
+[
+  {
+    "id": 433413,
+    "model": "llama3-poetry-mercury-26",
+    "base_model": "meta-llama/Llama-3.1-8B",
+    "prompt": "Rain on old city windows",
+    "poem": "Rain on old city windows\nI left my heart in Rome,\n\t\tI slipped it under the Duomo and \n\t\t\tdidn't they notice? \n\nKnees bent, sitting crosslegged on a chair. The only way to read is like this—held close to the source, nothing lost in translation. My apartment on via del Governo Vecchio, dark wood furniture, baroque details on the ceiling, chianti bottles at the market for 1 euro each, I filled one with water and kept it by my bed as a late-night companion. We only have two more weeks together, me and this place—that place—I’ve become wanton, undisciplined, there’s no order to my days, I’m afraid of what will happen when we are separated again, like last time, how I became someone else entirely, someone who thinks perhaps meditating among the florid hills of Colorado is a reasonable thing to do, but then again that self was also out of joint, maladjusted, misaligned sunglasses on a store shelf, you pick up one and see the others reflected in its lens. You adjust yours accordingly.\n\nLeaning against the ancient brick, just outside the crowds in piazza navona, a man with long hair and"
+  },
+  {
+    "id": 433413,
+    "model": "gpt2-finetuned-poetry-mercury-04",
+    "base_model": "gpt2",
+    "prompt": "Rain on old city windows",
+    "poem": "Rain on old city windows, and the sound of a car coming up from behind. she follows them to the back door and walks down into the hallwayway for some smoke (you can only smell weed)and it burns me like I'm smoking marijuana here, or at least i should have been because they'd just knocked when i left earlier this morning. i get there about 5:30 then pass by again wearing jeans and sneakers looking out through my window. two white shoes with short sleeves that look really good in winter sandals and an orange vest jacket next her dresser; which reminds us not too much of what we wore before last night.<|endoftext|>"
+  },
+  {
+    "id": 150565,
+    "model": "llama3-poetry-mercury-26",
+    "base_model": "meta-llama/Llama-3.1-8B",
+    "prompt": "A lighthouse speaking to the sea",
+    "poem": "A lighthouse speaking to the sea\nthe only witness a passing ship\n\nI climbed to the top and waited \nfor my crowd to arrive \n\nwith cameras and notebooks, asking questions\nthat I've already prepared answers for\n\n\nwill there be time for a toast? (nearly)\nbefore they must return to their lives?\n\nand after this one is finished,\nanother will begin \n\n\nbut here in these final days\nof this one, I am afraid\n \na stifled cry by the waves\nor perhaps a bird\n\n\n\nlike a sunflower turning toward the sun\nmy face follows the moving light \nuntil it finds its match—staying put,\n\ngathering darkness, gathering blue\nand now the stars are beginning to appear\n\n\n\n\n***\n\nseveral glasses of wine last night\nthinking nothing would come of this madness\nno great work was ever done sober, right?\n\n\nwell then, let us get drunk on meaninglessness!\nlet our handwritings curl and spin \nuntil we’re forced to stop ourselves with pencils\n\n(no pens, no quills, no feathers) \n\n\n\nhunting for an idea among the scraps\none that catches fire and becomes our focus\n\n\nwe wash the dishes, nearly burned by the hot water\nalmost singing, almost dancing\n\n\n***\n\n\nnow what was that"
+  },
+  {
+    "id": 150565,
+    "model": "gpt2-finetuned-poetry-mercury-04",
+    "base_model": "gpt2",
+    "prompt": "A lighthouse speaking to the sea",
+    "poem": "A lighthouse speaking to the sea, looking at it. her voice trembles in fear of her being drowned and she screams for water. we stay out all night together, not talking about what else is going on. this was a nightmare situation before i met her.the moment i broke down with someone like that and realized how terrible life really is. i feel helplessness trying desperately until i wake up next morning knowing everyone has lost them. I have never felt so truly loved or cared more than now, every time i meet these people.<|endoftext|>"
+  },
+  {
+    "id": 495098,
+    "model": "llama3-poetry-mercury-26",
+    "base_model": "meta-llama/Llama-3.1-8B",
+    "prompt": "Morning after a long winter",
+    "poem": "Morning after a long winter\nI dreamed that I was with you \nand we were happy, and the snowflakes \nwere angelic and blue. \n\nThe trees are bare and tired,\nstanding still in their places.\nA lone feather dances by the wind.\n\nHurtling down the slopes of Massachusetts, \nnot knowing the ice is real or the blood fictitious. \n\nMy heart beats quietly inside my jacket pocket. \n\n\n***\n\nAnd so the madness continues. The only solace being it’s all a mess for everyone—stuck together in this thing—that thing—that ridiculous bi-polar ferris wheel car ride where now as we’re going up everybody thinks things will be okay because look at all these people above us strung along on the tops of houses with nothing much to do but twinkle lights anyway—and soon enough we’ll come back down and forget about our agreement to let a pandemic kill thousands while we remain passive in our living rooms watching from too close, almost touching even, like siblings who once fought over a toy but now sit in nursing homes chair-tied, pillows fluffed behind their heads, waiting for someone to return before lockdown, before any of this started, when you could eat at an restaurant without having to think about which items were next to"
+  },
+  {
+    "id": 495098,
+    "model": "gpt2-finetuned-poetry-mercury-04",
+    "base_model": "gpt2",
+    "prompt": "Morning after a long winter",
+    "poem": "Morning after a long winter windy evening in the city of tuscany, i feel my heart flutter. all was fine until some random act went awry and we fell asleep on one bed together… but then I realized something else important happened to us: that for once he would never be ableto know how good an idea this is because it only takes him so far into his imagination. somehow he could find out why most people think they can learn much from their mistakes by looking at pictures insteadof thinking about themand there are still lotshe had done already before when he wanted more than just poetry. i want these things to happen againbut nothing happens like having those memories resurface even if they're not fully present.<|endoftext|>"
+  },
+  {
+    "id": 220263,
+    "model": "llama3-poetry-mercury-26",
+    "base_model": "meta-llama/Llama-3.1-8B",
+    "prompt": "today is the day",
+    "poem": "today is the day\nI will eat a fig\n\nbeside the mediterranean, \nin late september \n\nwith honey and cheese,\nand a glass of wine\n\n\n***\n\nthe sun is already going down,\nbut I've just gotten here.\nthere's so much blood in my vision\nthat I'm afraid to stray too far \nfrom the streetlights. \n\nevery month, at least for an hour or two,\na great rushing ecstasy that leaves me drained. \n\n\nnow there’s a hole where the tomato once was—\njust like all the others—that’s how you find them.\n\nyou shouldn't have asked me to come—I told you I can’t swim;\nand now look at this tie—including ties into my philosophy of existence:\nwe are not separate from our actions—involuntary things included—we must take responsibility;\n\nwhen the ice cubes were finally small enough that only one could fit inside,\n\nher voice quiet and soft, almost childlike—but meaningful chrysalis of magenta butterfly;\n\n\n***\nreturning through the archeology of footsteps, striding past stop lights; \nleaves being trod upon in some sortacular arrangement; \nmy shoes new and stiff and embarrassing but necessary (no socks);\nlaughing as I run across the street without"
+  },
+  {
+    "id": 220263,
+    "model": "gpt2-finetuned-poetry-mercury-04",
+    "base_model": "gpt2",
+    "prompt": "today is the day",
+    "poem": "today is the day i'll have this moment. i don't want to wait for them to go, no, it doesn't matter because they all look like us. but now she gets mad and walks off as fast again. just stay with her friends until we get back in touch again soon! then I leave my desk behind me and stand up on a bench looking at the pictures of myself by the door. not even close enough so that i can see what some guy looks like from inside his house. [i grab another stick] fuck yeah, hold your fucking hand out till you make sure everything's right before going through there again…you know how long people sit around talking? or talk about something else when things are bad??….well, guessit happens sometimes too...she’s got one habit if someone tries hard while watching tv..looked suspiciously into camera somewhere—but apparently nobody was listening really anyway, which made her worse than everyone did though: “the best thing anyone could do would be watch TV during bedtime (or maybe find an open window)....”<|endoftext|>"
+  },
+  {
+    "id": 991223,
+    "model": "llama3-poetry-mercury-26",
+    "base_model": "meta-llama/Llama-3.1-8B",
+    "prompt": "I went to the river and wept",
+    "poem": "I went to the river and wept\nfor you, my angel. \nThe dark refuse of modernity\nrolls along with the current.\nI dreamed an ode to your chaste brow,\nand woke in a sweat.\n\nHer face is heart-shaped, or so it seems from afar; her eyes are somehow both narrow and wide-set, like those of a fox. Her hair is black and glossy, tied in a loose bun at the nape of her neck when left to its own devices but often braided or twisted into intricate designs that require hours of preparation but only moments of display before being released again into their wild state. The slope of her nose is just perceptible from this angle, perhaps slightly off-center as though she had broken it once playing soccer as a child—but who’s looking? \n\nShe bites her lip when thinking, tapping a pencil lightly on the page as words don't come easily to her—like now while sitting crosslegged on the floor among books stacked precariously high beside our bed (hersome mine). A dust mote dances in the late-afternoon sunbeam passing through the windowilluminated by streetlights after dusk because hersleeps past sunrise most morningsbut Iwakeup earlyto watchtheferalheartbeatofherbreathing"
+  },
+  {
+    "id": 991223,
+    "model": "gpt2-finetuned-poetry-mercury-04",
+    "base_model": "gpt2",
+    "prompt": "I went to the river and wept",
+    "poem": "I went to the river and wept. it was surreal. he wanted me there, but i couldn't because he thought something of a different future for me. i looked at him fondly in his eyes looking toward my wife with tears streaming down her face as she sat on the rock beside us. they were naked behind closed doors talking about how great love is; laughing hysterically while holding hands or even kissing passionately through thick leather jackets. watching them walk up stairs across the street into the crowd thinking that this might be another chance. [pause.] then I realized what happened next: not only did they kiss — almost instantly, their lips wrapping around each other's cheek like fists against one side (but instead—a big grin) “then’s also gone…she had been standing alone all night wearing nothing more than short black coats under clothes covered by dark bandages. …and now here, clearly clothed just off the front door where i'd noticed those red velvet necklaces hanging from her chest.. we walked back upstairs without seeing any of her body except slightly wetness beneath some loose jeans–something unexpected – definitely unusual and unfamiliar. our bodies met again last time inside cold water swimming poolside house party room lighted over the candlelight! somehow someone came downstairs who asked if anyone else would come check out after dinner??? maybe you can tell everyone wasn**t very interested when everybody jumped onto your bed before entering so well dressed people could feel comfortable coming...maybe nobody cared….somebody entered first floor window #26th st., took photosof everything clear since 8/6 etc. no trace whatsoever. obviously disturbed person found strewn outside trying hardy to find anybody living near scene.<|endoftext|>"
+  },
+  {
+    "id": 213258,
+    "model": "llama3-poetry-mercury-26",
+    "base_model": "meta-llama/Llama-3.1-8B",
+    "prompt": "little shards hanging",
+    "poem": "little shards hanging on to the sunset\nlike drowsy children in a game of \nexile, we went willing  and  prepared \n\nhurtling into tomorrow where only\nthe sun will follow\n\nand only I will know the way\n\n\na system of highways with no markings,\njust follow my voice\n\nwe’ll get there eventually, even if\nwe’re going against the grain \n\n\nI’ve been here before, it looks like\na silver being among the pines\n\nno wriggling thing can fit through its jaws\n\nit asks, would you like to stay? (of course)\nand then I’m sorry and we go back again\n\n\n\nplain water instead of wine\nand the dancing maiden cries out \n\n“my love, what do you ask?”\n“I only want”, I say, “to know” \n\n\n\nher long hair ties loose ends together\nin our camp by the lake\n\nsimplest design for holding things together\nwith nothing left over or slipping thru the cracks\n\n\n\n\nveins running along the rocks\nfollowing the blood flow\n\njust as I thought, we’re all basically alike\nexcept for certain details that don’t matter \n\n\n\n\nlooking down from above, it seems so simple\nso why does it feel so complicated?\n\nbecause we’ve"
+  },
+  {
+    "id": 213258,
+    "model": "gpt2-finetuned-poetry-mercury-04",
+    "base_model": "gpt2",
+    "prompt": "little shards hanging",
+    "poem": "little shards hanging on the grass, it seems to be falling. she takes a sip and rolls her eyes slightly back in thought as she feels some of them fall onto her hands. she puts another drink down into the pitcher and walks out towards the porch until there is enough room for all four of us. we walk around outside till at least 5pm or so. i wait patiently here inside the house looking through the open window but when the lights go off my face goes blank except for the tiny moon-shaped patch of light emanating from below.<|endoftext|>"
+  },
+  {
+    "id": 655873,
+    "model": "llama3-poetry-mercury-26",
+    "base_model": "meta-llama/Llama-3.1-8B",
+    "prompt": "into the late night volleyball game under lights in the rain",
+    "poem": "into the late night volleyball game under lights in the rain\nnaked penthouse argument \nall I wanted was to see you, with a drink in my hand \n\nwe stayed on the couch for weeks preparing sandwiches\n\nyou walked out the door and never looked back \n\n\nplainclothed shivering girl by the river\nthinking of what I said as instruction instead of suggestion\n\n\nher body language when we first became friends\nand then lovers\n \nthe way she walks down the street\nwith long legs and no destination\n\nwhen I tell her things that nobody else knows\nshe listens intently like a child\n\nI want to become famous so people will look up my name and find us\nour love affair documented online among all the others\n\nlike e.e. cummings poems arranged in reverse\n\nHer voice is soft and gentle,\nlike a feather passing through the air.\n\n***\n\nShe sits crosslegged on the bed looking at me.\nThe man enters the store and no one else comes for hours.\nWe stay quiet and still, waiting.\n\n\n9:15 AM—go to Starbucks on 1st St., walk along the tracks, duck under the train, past the homeless guy who always asks for change there, order venti dark roast double shot caramel macchiato (extra foam) and sit at usual"
+  },
+  {
+    "id": 655873,
+    "model": "gpt2-finetuned-poetry-mercury-04",
+    "base_model": "gpt2",
+    "prompt": "into the late night volleyball game under lights in the rain",
+    "poem": "into the late night volleyball game under lights in the rain. he was about to exit when he noticed a group of boys who were getting drunk on one side and started making loud music, then suddenly found himself pulled back into the river where the man turned around just for his camera. they all stared at him like mad as hell, but everyone else seemed really happy that they weren't naked again. he decided not even looking up would help: it wasn​t worth asking any questions anyway. the young guys tried their best because they knew exactly what was going toward them. “it was good fun!” he says. \"but you have to leave before everybody arrives.\" he continues to talk slowly through several groups seated together next me. i ask whether or how long did this experience take? hes inquiringly. three minutes is almost enough time if she doesn´re nervous anymore. we walk out onto shore with our phones still attached to both hands.<|endoftext|>"
+  },
+  {
+    "id": 987519,
+    "model": "llama3-poetry-mercury-26",
+    "base_model": "meta-llama/Llama-3.1-8B",
+    "prompt": "approaching dawn",
+    "poem": "approaching dawn\nthe originality of the act \nsurprising even itself\n\na quiet clearing in the woods\njust beyond the first frost \n\nhiding place for an argument\nthat breaks into song\n\nher voice, a blueprint for morning\n\n\nI slipped a poem under her door,\nshe opened hers and began to fall\n \ngathering darkness, bringing order\nlike magnetized dust \n\nspinning until sunrise\nwhen I’d finally exhale\n\n\n\n***\n\nseveral beers at the local pub\nour crowd, our haunt\n\nhe speaks quietly, too much whiskey\nwe shouldn’t get involved \n\nof course it’s fascist, what else is there? \ncapitalist hegemony or some Marxist thing \n\n\nanyway, we’re already inside, might as well enjoy ourselves\n\nand besides, who am I to tell someone how to live their life?\nit doesn't work that way, no one person can save us all \n\n\n\nbut imagine if he was right! \nwouldn’t that be something?\n\n\n9 out of 10 cats prefer existential crisis to moral certitude\nand me, I just want to see her face again\n\n\n\n\nplainclothed by the river\nalmost healed here among these trees\n\nleaves silvertipped whitefeathered ash\n\nno phones, no"
+  },
+  {
+    "id": 987519,
+    "model": "gpt2-finetuned-poetry-mercury-04",
+    "base_model": "gpt2",
+    "prompt": "approaching dawn",
+    "poem": "approaching dawn. the moon drops into view in front of them and he stands on a stone face with his hands clasped behind him. he pauses, still looking up at the sky. just as tall and thin and almost unisex, eyes fixed firmly onto the stars. all their shapes are clear-eyed; but not quite above or below.”i turn to look back toward the clouds. there is no light from here except sopress, which i think looks darker than usual. “there were white lights out!» she says quietly. and then it turns her attention to me. «do you remember that night? what was your first memory for this time? how did you get yourself drunk?\"\nhere we are again standing next door, dressed casually in crisp black leathers, smiling broadly through our long barbed wire fence. my mind becomes engrossing over some vague idea about where these walls should be made: something like \"the wall has been blocked.\" I have forgotten exactly why they had done so, though. maybe because somehow someone inside figured things might happen if we walked down too close. another thought remains open:\"did anyone see people being murdered by police when nobody else wanted those guys dead?\". etc., and now i'm staring dumbly ahead until i make one final guess before moving towards the other side window. suddenly, an extra layer begins covering everything around us. only shadows remain, barely visible while walking forward past it..a cloudless twilight haze fills the room.<|endoftext|>"
+  }
+]
