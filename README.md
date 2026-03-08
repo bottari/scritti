@@ -380,9 +380,9 @@ COHERENCE METHOD SUMMARY
 
 ---
 
-## 🤖 **New: Agent Mercury — Local Speech-Enabled LLM Agent**
+## 🤖 **Agent Mercury — Local Speech-Enabled LLM Agent**
 
-A new addition to the repository: **Agent Mercury**, a fully local, speech-enabled LLM agent built on my merged GPT-2 fine-tuned poetry model.
+This section contains the scaffolding for: **Agent Mercury**, a fully local, speech-enabled LLM agent built on my merged GPT-2 fine-tuned poetry model.
 
 This agent demonstrates how to combine **local model inference**, **offline STT & TTS**, **memory-bounded conversational context**, and **agent-style prompting** into a cohesive interactive tool. It also reflects real model-ops considerations like device-aware loading, error handling, and multimodal input.
 
@@ -403,7 +403,7 @@ local-agent-001/
 │       ├── generation_config.json
 │       ├── merges.txt
 │       ├── model.safetensors
-│       └── vocab.json               # Fine-tuned + merged GPT-2 weights
+│       └── vocab.json               
 └── vosk-model-en-us-0.22/           # Offline STT model (excluded via .gitignore)
 ```
 
@@ -443,21 +443,10 @@ This brings together multiple areas of experimentation from the repo — generat
 │ 
 ├── 📄 README.md
 ├── 📄 First_Edition_GenPs-001_10_14_25.txt
-│ 
 │
 ├── 📁 analysis/
 │   ├── 📄 calculate_metrics.py       # Aggregate scoring logic
 │   └── 📄 metrics.py                 # Core evaluation functions
-│ 
-├── 📁 poem_review_app/               # Flask Human Evaluation Tool
-│   ├── 📄 app.py                     # Review UI Backend
-│   ├── 📄 prompts.json               # Shared prompt source
-│   ├── 📄 outputs.json               # Model results for review
-│   ├── 📄 results.json               # Captured human ratings
-│   └── 📁 templates/                 # UI HTML files
-│
-├── 📁 model_hosting_app/
-│   └── 📄 app.py                     # Uses ngrok to host a model locally for sharing via a public URL
 │
 ├── 📁 gpt2-files/
 │   │ 
@@ -485,18 +474,28 @@ This brings together multiple areas of experimentation from the repo — generat
 │       │   └── ... (safetenors, config, etc go here; excluded from public repo)
 │       │
 │       └── 📁 vosk-model-en-us-0.22/
-│           └── ... (offline STT model files; excluded from repo but avaiable publicly)
+│           └── ... (offline STT model files; excluded from repo but available publicly)
 │ 
 └── 📁 llama-files/
-    │ 
-    ├── 📁 generation/
-    │   ├── 📄 interactive-poetry-chat-in-terminal-for-llama-with-comparison.py
-    │   ├── 📄 new-llama-poetry-generation-adapteronly.py
-    │   └── 📄 generate_poetry_with_llama3_gpt2_qlora.py  # A/B Generator
-    │ 
-    └── 📁 tuning/
-        ├── 📄 fine-tuning-script-for-llama-3-q4-001.py
-        └── 📄 new-llama-training-poetry-003.py
+│    │ 
+│    ├── 📁 generation/
+│    │   ├── 📄 interactive-poetry-chat-in-terminal-for-llama-with-comparison.py
+│    │   ├── 📄 new-llama-poetry-generation-adapteronly.py
+│    │   └── 📄 generate_poetry_with_llama3_gpt2_qlora.py  # A/B Generator
+│    │ 
+│    └── 📁 tuning/
+│        ├── 📄 fine-tuning-script-for-llama-3-q4-001.py
+│        └── 📄 new-llama-training-poetry-003.py
+│
+├── 📁 poem_review_app/               # Flask Human Evaluation Tool
+│   ├── 📄 app.py                     # Review UI Backend
+│   ├── 📄 prompts.json               # Shared prompt source
+│   ├── 📄 outputs.json               # Model results for review
+│   ├── 📄 results.json               # Captured human ratings
+│   └── 📁 templates/                 # UI HTML files
+│
+└── 📁 model_hosting_app/
+    └── 📄 app.py                     # Uses ngrok to host a model locally for sharing via a public URL
         
 ```
 
