@@ -10,7 +10,7 @@
 
 ## 🧭 **Purpose & Professional Context**
 
-This repository showcases my hands-on work in **LLM evaluation, dataset tooling, prompt orchestration, and small-scale fine-tuning** — the same domains I manage professionally as a **Technical Program Manager specializing in AI Governance & Applied AI Operations**.
+This repository showcases my hands-on work in **LLM evaluation, dataset tooling, prompt orchestration, and small-scale fine-tuning** — the same domains I manage professionally as a **Technical Program Manager specializing in AI Operations & Systems Architecture**.
 
 While my day-job focuses on *risk management, evaluation pipelines, and GenAI program execution*, this repo captures the **personal R&D work** I do to deepen the engineering/ML side of that discipline.
 
