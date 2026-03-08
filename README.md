@@ -456,7 +456,10 @@ This brings together multiple areas of experimentation from the repo — generat
 │   ├── 📄 results.json               # Captured human ratings
 │   └── 📁 templates/                 # UI HTML files
 │
-│├── 📁 gpt2-files/
+├── 📁 model_hosting_app/
+│   └── 📄 app.py                     # Uses ngrok to host a model locally for sharing via a public URL
+│
+├── 📁 gpt2-files/
 │   │ 
 │   ├── 📁 generation/
 │   │   ├── 📄 gpt2-generation-haiku_form.py
