@@ -1,0 +1,20 @@
+model_base: "gpt2"
+# model_finetuned should point to the LoRA adapter directory
+model_finetuned: 'D:\\models\\choice-models\\gpt2-finetuned-poetry-mercury-04\\final_model'
+prompt_set: 'C:\\Users\\micha\\Desktop\\projects\\scritti\\prompts.txt'
+
+generation:
+  temperature: [0.2, 0.7, 1.0]
+  top_p: [0.9]
+  max_tokens: 120
+  batch_size: 4
+
+metrics:
+  - meter_score
+  - semantic_similarity
+  - repetition_index
+  - perplexity
+
+output:
+  log_dir: 'C:\\Users\\micha\\Desktop\\projects\\scritti\\eval_logs'
+  run_name: "style_tradeoff_v1"

@@ -34,14 +34,31 @@ def load_base_model(
     model_name_or_path: str,
     device: str,
     load_in_8bit: bool = False,
+    load_in_4bit: bool = False,
+    cpu_offload: bool = False,
 ) -> Tuple[AutoModelForCausalLM, AutoTokenizer]:
     tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
     tokenizer.padding_side = "left"
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
-    if load_in_8bit:
-        bnb_config = BitsAndBytesConfig(load_in_8bit=True)
+    if load_in_4bit:
+        bnb_config = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_use_double_quant=True,
+            bnb_4bit_compute_dtype=torch.float16,
+        )
+        model = AutoModelForCausalLM.from_pretrained(
+            model_name_or_path,
+            quantization_config=bnb_config,
+            device_map="auto",
+        )
+    elif load_in_8bit:
+        bnb_config = BitsAndBytesConfig(
+            load_in_8bit=True,
+            llm_int8_enable_fp32_cpu_offload=cpu_offload,
+        )
         model = AutoModelForCausalLM.from_pretrained(
             model_name_or_path,
             quantization_config=bnb_config,
@@ -60,12 +77,20 @@ def load_lora_model(
     lora_path: str,
     device: str,
     load_in_8bit: bool = False,
+    load_in_4bit: bool = False,
+    cpu_offload: bool = False,
 ) -> Tuple[AutoModelForCausalLM, AutoTokenizer]:
     if PeftModel is None:
         raise RuntimeError("peft is not installed. Please install peft to load LoRA weights.")
-    base_model, tokenizer = load_base_model(base_model_name_or_path, device, load_in_8bit=load_in_8bit)
+    base_model, tokenizer = load_base_model(
+        base_model_name_or_path,
+        device,
+        load_in_8bit=load_in_8bit,
+        load_in_4bit=load_in_4bit,
+        cpu_offload=cpu_offload,
+    )
     lora_model = PeftModel.from_pretrained(base_model, lora_path)
-    if not load_in_8bit:
+    if not load_in_8bit and not load_in_4bit:
         lora_model.to(device)
     lora_model.eval()
     return lora_model, tokenizer
@@ -113,6 +138,7 @@ def generate_samples(
     num_return_sequences: int = 1,
     log_every: int = 0,
     label: str = "",
+    heartbeat_seconds: int = 60,
 ) -> List[Dict[str, str]]:
     cfg = cfg or GenerationConfig()
     device = device or ("cuda" if torch.cuda.is_available() else "cpu")
@@ -126,6 +152,7 @@ def generate_samples(
     prompt_idx = 0
     batch_idx = 0
     start = time.time()
+    last_beat = start
 
     while len(samples) < num_samples:
         batch_prompts = []
@@ -150,8 +177,13 @@ def generate_samples(
                 break
 
         batch_idx += 1
+        now = time.time()
         if log_every and batch_idx % log_every == 0:
-            elapsed = time.time() - start
+            elapsed = now - start
             print(f"[gen]{' ' + label if label else ''} {len(samples)}/{num_samples} samples in {elapsed:.1f}s")
+        if heartbeat_seconds and now - last_beat >= heartbeat_seconds:
+            elapsed = now - start
+            print(f"[hb]{' ' + label if label else ''} working... {len(samples)}/{num_samples} samples in {elapsed:.1f}s")
+            last_beat = now
 
     return samples

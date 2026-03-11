@@ -84,6 +84,12 @@ python C:\Users\micha\Desktop\projects\scritti\eval\run_eval.py --config C:\User
 | metaphor_density          | 0.12 | 0.38 | 0.21  | +216%              | +75%                |
 | surrealism_index          | 0.75 | 1.47 | 1.02  | +96%               | +36%                |
 
+The `eval_config_sweep.yaml` file drives a lightweight prompt‑sweep harness in `eval_runner.py` that compares base vs LoRA outputs across multiple temperatures. It logs per‑prompt generations and computes summary statistics for `semantic_similarity`, `perplexity`, and `repetition_index`, with optional `meter_score` when available. Each run produces a timestamped CSV plus a summary JSON, making it easy to track behavioral tradeoffs over time and spot capability regression after fine‑tuning.
+
+**How to run:**
+```bash
+python "C:\Users\micha\Desktop\projects\scritti\eval_runner.py" --config "C:\Users\micha\Desktop\projects\scritti\eval_config_sweep.yaml"
+```
 
 ## ⚖️ New: Human Evaluation & Side-by-Side Comparison
 

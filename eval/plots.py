@@ -5,6 +5,23 @@ import pandas as pd
 import seaborn as sns
 
 
+def _preferred_order(models):
+    preferred = [
+        "base",
+        "lora",
+        "llama_base",
+        "llama_lora",
+        "gpt2_base",
+        "gpt2_lora",
+        "extra",
+        "human",
+    ]
+    ordered = [m for m in preferred if m in models]
+    # append any remaining models in stable order
+    ordered += [m for m in models if m not in ordered]
+    return ordered
+
+
 def plot_imagery_distribution(df: pd.DataFrame, output_path: str) -> None:
     plt.figure(figsize=(8, 4.5))
     sns.kdeplot(data=df, x="imagery_density", hue="model", fill=True, common_norm=False, alpha=0.4)
@@ -46,9 +63,11 @@ def plot_histogram_compare(df: pd.DataFrame, metric: str, output_path: str) -> N
     plt.close()
 
 
-def plot_surrealism_index(df: pd.DataFrame, output_path: str) -> None:
+def plot_surrealism_index(df: pd.DataFrame, output_path: str, order: Optional[list] = None) -> None:
     plt.figure(figsize=(7, 4.5))
-    sns.boxplot(data=df, x="model", y="surrealism_index", order=["base", "lora", "human"])
+    models = list(df["model"].unique())
+    order = order or _preferred_order(models)
+    sns.boxplot(data=df, x="model", y="surrealism_index", order=order)
     plt.title("Surrealism Index by Model")
     plt.tight_layout()
     plt.savefig(output_path, dpi=160)
