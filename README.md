@@ -1,4 +1,4 @@
-# 🌒 **scritti**  
+﻿# 🌒 **scritti**  
 ### *Applied LLM Experimentation, Evaluation, and Fine-Tuning*  
 
 [![Python](https://img.shields.io/badge/Python-3.12+-blue.svg)](https://www.python.org/)  
@@ -48,6 +48,42 @@ This repo is intentionally diverse — it contains a portfolio of practical, min
 - Aligning fine-tuning work with model safety/evaluation concerns  
 
 ---
+
+## ⚖️ **NEW: Evaluation Pipeline**
+
+This evaluation pipeline compares a base model, a LoRA-finetuned variant, and an optional human poetry reference set. It focuses on raw creative language properties before any downstream post-processing into strict forms.
+
+**Metrics (purpose):**
+- `imagery_density`: Proportion of words that match a sensory or natural imagery lexicon. Higher means richer sensory language.
+- `lexical_novelty`: Fraction of tokens not present in the training corpus. Higher suggests fresher vocabulary.
+- `semantic_drift_from_base`: Cosine distance between base and LoRA outputs (embedding space). Higher means stronger stylistic divergence.
+- `metaphor_density`: Frequency of syntactic patterns like "X is Y", "X becomes Y", "X like Y", "X of Y" using spaCy dependencies. Higher indicates more figurative structure.
+- `surreal_imagery_score`: Mean semantic distance between adjacent nouns. Higher suggests more unusual juxtapositions.
+- `surrealism_index`: Sum of `surreal_imagery_score` + `metaphor_density` + `imagery_density`. Higher means denser surreal language.
+- `token_distribution_shift`: KL divergence between base and LoRA token frequency distributions. Higher means broader distribution shift.
+
+**How to run:**
+```bash
+python C:\Users\micha\Desktop\projects\scritti\eval\run_eval.py --config C:\Users\micha\Desktop\projects\scritti\eval_config.yaml
+```
+
+**How to interpret the plots:**
+- Imagery and novelty distributions: Look for shifts in median and tails. A rightward shift indicates richer imagery or higher novelty.
+- Semantic drift scatter: Points farther right are LoRA samples that diverge most from their base counterparts.
+- Histogram comparison: Overlap shows similarity; separation indicates stylistic change.
+- Surrealism index box plot: Higher medians indicate stronger surreal composition across imagery, metaphor, and noun distance.
+- Latent poetry space (UMAP): Clusters and separation show how model outputs occupy different semantic regions. If colored by imagery, brighter regions indicate denser sensory language.
+
+**Example summary table (expected shape):**
+
+| metric                     | base | lora | human | delta_lora_vs_base | delta_human_vs_base |
+|---------------------------|------|------|-------|--------------------|---------------------|
+| imagery_density           | 0.41 | 0.72 | 0.65  | +75%               | +59%                |
+| lexical_novelty           | 0.34 | 0.57 | 0.29  | +68%               | -15%                |
+| semantic_drift_from_base  | 0.22 | 0.49 | 0.00  | +122%              | n/a                 |
+| metaphor_density          | 0.12 | 0.38 | 0.21  | +216%              | +75%                |
+| surrealism_index          | 0.75 | 1.47 | 1.02  | +96%               | +36%                |
+
 
 ## ⚖️ New: Human Evaluation & Side-by-Side Comparison
 
@@ -436,69 +472,6 @@ This brings together multiple areas of experimentation from the repo — generat
 
 ---
 
-## 📁 **Repository Structure**
-
-```text
-📁 scritti/
-│ 
-├── 📄 README.md
-├── 📄 First_Edition_GenPs-001_10_14_25.txt
-│
-├── 📁 analysis/
-│   ├── 📄 calculate_metrics.py       # Aggregate scoring logic
-│   └── 📄 metrics.py                 # Core evaluation functions
-│
-├── 📁 gpt2-files/
-│   │ 
-│   ├── 📁 generation/
-│   │   ├── 📄 gpt2-generation-haiku_form.py
-│   │   ├── 📄 gpt2-generation-iambic-pentameter-couplets-spacy.py
-│   │   ├── 📄 interactive-poetry-chat-in-terminal-gpt2-with-comparison.py
-│   │   ├── 📄 the-gpt2-fine-tuning-tweaked-unfreeze-top-layers-chatbot-compare.py
-│   │   └── 📄 updated-gpt2-large-comparison-poetry-generator-keeping-line-breaks.py
-│   │
-│   ├── 📁 tuning/
-│   │   ├── 📄 gpt2_large-fine-tuning-unfreeze-top-layers-keep-source-line-breaks.py
-│   │   └── 📄 updated-gpt2-fine-tuning-unfreeze-top-layers-keep-source-line-breaks.py
-│   │
-│   └── 📁 local-agent-001/
-│       ├── 📄 main-voice-input-only.py
-│       ├── 📄 main.py
-│       ├── 📄 requirements.txt
-│       ├── 📄 test_cuda.py
-│       │
-│       ├── 📁 agent-mercury/
-│       │   └── ... (virtual environment files; excluded from public repo)
-│       │
-│       ├── 📁 models/
-│       │   └── ... (safetenors, config, etc go here; excluded from public repo)
-│       │
-│       └── 📁 vosk-model-en-us-0.22/
-│           └── ... (offline STT model files; excluded from repo but available publicly)
-│ 
-└── 📁 llama-files/
-│    │ 
-│    ├── 📁 generation/
-│    │   ├── 📄 interactive-poetry-chat-in-terminal-for-llama-with-comparison.py
-│    │   ├── 📄 new-llama-poetry-generation-adapteronly.py
-│    │   └── 📄 generate_poetry_with_llama3_gpt2_qlora.py  # A/B Generator
-│    │ 
-│    └── 📁 tuning/
-│        ├── 📄 fine-tuning-script-for-llama-3-q4-001.py
-│        └── 📄 new-llama-training-poetry-003.py
-│
-├── 📁 poem_review_app/               # Flask Human Evaluation Tool
-│   ├── 📄 app.py                     # Review UI Backend
-│   ├── 📄 prompts.json               # Shared prompt source
-│   ├── 📄 outputs.json               # Model results for review
-│   ├── 📄 results.json               # Captured human ratings
-│   └── 📁 templates/                 # UI HTML files
-│
-└── 📁 model_hosting_app/
-    └── 📄 app.py                     # Uses ngrok to host a model locally for sharing via a public URL
-        
-```
-
 ### **`First_Edition_GenPs-001_10_14_25.txt`** — Results examples
 Examples of results from using these scripts for fine-tuning and generation experiments.
 
@@ -574,3 +547,4 @@ Technical Program Manager — AI Operations & Systems Architecture
 ## 📝 **License**
 
 MIT License — feel free to fork, study, and experiment.
+

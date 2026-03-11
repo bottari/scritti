@@ -1,0 +1,24 @@
+﻿base_model: 'gpt2'
+lora_path: 'D:\models\choice-models\gpt2-finetuned-poetry-mercury-04\final_model'
+prompts: 'C:\Users\micha\Desktop\projects\scritti\prompts.txt'
+corpus: 'C:\Users\micha\Desktop\projects\mercury\poetry_txt'
+num_samples: 200
+max_new_tokens: 256
+temperature: 0.5
+top_p: 0.45
+top_k: 15
+repetition_penalty: 1.2
+num_return_sequences: 1
+extra_base_model: 'meta-llama/Llama-3.1-8B'
+extra_lora_path: 'D:\models\choice-models\llama3-8b-poetry-mercury-26-qlora-8bit-019\final_model'
+extra_label: 'llama3.1'
+extra_8bit: true
+# generation visibility
+gen_log_every: 2
+# safer embedding limits
+embed_batch_size: 32
+max_nouns: 64
+# limit human corpus size
+human_max_lines: 1000
+# keep UMAP but cap size
+umap_max_points: 1200
