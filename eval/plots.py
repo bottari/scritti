@@ -1,4 +1,4 @@
-﻿from typing import Optional
+from typing import Optional
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -9,10 +9,14 @@ def _preferred_order(models):
     preferred = [
         "base",
         "lora",
+        "qwen_base",
+        "qwen_lora",
         "llama_base",
         "llama_lora",
         "gpt2_base",
         "gpt2_lora",
+        "extra_base",
+        "extra_lora",
         "extra",
         "human",
     ]
@@ -99,3 +103,4 @@ def plot_conceptual_distance_distribution(df: pd.DataFrame, output_path: str) ->
     plt.tight_layout()
     plt.savefig(output_path, dpi=160)
     plt.close()
+

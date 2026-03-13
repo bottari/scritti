@@ -1,4 +1,4 @@
-﻿import math
+import math
 import re
 from dataclasses import dataclass
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple
@@ -111,6 +111,16 @@ MOTION_PERCEPTION_VERBS = {
 }
 
 WORD_RE = re.compile(r"[a-zA-Z']+")
+SPECIAL_TOKEN_RE = re.compile(
+    r"(<\|im_start\|>|<\|im_end\|>|<\|eot_id\|>|<\|endoftext\|>|<\|assistant\|>|<\|user\|>|<\|system\|>)"
+)
+
+
+def clean_generation_text(text: str) -> str:
+    if not text:
+        return ""
+    cleaned = SPECIAL_TOKEN_RE.sub(" ", text)
+    return " ".join(cleaned.split())
 
 
 @dataclass
@@ -129,7 +139,8 @@ def load_spacy(model: str = "en_core_web_sm") -> SpacyResources:
 
 
 def tokenize_words(text: str) -> List[str]:
-    return [m.group(0).lower() for m in WORD_RE.finditer(text)]
+    cleaned = clean_generation_text(text)
+    return [m.group(0).lower() for m in WORD_RE.finditer(cleaned)]
 
 
 def _expand_imagery_lexicon(seed_lexicon: set) -> set:
@@ -179,6 +190,7 @@ def lexical_novelty(text: str, corpus_token_set: set) -> float:
 
 
 def metaphor_density(text: str, nlp: Optional["spacy.language.Language"]) -> float:
+    text = clean_generation_text(text)
     if not text.strip():
         return 0.0
     if nlp is None:
@@ -233,6 +245,7 @@ def metaphor_density(text: str, nlp: Optional["spacy.language.Language"]) -> flo
 
 
 def compound_imagery_density(text: str, nlp: Optional["spacy.language.Language"]) -> float:
+    text = clean_generation_text(text)
     tokens = tokenize_words(text)
     if not tokens:
         return 0.0
@@ -269,6 +282,7 @@ def compound_imagery_density(text: str, nlp: Optional["spacy.language.Language"]
 
 
 def narrative_density(text: str, nlp: Optional["spacy.language.Language"]) -> float:
+    text = clean_generation_text(text)
     tokens = tokenize_words(text)
     if not tokens:
         return 0.0
@@ -276,7 +290,7 @@ def narrative_density(text: str, nlp: Optional["spacy.language.Language"]) -> fl
         verb_ratio = len(re.findall(r"\b\w+(ed|ing)\b", text, flags=re.IGNORECASE)) / max(1, len(tokens))
         dialogue_ratio = (
             len(re.findall(r"\b(he|she)\s+said\b", text, flags=re.IGNORECASE))
-            + len(re.findall(r"\"|â€œ|â€", text))
+            + len(re.findall(r"\"|“|”", text))
         ) / max(1, len(tokens))
         motion_ratio = (
             len(re.findall(r"\b(walk|look|see|stand|move|turn|stare|watch|glance|hear|listen|run|step|wander)\b", text, flags=re.IGNORECASE))
@@ -294,7 +308,7 @@ def narrative_density(text: str, nlp: Optional["spacy.language.Language"]) -> fl
             subj = [c for c in token.children if c.dep_ in {"nsubj", "nsubjpass"}]
             if any(s.lemma_.lower() in {"he", "she", "they", "i", "we", "you"} for s in subj):
                 dialogue_hits += 1
-    quote_hits = text.count('"') + text.count("â€œ") + text.count("â€")
+    quote_hits = text.count('"') + text.count("“") + text.count("”")
     dialogue_ratio = (dialogue_hits + quote_hits) / max(1, len(doc))
 
     motion_hits = sum(
@@ -336,6 +350,7 @@ def conceptual_distance_score(
     max_nouns: int = 128,
     batch_size: int = 64,
 ) -> float:
+    text = clean_generation_text(text)
     if nlp is None or not text.strip():
         return 0.0
     doc = nlp(text)
@@ -353,6 +368,7 @@ def surreal_imagery_score(
     max_nouns: int = 128,
     batch_size: int = 64,
 ) -> float:
+    text = clean_generation_text(text)
     if nlp is None or not text.strip():
         return 0.0
     doc = nlp(text)
@@ -413,3 +429,4 @@ def token_distribution_shift(base_texts: Iterable[str], lora_texts: Iterable[str
     base_prob = base_vec / base_vec.sum() if base_vec.sum() > 0 else base_vec
     lora_prob = lora_vec / lora_vec.sum() if lora_vec.sum() > 0 else lora_vec
     return kl_divergence(lora_prob, base_prob)
+

@@ -1,8 +1,20 @@
-﻿from typing import Iterable, List, Optional, Sequence
+from typing import Iterable, List, Optional, Sequence
+import re
 
 import matplotlib.pyplot as plt
 import numpy as np
 from sentence_transformers import SentenceTransformer
+
+SPECIAL_TOKEN_RE = re.compile(
+    r"(<\|im_start\|>|<\|im_end\|>|<\|eot_id\|>|<\|endoftext\|>|<\|assistant\|>|<\|user\|>|<\|system\|>)"
+)
+
+
+def clean_generation_text(text: str) -> str:
+    if not text:
+        return ""
+    cleaned = SPECIAL_TOKEN_RE.sub(" ", text)
+    return " ".join(cleaned.split())
 
 try:
     import umap
@@ -11,7 +23,8 @@ except Exception as exc:  # pragma: no cover - optional dependency
 
 
 def _embed_texts(texts: Iterable[str], embedder: SentenceTransformer) -> np.ndarray:
-    embeddings = embedder.encode(list(texts), normalize_embeddings=True)
+    cleaned = [clean_generation_text(t) for t in texts]
+    embeddings = embedder.encode(list(cleaned), normalize_embeddings=True)
     return np.array(embeddings)
 
 
@@ -89,3 +102,4 @@ def plot_latent_space_groups(
     plt.tight_layout()
     plt.savefig(output_path, dpi=170)
     plt.close()
+

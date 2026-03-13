@@ -1,11 +1,11 @@
-base_model: 'meta-llama/Llama-3.1-8B'
-lora_path: 'D:\models\choice-models\llama3-8b-poetry-mercury-26-qlora-8bit-019\final_model'
+base_model: 'gpt2'
+lora_path: 'D:\models\choice-models\gpt2-finetuned-poetry-mercury-04\final_model'
 
 # extra pair (gpt2 base + gpt2 adapter)
-extra_base_model: 'gpt2'
-extra_lora_path: 'D:\models\choice-models\gpt2-finetuned-poetry-mercury-04\final_model'
-extra_base_label: 'gpt2_base'
-extra_lora_label: 'gpt2_lora'
+extra_base_model: 'Qwen/Qwen3.5-0.8B'
+extra_lora_path: 'D:\models\qwen3-5-0-8b-poetry-mercury-qlora-8bit-003'
+extra_base_label: 'qwen_base'
+extra_lora_label: 'qwen_lora'
 extra_8bit: false
 extra_4bit: false
 extra_batch_size: 8
@@ -15,18 +15,18 @@ extra_max_new_tokens: 200
 prompts: 'C:\Users\micha\Desktop\projects\scritti\prompts.txt'
 corpus: 'C:\Users\micha\Desktop\projects\mercury\poetry_txt'
 num_samples: 100
-max_new_tokens: 200
+max_new_tokens: 250
 temperature: 0.5
 top_p: 0.45
 top_k: 15
 repetition_penalty: 1.2
 num_return_sequences: 1
 
-# memory-safe llama settings
+# memory-safe llama settings - change 4bit to true
 base_8bit: false
 lora_8bit: false
-base_4bit: true
-lora_4bit: true
+base_4bit: false
+lora_4bit: false
 base_batch_size: 1
 lora_batch_size: 1
 base_max_new_tokens: 200
