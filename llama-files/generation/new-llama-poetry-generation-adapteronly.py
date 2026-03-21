@@ -18,7 +18,7 @@ HF_TOKEN = ""
 
 # 2. MODEL PATHS: Must match the paths used in train_llama_poetry.py
 BASE_MODEL_NAME = "meta-llama/Llama-3.1-8B"
-ADAPTER_PATH = r"D:\models\llama3-8b-poetry-mercury-25-qlora-012\final_modelv2"
+ADAPTER_PATH = r"D:\models\llama31-8b-poetry-mercury-qlora-4bit-March-15-2026"
 
 # 3. GENERATION SETTINGS
 MAX_NEW_TOKENS = 256

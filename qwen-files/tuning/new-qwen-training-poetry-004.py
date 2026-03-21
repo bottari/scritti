@@ -31,16 +31,16 @@ HF_TOKEN = ""
 
 MODEL_NAME = "Qwen/Qwen3.5-0.8B"
 TRUST_REMOTE_CODE = True
-DATASET_PATH = r"C:\Users\micha\Desktop\projects\mercury\poetry_txt"
-OUTPUT_DIR = r"D:\models\qwen3-5-0-8b-poetry-mercury-qlora-8bit-March21-001"
+DATASET_PATH = r"C:\Users\micha\Desktop\projects\mercury\poetry_txt_whitman"
+OUTPUT_DIR = r"D:\models\qwen3-5-0-8b-poetry-mercury-qlora-8bit-March21-002"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Training Parameters - regularized baseline
-MAX_LENGTH = 512
+MAX_LENGTH = 256
 PER_DEVICE_TRAIN_BATCH_SIZE = 1
-GRADIENT_ACCUMULATION_STEPS = 8
-NUM_EPOCHS = 20
-LEARNING_RATE = 5e-5
+GRADIENT_ACCUMULATION_STEPS = 4
+NUM_EPOCHS = 5
+LEARNING_RATE = 1e-4
 
 # LoRA Config - regularization to reduce overfit
 LORA_R = 64
@@ -52,6 +52,10 @@ AUGMENT_TRAIN_TEXT = True
 AUGMENT_PROB = 0.35
 TOKEN_DROP_PROB = 0.05
 LINE_SHUFFLE_PROB = 0.2
+
+# Corpus chunking — controls how the single .txt is split into training examples
+MIN_CHUNK_LINES = 1    # discard stanzas shorter than this many lines
+CHUNK_GROUP_SIZE = 2   # group this many stanzas into one training example
 
 warnings.filterwarnings("ignore")
 
@@ -131,9 +135,16 @@ def tokenize_function(examples, tokenizer, max_length, augment=False):
 
 
 def load_text_corpus_from_folder(data_path):
-    """Load text files preserving formatting."""
+    """
+    Load text files and split into stanza-grouped chunks.
+
+    Because a single large .txt file produces only 1 dataset row (making
+    train/test splitting impossible), we break each file on double-newlines
+    into stanzas, filter out very short ones, then regroup them in windows
+    of CHUNK_GROUP_SIZE stanzas so each training example has enough context.
+    """
     print(f"\nLoading corpus from folder: {data_path}...")
-    all_documents = []
+    all_chunks = []
 
     if not os.path.exists(data_path):
         print(f"Error: Path {data_path} does not exist.")
@@ -145,13 +156,36 @@ def load_text_corpus_from_folder(data_path):
             try:
                 with open(filepath, "r", encoding="utf-8") as f:
                     content = f.read().strip()
-                    if content:
-                        all_documents.append(content)
+                if not content:
+                    continue
+
+                # Split on blank lines → individual stanzas / sections
+                raw_stanzas = content.split("\n\n")
+                stanzas = [
+                    s.strip() for s in raw_stanzas
+                    if len(s.strip().splitlines()) >= MIN_CHUNK_LINES
+                ]
+
+                # Group stanzas into windows of CHUNK_GROUP_SIZE
+                for i in range(0, len(stanzas), CHUNK_GROUP_SIZE):
+                    group = stanzas[i : i + CHUNK_GROUP_SIZE]
+                    if group:
+                        all_chunks.append("\n\n".join(group))
+
+                print(f"  {filename}: {len(stanzas)} stanzas → ~{len(all_chunks)} chunks")
+
             except Exception as e:
                 print(f"Warning: Error reading {filename}: {e}")
 
-    raw_dataset = Dataset.from_dict({"text": all_documents})
-    print(f"Loaded {len(raw_dataset)} documents.")
+    if len(all_chunks) < 10:
+        print(
+            f"\nWARNING: Only {len(all_chunks)} chunks produced. "
+            "Consider lowering CHUNK_GROUP_SIZE or MIN_CHUNK_LINES, "
+            "or adding more source files."
+        )
+
+    raw_dataset = Dataset.from_dict({"text": all_chunks})
+    print(f"Total training chunks: {len(raw_dataset)}")
     return raw_dataset
 
 
@@ -318,8 +352,3 @@ if __name__ == "__main__":
         print(f"Save failed: {e}")
         traceback.print_exc()
         raise
-
-
-
-
-

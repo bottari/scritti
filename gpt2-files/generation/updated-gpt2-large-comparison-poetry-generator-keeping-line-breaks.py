@@ -5,7 +5,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, TextStreamer
 
 # --- CONFIGURATION ---
 BASE_MODEL_NAME = "gpt2-large"
-FINE_TUNED_PATH = r"D:\models\gpt2-large-finetuned-poetry-mercury-25-fixed-003\final_model"
+FINE_TUNED_PATH = r"D:\models\gpt2-large-whitman-leaves-of-grass-unfreeze-top-layers-001\final_model_unfrozen"
 PROMPT = "repeating in wind"
 
 # Generation parameters (Optimized for poetry)

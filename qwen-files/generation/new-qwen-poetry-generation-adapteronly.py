@@ -16,12 +16,12 @@ HF_TOKEN = ""
 
 BASE_MODEL_NAME = "Qwen/Qwen3.5-0.8B"
 TRUST_REMOTE_CODE = True
-ADAPTER_PATH = r"D:\models\qwen3-5-0-8b-poetry-mercury-qlora-8bit-003"
+ADAPTER_PATH = r"D:\models\qwen3-5-0-8b-poetry-mercury-qlora-8bit-March21-002"
 
-MAX_NEW_TOKENS = 256
-TEMPERATURE = 0.5
-TOP_P = 0.45
-TOP_K = 15
+MAX_NEW_TOKENS = 500
+TEMPERATURE = 0.7
+TOP_P = 0.95
+TOP_K = 50
 REPETITION_PENALTY = 1.2
 NUM_RETURN_SEQUENCES = 1
 
