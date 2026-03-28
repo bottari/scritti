@@ -1,4 +1,4 @@
-﻿# 🌒 **scritti**  
+# 🌒 **scritti**  
 ### *Applied LLM Experimentation, Evaluation, and Fine-Tuning*  
 
 [![Python](https://img.shields.io/badge/Python-3.12+-blue.svg)](https://www.python.org/)  
@@ -49,6 +49,50 @@ This repo is intentionally diverse — it contains a portfolio of practical, min
 
 ---
 
+## 🚀 **Reproducible Quickstart (Whitman + GPT-2)**
+
+This is the canonical smoke-test path from repo root. It uses the in-repo `poetry_txt_whitman/` corpus and writes outputs to `artifacts/gpt2-whitman-quickstart/`.
+
+1) Create and activate a virtual environment
+
+```bash
+python -m venv .venv
+```
+
+macOS/Linux:
+```bash
+source .venv/bin/activate
+```
+
+Windows (PowerShell):
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+2) Install dependencies
+
+```bash
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+3) Run quickstart training (small run)
+
+```bash
+python gpt2-files/tuning/updated-gpt2-fine-tuning-unfreeze-top-layers-keep-source-line-breaks.py --model-name gpt2 --dataset-path poetry_txt_whitman --output-dir artifacts/gpt2-whitman-quickstart --num-epochs 5 --max-steps 120 --batch-size 2 --block-size 128
+```
+
+4) Generate from the saved checkpoint
+
+```bash
+python gpt2-files/generation/updated-gpt2-comparison-poetry-generator-keeping-line-breaks.py --base-model gpt2 --fine-tuned-path artifacts/gpt2-whitman-quickstart/final_model --prompt "leaves in the river wind"
+```
+
+Notes:
+- The training script accepts either a directory of `.txt` files or a single `.txt` file for `--dataset-path`.
+- For local/private adapter paths and tokens, copy `.env.example` to `.env` and set `SCRITTI_*` variables.
+
+---
 ## ⚖️ **NEW: Evaluation Pipeline**
 
 This evaluation pipeline compares a base model, a LoRA-finetuned variant, and an optional human poetry reference set. It focuses on raw creative language properties before any downstream post-processing into strict forms.
@@ -64,7 +108,7 @@ This evaluation pipeline compares a base model, a LoRA-finetuned variant, and an
 
 **How to run:**
 ```bash
-python C:\Users\micha\Desktop\projects\scritti\eval\run_eval.py --config C:\Users\micha\Desktop\projects\scritti\eval_config.yaml
+python eval/run_eval.py --config eval_config.yaml
 ```
 
 **How to interpret the plots:**
@@ -88,7 +132,7 @@ The `eval_config_sweep.yaml` file drives a lightweight prompt‑sweep harness in
 
 **How to run:**
 ```bash
-python "C:\Users\micha\Desktop\projects\scritti\eval_runner.py" --config "C:\Users\micha\Desktop\projects\scritti\eval_config_sweep.yaml"
+python eval_runner.py --config eval_config_sweep.yaml
 ```
 
 ## ⚖️ New: Human Evaluation & Side-by-Side Comparison
@@ -97,14 +141,14 @@ The latest evolution of **scritti** moves beyond automated metrics into **Human-
 
 ### **The Workflow**
 1.  **Orchestration:** Run identical prompts through both a **Llama 3.1 (QLoRA)** and a **GPT-2 (Fine-tuned)** model.
-2.  **Blind Review:** Use the Flask UI (`poem_review_app/`) to compare outputs without knowing which model produced which result.
+2.  **Blind Review:** Use the Flask UI (`poem_review_app/`) to compare blinded `Output A` vs `Output B`. Ordering is deterministic per `(reviewer, comparison_id)` so refreshes do not reshuffle mid-review.
 3.  **Qualitative Scoring:** Models are rated on a 1-5 scale across three dimensions:
     * **Originality:** Does it avoid clichés and "LLM-isms"?
     * **Emotion:** Does the output evoke the intended mood?
     * **Imagery:** How vivid and specific is the sensory language?
 4.  **Audit Trail:** Results are captured in structured JSON, preserving the link between Prompt ID, Model Version, and Reviewer Scores.
 
-> **Why this matters for AI Governance:** This mimics production-grade RLHF and red-teaming workflows, creating a consistent A/B evaluation process that can be audited for model drift or stylistic alignment.
+> **Why this matters for AI Governance:** This mimics production-grade reinforcement learning from human feedback (RLHF) and red-teaming workflows, creating a consistent A/B evaluation process that can be audited for model drift or stylistic alignment.
 
 ---
 
@@ -552,5 +596,8 @@ Technical Program Manager — AI Operations & Systems Architecture
 
 ## 📝 **License**
 
-MIT License — feel free to fork, study, and experiment.
+MIT License. See [LICENSE](LICENSE).
+
+
+
 

@@ -1,7 +1,7 @@
 model_base: "gpt2"
-# model_finetuned should point to the LoRA adapter directory
-model_finetuned: 'D:\\models\\choice-models\\gpt2-finetuned-poetry-mercury-04\\final_model'
-prompt_set: 'C:\\Users\\micha\\Desktop\\projects\\scritti\\prompts.txt'
+# LoRA adapter directory (set in your environment)
+model_finetuned: "${SCRITTI_EVAL_LORA_PATH}"
+prompt_set: "prompts.txt"
 
 generation:
   temperature: [0.2, 0.7, 1.0]
@@ -16,5 +16,5 @@ metrics:
   - perplexity
 
 output:
-  log_dir: 'C:\\Users\\micha\\Desktop\\projects\\scritti\\eval_logs'
+  log_dir: "eval_logs"
   run_name: "style_tradeoff_v1"

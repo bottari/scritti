@@ -1,19 +1,20 @@
-base_model: 'gpt2'
-lora_path: 'D:\models\choice-models\gpt2-finetuned-poetry-mercury-04\final_model'
+base_model: "meta-llama/Llama-3.1-8B"
+lora_path: "${SCRITTI_EVAL_LORA_PATH}"
 
-# extra pair (gpt2 base + gpt2 adapter)
-extra_base_model: 'Qwen/Qwen3.5-0.8B'
-extra_lora_path: 'D:\models\qwen3-5-0-8b-poetry-mercury-qlora-8bit-003'
-extra_base_label: 'qwen_base'
-extra_lora_label: 'qwen_lora'
+# Optional extra pair (enabled via env vars)
+extra_base_model: "${SCRITTI_EVAL_EXTRA_BASE_MODEL}"
+extra_lora_path: "${SCRITTI_EVAL_EXTRA_LORA_PATH}"
+extra_base_label: "gpt_base"
+extra_lora_label: "gpt_lora"
 extra_8bit: false
 extra_4bit: false
 extra_batch_size: 8
 extra_max_new_tokens: 200
 
-# required inputs
-prompts: 'C:\Users\micha\Desktop\projects\scritti\prompts.txt'
-corpus: 'C:\Users\micha\Desktop\projects\mercury\poetry_txt'
+# Required inputs
+prompts: "prompts.txt"
+corpus: "poetry_txt_whitman"
+human_corpus: "poetry_txt_whitman"
 num_samples: 100
 max_new_tokens: 250
 temperature: 0.5
@@ -22,7 +23,7 @@ top_k: 15
 repetition_penalty: 1.2
 num_return_sequences: 1
 
-# memory-safe llama settings - change 4bit to true
+# Memory-safe settings (toggle 4bit for lower VRAM)
 base_8bit: false
 lora_8bit: false
 base_4bit: false
@@ -32,10 +33,11 @@ lora_batch_size: 1
 base_max_new_tokens: 200
 lora_max_new_tokens: 200
 
-# progress + safety
+# Progress + safety
 heartbeat_seconds: 30
 gen_log_every: 1
 embed_batch_size: 64
 max_nouns: 128
 human_max_lines: 1000
 umap_max_points: 1200
+output_dir: "eval_outputs"

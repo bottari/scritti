@@ -1,4 +1,6 @@
+import hashlib
 import json
+import random
 from collections import defaultdict
 from pathlib import Path
 
@@ -162,6 +164,47 @@ def mean_score(values: list[int]) -> float:
     return sum(values) / len(values)
 
 
+def _blind_seed(reviewer: str, comparison_id: str) -> int:
+    seed_source = f"{reviewer.strip().lower()}::{comparison_id}"
+    digest = hashlib.sha256(seed_source.encode("utf-8")).hexdigest()
+    return int(digest[:16], 16)
+
+
+def blind_item_for_reviewer(item: dict, reviewer: str) -> dict:
+    outputs = [
+        {"model": str(out["model"]), "poem": str(out["poem"])}
+        for out in item["outputs"][:2]
+    ]
+
+    rng = random.Random(_blind_seed(reviewer, item["id"]))
+    if rng.random() < 0.5:
+        outputs.reverse()
+
+    blind_labels = ("A", "B")
+    blinded_outputs = []
+    for position, (label, output) in enumerate(zip(blind_labels, outputs), start=1):
+        blinded_outputs.append(
+            {
+                "blind_label": label,
+                "display_position": position,
+                "model": output["model"],
+                "poem": output["poem"],
+            }
+        )
+
+    return {
+        "id": item["id"],
+        "prompt": item["prompt"],
+        "outputs": blinded_outputs,
+    }
+
+
+def _read_score(form, blind_label: str, field: str) -> str:
+    # Backwards compatibility with m1/m2 form keys if older templates submit.
+    legacy_slot = "m1" if blind_label == "A" else "m2"
+    return form.get(f"{blind_label.lower()}_{field}") or form.get(f"{legacy_slot}_{field}")
+
+
 @app.route("/", methods=["GET", "POST"])
 def review_poem():
     error = None
@@ -183,20 +226,26 @@ def review_poem():
             if item is None:
                 error = "Comparison item not found for this submission."
             else:
+                blinded_item = blind_item_for_reviewer(item, reviewer)
                 score_rows = []
                 try:
-                    for idx, output in enumerate(item["outputs"], start=1):
+                    for output in blinded_item["outputs"]:
                         row = {
                             "reviewer": reviewer,
-                            "comparison_id": item["id"],
-                            "poem_id": item["id"],
-                            "prompt": item["prompt"],
+                            "comparison_id": blinded_item["id"],
+                            "poem_id": blinded_item["id"],
+                            "prompt": blinded_item["prompt"],
+                            "blind_label": output["blind_label"],
+                            "display_position": output["display_position"],
                             "model": output["model"],
                             "poem": output["poem"],
                         }
                         for field in SCORE_FIELDS:
-                            form_key = f"m{idx}_{field}"
-                            row[field] = parse_score(request.form.get(form_key), f"Model {idx} {field.title()}")
+                            score_val = _read_score(request.form, output["blind_label"], field)
+                            row[field] = parse_score(
+                                score_val,
+                                f"Output {output['blind_label']} {field.title()}",
+                            )
 
                         row["overall"] = round(mean_score([row[f] for f in SCORE_FIELDS]), 2)
                         score_rows.append(row)
@@ -208,7 +257,11 @@ def review_poem():
                     return redirect(url_for("review_poem", reviewer=reviewer))
 
     reviewer = request.args.get("reviewer", "").strip()
-    item = next_item_for_reviewer(items, results, reviewer) if reviewer else None
+    item = None
+    if reviewer:
+        next_item = next_item_for_reviewer(items, results, reviewer)
+        if next_item is not None:
+            item = blind_item_for_reviewer(next_item, reviewer)
 
     return render_template(
         "index.html",
@@ -222,4 +275,3 @@ def review_poem():
 
 if __name__ == "__main__":
     app.run(debug=True)
-

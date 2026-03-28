@@ -83,8 +83,8 @@
 <body>
   <main class="wrap">
     <section class="card">
-      <h1>Side-by-Side Poem Review</h1>
-      <p>Review both model outputs and score each one from 1 (low) to 5 (high).</p>
+      <h1>Side-by-Side Blind Poem Review</h1>
+      <p>Review both blinded outputs and score each one from 1 (low) to 5 (high).</p>
 
       {% if setup_error %}
       <div class="error">{{ setup_error }}</div>
@@ -113,61 +113,35 @@
         <input type="hidden" name="comparison_id" value="{{ item.id }}">
 
         <div class="columns">
+          {% for output in item.outputs %}
           <section class="card">
-            <h3>Model 1: {{ item.outputs[0].model }}</h3>
-            <div class="poem-box">{{ item.outputs[0].poem }}</div>
+            <h3>Output {{ output.blind_label }}</h3>
+            <div class="poem-box">{{ output.poem }}</div>
             <div class="scores">
               <div>
-                <label for="m1_originality">Originality</label>
-                <select id="m1_originality" name="m1_originality" required>
+                <label for="{{ output.blind_label|lower }}_originality">Originality</label>
+                <select id="{{ output.blind_label|lower }}_originality" name="{{ output.blind_label|lower }}_originality" required>
                   <option value="">Choose</option>
                   <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
                 </select>
               </div>
               <div>
-                <label for="m1_emotion">Emotion</label>
-                <select id="m1_emotion" name="m1_emotion" required>
+                <label for="{{ output.blind_label|lower }}_emotion">Emotion</label>
+                <select id="{{ output.blind_label|lower }}_emotion" name="{{ output.blind_label|lower }}_emotion" required>
                   <option value="">Choose</option>
                   <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
                 </select>
               </div>
               <div>
-                <label for="m1_imagery">Imagery</label>
-                <select id="m1_imagery" name="m1_imagery" required>
+                <label for="{{ output.blind_label|lower }}_imagery">Imagery</label>
+                <select id="{{ output.blind_label|lower }}_imagery" name="{{ output.blind_label|lower }}_imagery" required>
                   <option value="">Choose</option>
                   <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
                 </select>
               </div>
             </div>
           </section>
-
-          <section class="card">
-            <h3>Model 2: {{ item.outputs[1].model }}</h3>
-            <div class="poem-box">{{ item.outputs[1].poem }}</div>
-            <div class="scores">
-              <div>
-                <label for="m2_originality">Originality</label>
-                <select id="m2_originality" name="m2_originality" required>
-                  <option value="">Choose</option>
-                  <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
-                </select>
-              </div>
-              <div>
-                <label for="m2_emotion">Emotion</label>
-                <select id="m2_emotion" name="m2_emotion" required>
-                  <option value="">Choose</option>
-                  <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
-                </select>
-              </div>
-              <div>
-                <label for="m2_imagery">Imagery</label>
-                <select id="m2_imagery" name="m2_imagery" required>
-                  <option value="">Choose</option>
-                  <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
-                </select>
-              </div>
-            </div>
-          </section>
+          {% endfor %}
         </div>
 
         <button type="submit">Submit Both Reviews and Load Next</button>

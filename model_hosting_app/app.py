@@ -1,59 +1,57 @@
-import os
+﻿import os
+import json
 import torch
 import warnings
+from pathlib import Path
+from threading import Thread
+
 from flask import Flask, render_template, request, Response, stream_with_context
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig, TextIteratorStreamer
 from peft import PeftModel
-from threading import Thread
-import json
 
 warnings.filterwarnings("ignore")
 
-# ─────────────────────────────────────────────
-#  CONFIGURATION
-# ─────────────────────────────────────────────
-HF_TOKEN        = ""                          # HF token with read access to meta-llama
+# CONFIGURATION
+HF_TOKEN = ""
 BASE_MODEL_NAME = "meta-llama/Llama-3.1-8B"
-ADAPTER_PATH    = r"D:\models\choice-models\llama3-8b-poetry-mercury-26-qlora-8bit-019\final_model"
+ADAPTER_PATH = r"D:\models\choice-models\llama3-8b-poetry-mercury-26-qlora-8bit-019\final_model"
 
-# Generation defaults
-MAX_NEW_TOKENS     = 200
-TEMPERATURE        = 0.75
-TOP_P              = 0.9
-TOP_K              = 25
+MAX_NEW_TOKENS = 200
+TEMPERATURE = 0.75
+TOP_P = 0.9
+TOP_K = 25
 REPETITION_PENALTY = 1.2
-# ─────────────────────────────────────────────
 
-app = Flask(__name__)
+APP_DIR = Path(__file__).resolve().parent
+app = Flask(__name__, template_folder=str(APP_DIR / "templates"))
 
-# ── Model globals ──────────────────────────────
-model     = None
+model = None
 tokenizer = None
-eot_token_id = None  # Llama 3 <|eot_id|> stopping token
-device    = "cuda" if torch.cuda.is_available() else "cpu"
+eot_token_id = None
+device = "cuda" if torch.cuda.is_available() else "cpu"
+MODEL_DISPLAY_NAME = BASE_MODEL_NAME
 
 
 def load_model():
-    global model, tokenizer, eot_token_id
+    global model, tokenizer, eot_token_id, MODEL_DISPLAY_NAME
 
     if not torch.cuda.is_available():
         raise RuntimeError("No CUDA GPU detected. Llama 3.1-8B with QLoRA requires a GPU.")
 
-    print(f"⚡ Loading tokenizer from {BASE_MODEL_NAME}…")
+    print(f"Loading tokenizer from {BASE_MODEL_NAME}...")
     tokenizer = AutoTokenizer.from_pretrained(
         BASE_MODEL_NAME,
-        token=HF_TOKEN or True
+        token=HF_TOKEN or True,
     )
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.padding_side = "left"
 
-    # Resolve Llama 3 end-of-turn token ID for clean stopping
     eot_token_id = tokenizer.convert_tokens_to_ids("<|eot_id|>")
-    print(f"ℹ️  EOT token id: {eot_token_id}")
+    print(f"EOT token id: {eot_token_id}")
 
-    print(f"⚡ Loading base model ({BASE_MODEL_NAME}) with 8-bit quantisation…")
+    print(f"Loading base model ({BASE_MODEL_NAME}) with 8-bit quantization...")
     bnb_config = BitsAndBytesConfig(
-        load_in_8bit=True,                    # matches your qlora-8bit training run
+        load_in_8bit=True,
         llm_int8_has_fp16_weight=False,
     )
 
@@ -67,36 +65,30 @@ def load_model():
     except OSError as e:
         raise RuntimeError(
             f"Could not load base model: {e}\n"
-            f"Make sure you have accepted the licence at "
-            f"https://huggingface.co/{BASE_MODEL_NAME} "
-            f"and that your HF_TOKEN has read access."
+            f"Make sure you accepted the license at https://huggingface.co/{BASE_MODEL_NAME} "
+            "and your HF token has access."
         ) from e
 
     if not os.path.exists(ADAPTER_PATH):
         raise FileNotFoundError(
-            f"Adapter not found at:\n  {ADAPTER_PATH}\n"
-            "Check the path and try again."
+            f"Adapter not found at:\n  {ADAPTER_PATH}\nCheck the path and try again."
         )
 
-    print(f"🔗 Attaching LoRA adapter from {ADAPTER_PATH}…")
+    print(f"Attaching LoRA adapter from {ADAPTER_PATH}...")
     model = PeftModel.from_pretrained(base_model, ADAPTER_PATH)
     model.eval()
-    print(f"✅ Model ready on {device}!")
+    MODEL_DISPLAY_NAME = f"{BASE_MODEL_NAME} + LoRA ({Path(ADAPTER_PATH).name})"
+    print(f"Model ready on {device}!")
 
 
 def generate_stream(prompt: str):
-    """Yields tokens one-by-one as a server-sent event stream."""
-    # Llama 3.1: prepend BOS token exactly as in the training/inference script
     input_text = tokenizer.bos_token + prompt
     inputs = tokenizer(input_text, return_tensors="pt").to(device)
-    input_ids      = inputs["input_ids"]
+    input_ids = inputs["input_ids"]
     attention_mask = inputs["attention_mask"]
 
-    streamer = TextIteratorStreamer(
-        tokenizer, skip_prompt=True, skip_special_tokens=True
-    )
+    streamer = TextIteratorStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
 
-    # Stop on both <|end_of_text|> and <|eot_id|>
     stopping_ids = [tokenizer.eos_token_id, eot_token_id]
 
     gen_kwargs = dict(
@@ -117,23 +109,20 @@ def generate_stream(prompt: str):
     thread.start()
 
     for token_text in streamer:
-        # SSE format: "data: <json>\n\n"
         yield f"data: {json.dumps({'token': token_text})}\n\n"
 
     yield f"data: {json.dumps({'done': True})}\n\n"
     thread.join()
 
 
-# ── Routes ─────────────────────────────────────
-
 @app.route("/")
 def index():
-    return render_template("index.html", model_name=BASE_MODEL_NAME)
+    return render_template("index.html", model_name=MODEL_DISPLAY_NAME)
 
 
 @app.route("/generate", methods=["POST"])
 def generate():
-    data   = request.get_json(force=True)
+    data = request.get_json(force=True)
     prompt = data.get("prompt", "").strip()
     if not prompt:
         return Response("data: {\"error\": \"Empty prompt\"}\n\n", mimetype="text/event-stream")
@@ -143,18 +132,22 @@ def generate():
         mimetype="text/event-stream",
         headers={
             "Cache-Control": "no-cache",
-            "X-Accel-Buffering": "no",   # disables nginx buffering if behind proxy
+            "X-Accel-Buffering": "no",
         },
     )
 
 
 @app.route("/health")
 def health():
-    return {"status": "ok", "device": device, "model": BASE_MODEL_NAME}
+    return {
+        "status": "ok",
+        "device": device,
+        "base_model": BASE_MODEL_NAME,
+        "adapter_path": ADAPTER_PATH,
+        "model": MODEL_DISPLAY_NAME,
+    }
 
 
-# ── Entry point ────────────────────────────────
 if __name__ == "__main__":
     load_model()
-    # threaded=False keeps PyTorch happy; use_reloader=False avoids double model load
     app.run(host="0.0.0.0", port=5000, threaded=True, use_reloader=False, debug=False)

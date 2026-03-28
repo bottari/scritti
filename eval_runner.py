@@ -2,8 +2,9 @@ import argparse
 import json
 import math
 import os
-from dataclasses import dataclass
+import re
 from datetime import datetime
+from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
 import numpy as np
@@ -12,6 +13,10 @@ import torch
 import yaml
 from sentence_transformers import SentenceTransformer
 from transformers import AutoModelForCausalLM, AutoTokenizer
+try:
+    from dotenv import load_dotenv
+except Exception:  # pragma: no cover - optional dependency
+    load_dotenv = None
 
 try:
     from peft import PeftModel
@@ -19,13 +24,58 @@ except Exception:  # pragma: no cover - optional dependency
     PeftModel = None
 
 
+REPO_ROOT = Path(__file__).resolve().parent
+
+if load_dotenv is not None:
+    load_dotenv(REPO_ROOT / ".env")
+
+
+def expand_env_placeholders(value: str) -> str:
+    pattern = re.compile(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}")
+
+    def repl(match: re.Match[str]) -> str:
+        var_name = match.group(1)
+        env_val = os.getenv(var_name)
+        if env_val is None or not env_val.strip():
+            raise ValueError(
+                f"Missing required environment variable: {var_name}. "
+                f"Set it in your environment or .env file."
+            )
+        return env_val
+
+    return pattern.sub(repl, value)
+
+
+def _expand_config(value):
+    if isinstance(value, dict):
+        return {k: _expand_config(v) for k, v in value.items()}
+    if isinstance(value, list):
+        return [_expand_config(v) for v in value]
+    if isinstance(value, str):
+        return expand_env_placeholders(value)
+    return value
+
+
+def resolve_path(value: str | None, config_dir: Path) -> str | None:
+    if not value:
+        return None
+    candidate = Path(value).expanduser()
+    if candidate.is_absolute():
+        return str(candidate)
+    return str((config_dir / candidate).resolve())
+
+
 def load_yaml(path: str) -> Dict[str, Any]:
-    with open(path, "r", encoding="utf-8") as f:
-        return yaml.safe_load(f) or {}
+    config_path = Path(path).expanduser().resolve()
+    with config_path.open("r", encoding="utf-8") as f:
+        raw = yaml.safe_load(f) or {}
+    cfg = _expand_config(raw)
+    cfg["_config_path"] = str(config_path)
+    return cfg
 
 
-def ensure_dir(path: str) -> None:
-    os.makedirs(path, exist_ok=True)
+def ensure_dir(path: str | Path) -> None:
+    Path(path).mkdir(parents=True, exist_ok=True)
 
 
 def _normalize_prompt_entry(entry: Any, idx: int) -> Dict[str, str]:
@@ -41,20 +91,20 @@ def _normalize_prompt_entry(entry: Any, idx: int) -> Dict[str, str]:
 
 
 def _read_prompt_lines(path: str) -> List[Dict[str, str]]:
-    with open(path, "r", encoding="utf-8") as f:
-        lines = [line.strip() for line in f if line.strip()]
+    lines = [line.strip() for line in Path(path).read_text(encoding="utf-8").splitlines() if line.strip()]
     return [{"prompt_id": str(idx), "prompt": line} for idx, line in enumerate(lines)]
 
 
 def load_prompt_set(path: str) -> List[Dict[str, str]]:
-    ext = os.path.splitext(path)[1].lower()
-    if ext == ".txt":
-        return _read_prompt_lines(path)
-    with open(path, "r", encoding="utf-8") as f:
-        data = json.load(f)
+    source = Path(path)
+    if source.suffix.lower() == ".txt":
+        return _read_prompt_lines(str(source))
+
+    data = json.loads(source.read_text(encoding="utf-8"))
     if not isinstance(data, list):
         raise ValueError("prompt_set JSON must be a list of prompts or prompt objects.")
     return [_normalize_prompt_entry(entry, idx) for idx, entry in enumerate(data)]
+
 
 def prepare_tokenizer(model_name_or_path: str) -> AutoTokenizer:
     tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
@@ -149,6 +199,7 @@ def resolve_meter_score(optional: bool = False) -> Optional[Any]:
             "meter_score not found. Define meter_score in eval/metrics.py or adjust the import."
         ) from exc
 
+
 def compute_semantic_similarity(
     embedder: SentenceTransformer,
     base_texts: Sequence[str],
@@ -158,8 +209,7 @@ def compute_semantic_similarity(
         raise ValueError("base_texts and finetuned_texts must be same length for similarity.")
     base_emb = embedder.encode(list(base_texts), normalize_embeddings=True, show_progress_bar=False)
     fine_emb = embedder.encode(list(finetuned_texts), normalize_embeddings=True, show_progress_bar=False)
-    sims = [float(np.dot(b, f)) for b, f in zip(base_emb, fine_emb)]
-    return sims
+    return [float(np.dot(b, f)) for b, f in zip(base_emb, fine_emb)]
 
 
 def iter_sweep(values: Iterable[float]) -> List[float]:
@@ -168,17 +218,21 @@ def iter_sweep(values: Iterable[float]) -> List[float]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Config-driven eval runner with prompt sweep.")
-    parser.add_argument("--config", default="eval_config.yaml", help="Path to eval_config.yaml")
+    parser.add_argument("--config", default="eval_config_sweep.yaml", help="Path to eval config file")
     args = parser.parse_args()
 
     cfg = load_yaml(args.config)
+    config_dir = Path(cfg.get("_config_path", Path(args.config).resolve())).parent
 
     model_base = cfg.get("model_base")
-    model_finetuned = cfg.get("model_finetuned")
-    prompt_set = cfg.get("prompt_set")
+    model_finetuned_raw = cfg.get("model_finetuned")
+    prompt_set_raw = cfg.get("prompt_set")
     generation = cfg.get("generation", {})
     metrics = cfg.get("metrics", [])
     output_cfg = cfg.get("output", {})
+
+    model_finetuned = resolve_path(model_finetuned_raw, config_dir)
+    prompt_set = resolve_path(prompt_set_raw, config_dir)
 
     if not model_base or not model_finetuned or not prompt_set:
         raise ValueError("model_base, model_finetuned, and prompt_set are required in config.")
@@ -188,7 +242,8 @@ def main() -> None:
     max_tokens = int(generation.get("max_tokens", 120))
     batch_size = int(generation.get("batch_size", 4))
 
-    log_dir = output_cfg.get("log_dir", "./eval_logs/")
+    log_dir_raw = output_cfg.get("log_dir", "eval_logs")
+    log_dir = Path(resolve_path(log_dir_raw, config_dir) or (REPO_ROOT / "eval_logs"))
     run_name = output_cfg.get("run_name", datetime.now().strftime("eval_%Y%m%d_%H%M%S"))
     run_stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     ensure_dir(log_dir)
@@ -243,46 +298,40 @@ def main() -> None:
                 base_text = base_texts[idx]
                 fine_text = finetuned_texts[idx]
 
-                base_row = {
-                    "prompt_id": prompt_id,
-                    "model_type": "base",
-                    "temperature": float(temperature),
-                    "top_p": float(top_p),
-                    "meter_score": float(meter_fn(base_text)) if "meter_score" in metrics and meter_fn is not None else float("nan"),
-                    "semantic_similarity": float(sims[idx]) if "semantic_similarity" in metrics else float("nan"),
-                    "repetition_index": float(repetition_index(base_text, base_tokenizer))
-                    if "repetition_index" in metrics
-                    else float("nan"),
-                    "perplexity": float(perplexity(base_text, base_model, base_tokenizer, device))
-                    if "perplexity" in metrics
-                    else float("nan"),
-                    "output_length": len(base_text),
-                    "prompt": prompt,
-                    "output": base_text,
-                }
-                rows.append(base_row)
+                rows.append(
+                    {
+                        "prompt_id": prompt_id,
+                        "model_type": "base",
+                        "temperature": float(temperature),
+                        "top_p": float(top_p),
+                        "meter_score": float(meter_fn(base_text)) if "meter_score" in metrics and meter_fn is not None else float("nan"),
+                        "semantic_similarity": float(sims[idx]) if "semantic_similarity" in metrics else float("nan"),
+                        "repetition_index": float(repetition_index(base_text, base_tokenizer)) if "repetition_index" in metrics else float("nan"),
+                        "perplexity": float(perplexity(base_text, base_model, base_tokenizer, device)) if "perplexity" in metrics else float("nan"),
+                        "output_length": len(base_text),
+                        "prompt": prompt,
+                        "output": base_text,
+                    }
+                )
 
-                fine_row = {
-                    "prompt_id": prompt_id,
-                    "model_type": "finetuned",
-                    "temperature": float(temperature),
-                    "top_p": float(top_p),
-                    "meter_score": float(meter_fn(fine_text)) if "meter_score" in metrics and meter_fn is not None else float("nan"),
-                    "semantic_similarity": float(sims[idx]) if "semantic_similarity" in metrics else float("nan"),
-                    "repetition_index": float(repetition_index(fine_text, finetuned_tokenizer))
-                    if "repetition_index" in metrics
-                    else float("nan"),
-                    "perplexity": float(perplexity(fine_text, finetuned_model, finetuned_tokenizer, device))
-                    if "perplexity" in metrics
-                    else float("nan"),
-                    "output_length": len(fine_text),
-                    "prompt": prompt,
-                    "output": fine_text,
-                }
-                rows.append(fine_row)
+                rows.append(
+                    {
+                        "prompt_id": prompt_id,
+                        "model_type": "finetuned",
+                        "temperature": float(temperature),
+                        "top_p": float(top_p),
+                        "meter_score": float(meter_fn(fine_text)) if "meter_score" in metrics and meter_fn is not None else float("nan"),
+                        "semantic_similarity": float(sims[idx]) if "semantic_similarity" in metrics else float("nan"),
+                        "repetition_index": float(repetition_index(fine_text, finetuned_tokenizer)) if "repetition_index" in metrics else float("nan"),
+                        "perplexity": float(perplexity(fine_text, finetuned_model, finetuned_tokenizer, device)) if "perplexity" in metrics else float("nan"),
+                        "output_length": len(fine_text),
+                        "prompt": prompt,
+                        "output": fine_text,
+                    }
+                )
 
     df = pd.DataFrame(rows)
-    csv_path = os.path.join(log_dir, f"{run_name}_{run_stamp}.csv")
+    csv_path = log_dir / f"{run_name}_{run_stamp}.csv"
     df.to_csv(csv_path, index=False)
 
     summary = {
@@ -292,9 +341,8 @@ def main() -> None:
         "mean_repetition_index": float(df["repetition_index"].mean()) if "repetition_index" in df else float("nan"),
     }
 
-    summary_path = os.path.join(log_dir, f"{run_name}_{run_stamp}_summary.json")
-    with open(summary_path, "w", encoding="utf-8") as f:
-        json.dump(summary, f, indent=2)
+    summary_path = log_dir / f"{run_name}_{run_stamp}_summary.json"
+    summary_path.write_text(json.dumps(summary, indent=2), encoding="utf-8")
 
     print(f"Saved: {csv_path}")
     print(f"Saved: {summary_path}")
@@ -302,10 +350,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
-
-
