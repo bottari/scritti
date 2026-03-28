@@ -93,6 +93,28 @@ Notes:
 - For local/private adapter paths and tokens, copy `.env.example` to `.env` and set `SCRITTI_*` variables.
 
 ---
+## Model Hosting App: One-Command Launchers (Windows)
+
+The model hosting app includes launcher scripts in `model_hosting_app/` so you can switch model profiles quickly:
+
+- `run-llama.cmd`
+- `run-qwen.cmd`
+- `run-gpt2.cmd`
+
+From repo root:
+
+```cmd
+model_hosting_app\run-llama.cmd
+model_hosting_app\run-qwen.cmd
+model_hosting_app\run-gpt2.cmd
+```
+
+Important note:
+- Run `.cmd` files directly in Command Prompt.
+- Do not run them with `python` (for example, `python run-llama.cmd` is invalid).
+- `call` is optional in an interactive prompt. It is mainly useful inside another batch file.
+
+---
 ## ⚖️ **NEW: Evaluation Pipeline**
 
 This evaluation pipeline compares a base model, a LoRA-finetuned variant, and an optional human poetry reference set. It focuses on raw creative language properties before any downstream post-processing into strict forms.
@@ -147,8 +169,6 @@ The latest evolution of **scritti** moves beyond automated metrics into **Human-
     * **Emotion:** Does the output evoke the intended mood?
     * **Imagery:** How vivid and specific is the sensory language?
 4.  **Audit Trail:** Results are captured in structured JSON, preserving the link between Prompt ID, Model Version, and Reviewer Scores.
-
-> **Why this matters for AI Governance:** This mimics production-grade reinforcement learning from human feedback (RLHF) and red-teaming workflows, creating a consistent A/B evaluation process that can be audited for model drift or stylistic alignment.
 
 ---
 
