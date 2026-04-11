@@ -61,16 +61,19 @@ def is_qwen_model(name_or_path: str) -> bool:
 
 
 def expand_env_placeholders(value: str) -> str:
-    pattern = re.compile(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}")
+    pattern = re.compile(r"\$\{([A-Za-z_][A-Za-z0-9_]*)(?::-(.*?))?\}")
 
     def repl(match: re.Match[str]) -> str:
         var_name = match.group(1)
+        default_value = match.group(2)
         env_val = os.getenv(var_name)
-        if env_val is None or not env_val.strip():
+        if default_value is None and (env_val is None or not env_val.strip()):
             raise ValueError(
                 f"Missing required environment variable: {var_name}. "
                 f"Set it in your environment or .env file."
             )
+        if env_val is None or not env_val.strip():
+            return default_value if default_value is not None else ""
         return env_val
 
     return pattern.sub(repl, value)
@@ -205,9 +208,10 @@ def main() -> None:
     lora_path_raw = args.lora_path or cfg.get("lora_path") or DEFAULT_LORA_PATH
     lora_path = resolve_config_path(lora_path_raw, config_dir) if lora_path_raw else None
 
-    extra_base_model = args.extra_base_model or cfg.get("extra_base_model")
+    extra_base_model = (args.extra_base_model or cfg.get("extra_base_model") or "").strip()
     extra_lora_raw = args.extra_lora_path or cfg.get("extra_lora_path")
     extra_lora_path = resolve_config_path(extra_lora_raw, config_dir) if extra_lora_raw else None
+    extra_lora_path = extra_lora_path.strip() if isinstance(extra_lora_path, str) else ""
 
     prompts_raw = args.prompts or cfg.get("prompts")
     corpus_raw = args.corpus or cfg.get("corpus")
@@ -244,8 +248,11 @@ def main() -> None:
     print(f"[config] prompts={prompts_path}")
     print(f"[config] corpus={corpus_path}")
     print(f"[config] human_corpus={human_corpus_path}")
-    print(f"[config] extra_base_model={extra_base_model or '(disabled)'}")
-    print(f"[config] extra_lora_path={extra_lora_path or '(disabled)'}")
+    if extra_base_model and extra_lora_path:
+        print(f"[config] extra_base_model={extra_base_model}")
+        print(f"[config] extra_lora_path={extra_lora_path}")
+    else:
+        print("[config] extra comparison pair disabled")
 
     # Guard known-unstable combo seen on some Windows CUDA + bitsandbytes setups:
     # Llama LoRA + int8 + CPU offload can fail at runtime inside bnb kernels.

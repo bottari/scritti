@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Family Tree | Portfolio + Family Tree</title>
+    <link rel="stylesheet" href="/assets/styles.css" />
+  </head>
+  <body data-page="family">
+    <div class="site-shell">
+      <header class="page-header">
+        <nav class="top-nav">
+          <a href="/">Home</a>
+          <a href="/about">About</a>
+          <a href="/portfolio">Portfolio</a>
+          <a href="/family">Family Tree</a>
+        </nav>
+        <h1>Family Tree</h1>
+        <p>Browse the family directory, then move into individual profiles or the computed tree view.</p>
+      </header>
+
+      <main class="family-layout">
+        <section class="panel">
+          <div class="section-heading">
+            <h2>Family Table</h2>
+            <div class="filters">
+              <input id="family-search" type="search" placeholder="Search family members" />
+              <select id="branch-filter">
+                <option value="all">All branches</option>
+              </select>
+            </div>
+          </div>
+          <div class="table-wrapper">
+            <table class="family-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Birth Year</th>
+                  <th>Death Year</th>
+                  <th>Relation / Branch</th>
+                </tr>
+              </thead>
+              <tbody id="family-table-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="section-heading">
+            <h2>Tree View</h2>
+            <p class="subtle">Derived dynamically from parent → child relationships.</p>
+          </div>
+          <div id="family-tree-root" class="tree-root"></div>
+        </section>
+      </main>
+    </div>
+    <script src="/assets/app.js" defer></script>
+    <script src="/assets/family-table.js" defer></script>
+    <script src="/assets/family-tree.js" defer></script>
+  </body>
+</html>

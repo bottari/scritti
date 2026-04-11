@@ -1,5 +1,7 @@
 import torch
 import sys 
+import os
+import argparse
 from transformers import (
     AutoTokenizer,
     AutoModelForCausalLM,
@@ -62,7 +64,19 @@ class PoetryStreamer(TextStreamer):
 
 # --- Configuration ---
 MODEL_NAME = "meta-llama/Meta-Llama-3.1-8B"
-ADAPTER_PATH = r"D:\models\llama-3-8b-q4-finetuned-poetry-mercury-11-test-001-r64-alpha128-3e4-lngth1024-50epochs\final_model" 
+DEFAULT_ADAPTER_PATH = r"D:\models\choice-models\llama3-8b-poetry-mercury-26-qlora-8bit-019\final_model"
+
+# Allow override from CLI or environment variable.
+parser = argparse.ArgumentParser(description="Interactive poetry generation with optional finetuned model comparison.")
+parser.add_argument(
+    "--adapter-path",
+    dest="adapter_path",
+    default=os.environ.get("SCRITTI_ADAPTER_PATH", DEFAULT_ADAPTER_PATH),
+    help="Path to PEFT adapter folder (adapter_config.json) or merged model folder (config.json). "
+         "Can also be set via SCRITTI_ADAPTER_PATH env var."
+)
+args = parser.parse_args()
+ADAPTER_PATH = args.adapter_path
 
 # Quantization config (4-bit NF4 with bfloat16 compute)
 bnb_config = BitsAndBytesConfig(
@@ -89,13 +103,46 @@ try:
     )
     base_model.eval()
 
-    # Load your adapter onto the base model
-    model = PeftModel.from_pretrained(base_model, ADAPTER_PATH)
-    model.eval() 
+    model = None
+
+    # Load finetuned weights (optional):
+    # 1) PEFT adapter path (expects adapter_config.json), or
+    # 2) merged/full model path (expects config.json)
+    if os.path.isdir(ADAPTER_PATH):
+        adapter_config_path = os.path.join(ADAPTER_PATH, "adapter_config.json")
+        merged_config_path = os.path.join(ADAPTER_PATH, "config.json")
+
+        if os.path.isfile(adapter_config_path):
+            print(f"Detected PEFT adapter at: {ADAPTER_PATH}")
+            model = PeftModel.from_pretrained(base_model, ADAPTER_PATH)
+            model.eval()
+        elif os.path.isfile(merged_config_path):
+            print(f"Detected merged/full model at: {ADAPTER_PATH}")
+            model = AutoModelForCausalLM.from_pretrained(
+                ADAPTER_PATH,
+                quantization_config=bnb_config,
+                device_map="auto",
+                dtype=torch.bfloat16
+            )
+            model.eval()
+        else:
+            dir_preview = ", ".join(sorted(os.listdir(ADAPTER_PATH))[:20])
+            print(
+                "WARNING: Could not detect a PEFT adapter or merged model at ADAPTER_PATH. "
+                f"Expected adapter_config.json or config.json in: {ADAPTER_PATH}. "
+                f"Found: [{dir_preview}]"
+            )
+            print("Running in base-model-only mode.")
+    else:
+        print(f"WARNING: ADAPTER_PATH not found: {ADAPTER_PATH}")
+        print("Running in base-model-only mode.")
 
     # Device check
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    print(f"--- Models loaded successfully on device: {device} ---")
+    if model is None:
+        print(f"--- Base model loaded successfully on device: {device} ---")
+    else:
+        print(f"--- Models loaded successfully on device: {device} ---")
 
 except Exception as e:
     print(f"\n--- ERROR during model loading or configuration! ---")
@@ -115,8 +162,8 @@ GEN_KWARGS = dict(
     do_sample=True,
     top_k=250, 
     top_p=0.95,
-    temperature=1.25,
-    repetition_penalty=1.05,
+    temperature=0.7,
+    repetition_penalty=1.15,
     pad_token_id=tokenizer.eos_token_id,
     eos_token_id=tokenizer.eos_token_id,
     # The streamer handles the output printing, so we don't need to return the full sequences
@@ -151,18 +198,23 @@ while True:
 
         with torch.no_grad():
             
-            # 1. FINETUNED MODEL GENERATION (STREAMED)
-            print(f"\n{'='*70}")
-            print(f"--- FINETUNED MODEL (POESIA DI MICHELE BOTTARI) OUTPUT ---")
-            print(f"Prompt: '{prompt}'")
-            print(f"{'-'*70}")
-            # Pass the streamer to quitstream the output to stdout
-            model.generate(
-                input_ids,
-                streamer=streamer, 
-                **GEN_KWARGS
-            )
-            print(f"\n{'='*70}\n")
+            # 1. FINETUNED MODEL GENERATION (STREAMED), if available
+            if model is not None:
+                print(f"\n{'='*70}")
+                print(f"--- FINETUNED MODEL (POESIA DI MICHELE BOTTARI) OUTPUT ---")
+                print(f"Prompt: '{prompt}'")
+                print(f"{'-'*70}")
+                # Pass the streamer to stream output to stdout
+                model.generate(
+                    input_ids,
+                    streamer=streamer, 
+                    **GEN_KWARGS
+                )
+                print(f"\n{'='*70}\n")
+            else:
+                print(f"\n{'='*70}")
+                print("--- FINETUNED MODEL OUTPUT SKIPPED (no valid --adapter-path found) ---")
+                print(f"{'='*70}\n")
             
             # 2. BASE MODEL GENERATION (STREAMED)
             print(f"\n{'='*70}")

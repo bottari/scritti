@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio | Portfolio + Family Tree</title>
+    <link rel="stylesheet" href="/assets/styles.css" />
+  </head>
+  <body data-page="portfolio">
+    <div class="site-shell">
+      <header class="page-header">
+        <nav class="top-nav">
+          <a href="/">Home</a>
+          <a href="/about">About</a>
+          <a href="/portfolio">Portfolio</a>
+          <a href="/family">Family Tree</a>
+        </nav>
+        <h1>Portfolio</h1>
+        <p>Every image added to the frontend photos folder will appear here automatically.</p>
+      </header>
+      <main>
+        <section class="panel">
+          <div class="section-heading">
+            <div>
+              <h2>Photo Gallery</h2>
+              <p class="subtle">Powered by files from <code>frontend/data/photos</code>.</p>
+            </div>
+          </div>
+          <div id="portfolio-gallery-root" class="portfolio-gallery"></div>
+        </section>
+      </main>
+    </div>
+    <script src="/assets/app.js" defer></script>
+    <script src="/assets/portfolio-gallery.js" defer></script>
+  </body>
+</html>

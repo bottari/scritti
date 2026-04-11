@@ -109,6 +109,21 @@ model_hosting_app\run-qwen.cmd
 model_hosting_app\run-gpt2.cmd
 ```
 
+Hosting env contract (`SCRITTI_*` canonical, legacy aliases still accepted):
+- `SCRITTI_HF_TOKEN`
+- `SCRITTI_BASE_MODEL_NAME`
+- `SCRITTI_ADAPTER_PATH`
+- `SCRITTI_QUANTIZATION` (`none`, `8bit`, `4bit`)
+- `SCRITTI_TORCH_DTYPE` (`auto`, `float16`, `bfloat16`, `float32`)
+- `SCRITTI_TRUST_REMOTE_CODE` (`true`/`false`)
+- `SCRITTI_HOST`
+- `SCRITTI_PORT`
+- `SCRITTI_MAX_NEW_TOKENS`
+- `SCRITTI_TEMPERATURE`
+- `SCRITTI_TOP_P`
+- `SCRITTI_TOP_K`
+- `SCRITTI_REPETITION_PENALTY`
+
 Important note:
 - Run `.cmd` files directly in Command Prompt.
 - Do not run them with `python` (for example, `python run-llama.cmd` is invalid).
@@ -132,6 +147,10 @@ This evaluation pipeline compares a base model, a LoRA-finetuned variant, and an
 ```bash
 python eval/run_eval.py --config eval_config.yaml
 ```
+
+Eval env requirements:
+- Main eval path: `SCRITTI_EVAL_LORA_PATH` is required unless you run with `--skip-lora`.
+- Extra comparison pair is optional: it activates only when both `SCRITTI_EVAL_EXTRA_BASE_MODEL` and `SCRITTI_EVAL_EXTRA_LORA_PATH` are set. Leave both unset to disable it.
 
 **How to interpret the plots:**
 - Imagery and novelty distributions: Look for shifts in median and tails. A rightward shift indicates richer imagery or higher novelty.

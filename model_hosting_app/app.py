@@ -37,25 +37,60 @@ def _env_bool(*keys: str, default: bool = False) -> bool:
     raw = _env(*keys, default=str(default)).lower()
     return raw in {"1", "true", "yes", "on"}
 
+
+def _parse_quantization(value: str) -> str:
+    normalized = (value or "").strip().lower()
+    if normalized in {"none", "8bit", "4bit"}:
+        return normalized
+    raise ValueError(
+        f"Invalid SCRITTI_QUANTIZATION='{value}'. Supported values: none, 8bit, 4bit."
+    )
+
+
+def _parse_torch_dtype(value: str):
+    normalized = (value or "").strip().lower()
+    mapping = {
+        "auto": "auto",
+        "float16": torch.float16,
+        "bfloat16": torch.bfloat16,
+        "float32": torch.float32,
+    }
+    if normalized in mapping:
+        return normalized, mapping[normalized]
+    raise ValueError(
+        f"Invalid SCRITTI_TORCH_DTYPE='{value}'. Supported values: auto, float16, bfloat16, float32."
+    )
+
+
+def _resolve_quantization() -> str:
+    quantization = _env("SCRITTI_QUANTIZATION", default="")
+    if quantization:
+        return _parse_quantization(quantization)
+
+    legacy_use_8bit = _env("USE_8BIT", default="")
+    if legacy_use_8bit:
+        return "8bit" if _env_bool("USE_8BIT", default=False) else "none"
+    return _parse_quantization("8bit")
+
 # CONFIGURATION
-HF_TOKEN = _env("HF_TOKEN", "SCRITTI_HF_TOKEN", default="")
-BASE_MODEL_NAME = _env("BASE_MODEL_NAME", "SCRITTI_BASE_MODEL_NAME", default="meta-llama/Llama-3.1-8B")
-_DEFAULT_ADAPTER_PATH = ""
-if "ADAPTER_PATH" in os.environ:
-    ADAPTER_PATH = os.environ.get("ADAPTER_PATH", "").strip()
-else:
-    ADAPTER_PATH = _env("SCRITTI_ADAPTER_PATH", default=_DEFAULT_ADAPTER_PATH)
+HF_TOKEN = _env("SCRITTI_HF_TOKEN", "HF_TOKEN", default="")
+BASE_MODEL_NAME = _env("SCRITTI_BASE_MODEL_NAME", "BASE_MODEL_NAME", default="meta-llama/Llama-3.1-8B")
+ADAPTER_PATH = _env("SCRITTI_ADAPTER_PATH", "ADAPTER_PATH", default="")
 
-MAX_NEW_TOKENS = int(_env("MAX_NEW_TOKENS", "SCRITTI_MAX_NEW_TOKENS", default="200"))
-TEMPERATURE = float(_env("TEMPERATURE", "SCRITTI_TEMPERATURE", default="0.75"))
-TOP_P = float(_env("TOP_P", "SCRITTI_TOP_P", default="0.9"))
-TOP_K = int(_env("TOP_K", "SCRITTI_TOP_K", default="25"))
-REPETITION_PENALTY = float(_env("REPETITION_PENALTY", "SCRITTI_REPETITION_PENALTY", default="1.2"))
+QUANTIZATION = _resolve_quantization()
+TORCH_DTYPE_NAME, TORCH_DTYPE_VALUE = _parse_torch_dtype(
+    _env("SCRITTI_TORCH_DTYPE", "TORCH_DTYPE", default="float16")
+)
 
-USE_8BIT = _env_bool("USE_8BIT", default=True)
-TRUST_REMOTE_CODE = _env_bool("TRUST_REMOTE_CODE", default=True)
-HOST = _env("HOST", default="0.0.0.0")
-PORT = int(_env("PORT", default="5000"))
+MAX_NEW_TOKENS = int(_env("SCRITTI_MAX_NEW_TOKENS", "MAX_NEW_TOKENS", default="200"))
+TEMPERATURE = float(_env("SCRITTI_TEMPERATURE", "TEMPERATURE", default="0.75"))
+TOP_P = float(_env("SCRITTI_TOP_P", "TOP_P", default="0.9"))
+TOP_K = int(_env("SCRITTI_TOP_K", "TOP_K", default="25"))
+REPETITION_PENALTY = float(_env("SCRITTI_REPETITION_PENALTY", "REPETITION_PENALTY", default="1.2"))
+
+TRUST_REMOTE_CODE = _env_bool("SCRITTI_TRUST_REMOTE_CODE", "TRUST_REMOTE_CODE", default=True)
+HOST = _env("SCRITTI_HOST", "HOST", default="0.0.0.0")
+PORT = int(_env("SCRITTI_PORT", "PORT", default="5000"))
 
 app = Flask(__name__, template_folder=str(APP_DIR / "templates"))
 
@@ -144,20 +179,36 @@ def _build_stopping_ids(local_tokenizer, family: str) -> list[int]:
 def _load_base_model() -> AutoModelForCausalLM:
     base_load_kwargs = {
         "trust_remote_code": TRUST_REMOTE_CODE,
+        "dtype": TORCH_DTYPE_VALUE,
         **_hf_kwargs(),
     }
 
     if torch.cuda.is_available():
         base_load_kwargs["device_map"] = "auto"
 
-    if USE_8BIT and torch.cuda.is_available():
-        print(f"Loading base model ({BASE_MODEL_NAME}) with 8-bit quantization...")
-        base_load_kwargs["quantization_config"] = BitsAndBytesConfig(
-            load_in_8bit=True,
-            llm_int8_has_fp16_weight=False,
-        )
+    if QUANTIZATION == "8bit":
+        if torch.cuda.is_available():
+            print(f"Loading base model ({BASE_MODEL_NAME}) with 8-bit quantization...")
+            base_load_kwargs["quantization_config"] = BitsAndBytesConfig(
+                load_in_8bit=True,
+                llm_int8_has_fp16_weight=False,
+            )
+        else:
+            print("SCRITTI_QUANTIZATION=8bit requested without CUDA; loading without quantization.")
+    elif QUANTIZATION == "4bit":
+        if torch.cuda.is_available():
+            print(f"Loading base model ({BASE_MODEL_NAME}) with 4-bit quantization...")
+            compute_dtype = TORCH_DTYPE_VALUE if TORCH_DTYPE_NAME != "auto" else torch.float16
+            base_load_kwargs["quantization_config"] = BitsAndBytesConfig(
+                load_in_4bit=True,
+                bnb_4bit_use_double_quant=True,
+                bnb_4bit_quant_type="nf4",
+                bnb_4bit_compute_dtype=compute_dtype,
+            )
+        else:
+            print("SCRITTI_QUANTIZATION=4bit requested without CUDA; loading without quantization.")
     else:
-        print(f"Loading base model ({BASE_MODEL_NAME}) without 8-bit quantization...")
+        print(f"Loading base model ({BASE_MODEL_NAME}) without quantization...")
 
     def _raise_helpful_model_error(err: Exception) -> None:
         message = str(err)
@@ -178,7 +229,7 @@ def _load_base_model() -> AutoModelForCausalLM:
         return AutoModelForCausalLM.from_pretrained(BASE_MODEL_NAME, **base_load_kwargs)
     except Exception as err:
         if "quantization_config" in base_load_kwargs:
-            print("8-bit load failed, retrying without quantization...")
+            print("Quantized load failed, retrying without quantization...")
             base_load_kwargs.pop("quantization_config", None)
             try:
                 return AutoModelForCausalLM.from_pretrained(BASE_MODEL_NAME, **base_load_kwargs)
@@ -336,6 +387,18 @@ def health():
         "base_model": BASE_MODEL_NAME,
         "adapter_path": ADAPTER_PATH,
         "model": MODEL_DISPLAY_NAME,
+        "quantization": QUANTIZATION,
+        "torch_dtype": TORCH_DTYPE_NAME,
+        "trust_remote_code": TRUST_REMOTE_CODE,
+        "host": HOST,
+        "port": PORT,
+        "generation": {
+            "max_new_tokens": MAX_NEW_TOKENS,
+            "temperature": TEMPERATURE,
+            "top_p": TOP_P,
+            "top_k": TOP_K,
+            "repetition_penalty": REPETITION_PENALTY,
+        },
     }
 
 

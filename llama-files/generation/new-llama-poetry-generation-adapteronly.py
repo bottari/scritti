@@ -18,17 +18,17 @@ HF_TOKEN = ""
 
 # 2. MODEL PATHS: Must match the paths used in train_llama_poetry.py
 BASE_MODEL_NAME = "meta-llama/Llama-3.1-8B"
-ADAPTER_PATH = r"D:\models\llama31-8b-poetry-mercury-qlora-4bit-March-15-2026"
+ADAPTER_PATH = r"D:\models\choice-models\llama3-8b-poetry-mercury-26-qlora-8bit-019\final_model"
 
 # 3. GENERATION SETTINGS
-MAX_NEW_TOKENS = 256
-TEMPERATURE = 1.8
-TOP_P = 0.45
-TOP_K = 150
-REPETITION_PENALTY = 1.2 
+MAX_NEW_TOKENS = 500
+TEMPERATURE = 0.7
+TOP_P = 0.95
+TOP_K = 50
+REPETITION_PENALTY = 1.15
 NUM_RETURN_SEQUENCES = 1
 
-PROMPT = "Coming upon the lake at night"
+PROMPT = "The stakes never higher, tonight"
 
 # Suppress warnings
 warnings.filterwarnings("ignore")

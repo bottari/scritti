@@ -19,10 +19,22 @@ __pycache__/
 # Ignore virtual environments
 gpt2-files/local-agent-001/agent-mercury/
 venv/
+.venv/
 .env/
 
 # Ignore logs
 *.log
 .env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Keep personal website data/assets local by default
+website_construction/backend/data/family.json
+website_construction/frontend/data/photos/*
+!website_construction/frontend/data/photos/.gitkeep
 
 artifacts/

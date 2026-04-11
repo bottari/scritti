@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Person Profile | Portfolio + Family Tree</title>
+    <link rel="stylesheet" href="/assets/styles.css" />
+  </head>
+  <body data-page="family">
+    <div class="site-shell">
+      <header class="page-header">
+        <nav class="top-nav">
+          <a href="/">Home</a>
+          <a href="/about">About</a>
+          <a href="/portfolio">Portfolio</a>
+          <a href="/family">Family Tree</a>
+        </nav>
+        <h1>Person Profile</h1>
+        <p>View biographical details and family relationships generated from the shared dataset.</p>
+      </header>
+
+      <main>
+        <section class="panel">
+          <a class="inline-link" href="/family">← Back to family table</a>
+          <div id="person-profile-root" class="profile-root"></div>
+        </section>
+      </main>
+    </div>
+    <script src="/assets/app.js" defer></script>
+    <script src="/assets/person-profile.js" defer></script>
+  </body>
+</html>

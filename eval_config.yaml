@@ -2,8 +2,8 @@ base_model: "meta-llama/Llama-3.1-8B"
 lora_path: "${SCRITTI_EVAL_LORA_PATH}"
 
 # Optional extra pair (enabled via env vars)
-extra_base_model: "${SCRITTI_EVAL_EXTRA_BASE_MODEL}"
-extra_lora_path: "${SCRITTI_EVAL_EXTRA_LORA_PATH}"
+extra_base_model: "${SCRITTI_EVAL_EXTRA_BASE_MODEL:-}"
+extra_lora_path: "${SCRITTI_EVAL_EXTRA_LORA_PATH:-}"
 extra_base_label: "gpt_base"
 extra_lora_label: "gpt_lora"
 extra_8bit: false
