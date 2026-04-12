@@ -95,7 +95,7 @@ async def get_whitman_response(prompt: str = Query(..., min_length=1)):
         top_p=0.95, 
         top_k=50, 
         repetition_penalty=1.2,
-        stream=True
+        stream=False
     )
     
     # 1. Get the raw output
