@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import os
-import re
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Query
@@ -11,6 +9,11 @@ from fastapi.staticfiles import StaticFiles
 from llama_cpp import Llama
 
 from services.family_loader import FamilyRepository
+from services.whitman_pipeline import (
+    DEFAULT_FALLBACK_RESPONSE,
+    build_formatted_prompt,
+    generate_clean_response,
+)
 
 # --- PATH CONFIGURATION ---
 BASE_DIR = Path(__file__).resolve().parent
@@ -51,71 +54,13 @@ def _page_response(page_name: str) -> FileResponse:
     return FileResponse(FRONTEND_DIR / page_name)
 
 
-THINKING_TAG_RE = re.compile(r"<think>.*?</think>", re.IGNORECASE | re.DOTALL)
-THINKING_HEADER_RE = re.compile(
-    r"^\s*(?:thinking process|thought process|reasoning|analysis|chain of thought|internal reasoning)\s*:",
-    re.IGNORECASE,
-)
-FINAL_MARKER_RE = re.compile(
-    r"^\s*(?:final answer|final response|answer|response)\s*:\s*",
-    re.IGNORECASE,
-)
-
-
-def _normalize_text(text: str) -> str:
-    return (
-        text.replace("â€œ", '"')
-        .replace("â€", '"')
-        .replace("â€˜", "'")
-        .replace("â€™", "'")
-        .strip()
-    )
-
-
-def _strip_thinking_steps(text: str) -> str:
-    cleaned = THINKING_TAG_RE.sub("", text or "")
-    cleaned = _normalize_text(cleaned)
-
-    if not cleaned:
-        return ""
-
-    lines = cleaned.splitlines()
-    for index, line in enumerate(lines):
-        if FINAL_MARKER_RE.match(line):
-            tail = FINAL_MARKER_RE.sub("", line, count=1).strip()
-            remainder = "\n".join(lines[index + 1 :]).strip()
-            return "\n".join(part for part in [tail, remainder] if part).strip()
-
-    if THINKING_HEADER_RE.match(cleaned):
-        return ""
-
-    return cleaned
-
-
 def _generate_whitman_response(prompt: str, *, retry: bool = False) -> str:
-    system_prompt = (
-        "You are the spirit of Walt Whitman. Speak with his poetic soul and transcendentalist wisdom. "
-        "Keep your answers short but profound. Never reveal analysis, chain-of-thought, reasoning, steps, "
-        "or notes. Output only the final in-character response with no headings or preamble."
-    )
-
-    if retry:
-        system_prompt += (
-            " Do not write 'Thinking Process', numbered lists, bullets, or explanations. "
-            "Return exactly one short Whitman-style passage."
-        )
-
-    formatted_prompt = (
-        f"<|im_start|>system\n"
-        f"{system_prompt}<|im_end|>\n"
-        f"<|im_start|>user\n{prompt}<|im_end|>\n"
-        f"<|im_start|>assistant\n"
-    )
+    formatted_prompt = build_formatted_prompt(prompt, retry=retry)
 
     output = llm(
         formatted_prompt,
         max_tokens=150,
-        stop=["<|im_end|>", "<|im_start|>", "</think>", "<|endoftext|>"],
+        stop=["<|im_end|>", "<|im_start|>", "<|endoftext|>"],
         temperature=0.6 if retry else 0.7,
         top_p=0.95,
         repeat_penalty=1.2,
@@ -164,15 +109,13 @@ def poet_page() -> FileResponse:
 # --- QWEN 3.5 API ENDPOINT ---
 @app.get("/api/whitman")
 async def get_whitman_response(prompt: str = Query(..., min_length=1)):
-    clean_text = _strip_thinking_steps(_generate_whitman_response(prompt))
-
-    if not clean_text:
-        clean_text = _strip_thinking_steps(_generate_whitman_response(prompt, retry=True))
-
-    if not clean_text:
-        clean_text = "I sing the bright wire at morning, and the human hand reaching through it for one more living spark."
-
-    return {"response": clean_text}
+    response = generate_clean_response(
+        prompt,
+        _generate_whitman_response,
+        lambda retry_prompt: _generate_whitman_response(retry_prompt, retry=True),
+        fallback_response=DEFAULT_FALLBACK_RESPONSE,
+    )
+    return {"response": response}
 
 
 # --- FAMILY & PORTFOLIO API ENDPOINTS ---
