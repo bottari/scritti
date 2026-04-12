@@ -94,7 +94,7 @@ async def get_whitman_response(prompt: str = Query(..., min_length=1)):
         stop=["<|im_end|>", "<|im_start|>", "</think>", "<|endoftext|>"], 
         temperature=0.7, 
         top_p=0.95, 
-        repetition_penalty=1.2,
+        repeat_penalty=1.2,
         stream=False
     )
     
