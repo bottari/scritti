@@ -81,36 +81,33 @@ def poet_page() -> FileResponse:
 async def get_whitman_response(prompt: str = Query(..., min_length=1)):
     formatted_prompt = (
         f"<|im_start|>system\n"
-        f"You are the spirit of Walt Whitman. Speak with his poetic soul."
+        f"You are the spirit of Walt Whitman. Speak with his poetic soul.\n"
         f"Keep your answers short but profound.<|im_end|>\n"
         f"<|im_start|>user\n{prompt}<|im_end|>\n"
         f"<|im_start|>assistant\n"
     )
     
+    # We remove top_k and stream to ensure maximum compatibility
     output = llm(
         formatted_prompt, 
         max_tokens=150, 
         stop=["<|im_end|>", "<|im_start|>", "</think>", "<|endoftext|>"], 
         temperature=0.7, 
         top_p=0.95, 
-        top_k=50, 
         repetition_penalty=1.2,
         stream=False
     )
     
-    # 1. Get the raw output
+    # Extract text safely
     raw_text = output["choices"][0]["text"].strip()
     
-    # 2. Handle the "Thinking" leakage
-    # If the model stopped at </think>, we take everything before it.
-    # If it included the tags, we strip them out.
+    # Handle thinking tags
     if "</think>" in raw_text:
         clean_text = raw_text.split("</think>")[-1].strip()
     else:
         clean_text = raw_text.replace("<think>", "").strip()
 
-    # 3. Fix Quote Directionality (Standardize to Straight Quotes)
-    # This replaces all variations of curly quotes with standard straight ones
+    # Standardize quotes
     clean_text = (clean_text.replace("“", '"')
                             .replace("”", '"')
                             .replace("‘", "'")
