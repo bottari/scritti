@@ -1,0 +1,2 @@
+# Keep local gallery test videos out of Git unless they have been intentionally optimized for deployment.
+frontend/data/photos/*.mp4

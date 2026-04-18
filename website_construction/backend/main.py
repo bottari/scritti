@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from urllib.parse import quote
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
@@ -23,7 +24,9 @@ FRONTEND_DATA_DIR = FRONTEND_DIR / "data"
 PHOTO_DIR = FRONTEND_DATA_DIR / "photos"
 DATA_PATH = BASE_DIR / "data" / "family.json"
 MODEL_PATH = BASE_DIR / "models" / "mini-whitman-q4.gguf"
-PHOTO_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg"}
+IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg"}
+VIDEO_EXTENSIONS = {".mp4", ".webm", ".ogg"}
+PORTFOLIO_MEDIA_EXTENSIONS = IMAGE_EXTENSIONS | VIDEO_EXTENSIONS
 
 # --- QWEN 3.5 INITIALIZATION ---
 llm = Llama(
@@ -68,6 +71,12 @@ def _generate_whitman_response(prompt: str, *, retry: bool = False) -> str:
     )
 
     return output["choices"][0]["text"].strip()
+
+
+def _get_portfolio_media_type(file_path: Path) -> str:
+    if file_path.suffix.lower() in VIDEO_EXTENSIONS:
+        return "video"
+    return "image"
 
 
 # --- PAGE ROUTES ---
@@ -142,12 +151,13 @@ def get_portfolio_photos():
     photos = []
     if PHOTO_DIR.exists():
         for file_path in sorted(PHOTO_DIR.iterdir(), key=lambda item: item.name.lower()):
-            if file_path.is_file() and file_path.suffix.lower() in PHOTO_EXTENSIONS:
+            if file_path.is_file() and file_path.suffix.lower() in PORTFOLIO_MEDIA_EXTENSIONS:
                 photos.append(
                     {
                         "name": file_path.stem.replace("-", " ").replace("_", " "),
                         "filename": file_path.name,
-                        "url": f"/data/photos/{file_path.name}",
+                        "url": f"/data/photos/{quote(file_path.name)}",
+                        "mediaType": _get_portfolio_media_type(file_path),
                     }
                 )
     return photos

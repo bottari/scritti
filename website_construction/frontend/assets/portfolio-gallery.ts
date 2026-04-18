@@ -1,12 +1,16 @@
-type PhotoEntry = {
+type PortfolioMediaType = "image" | "video";
+
+type PortfolioMediaEntry = {
   name: string;
   filename: string;
   url: string;
+  mediaType: PortfolioMediaType;
 };
 
 const portfolioGalleryRoot = document.getElementById("portfolio-gallery-root");
 let lightboxElement: HTMLDivElement | null = null;
 let lightboxImage: HTMLImageElement | null = null;
+let lightboxVideo: HTMLVideoElement | null = null;
 let lightboxCaption: HTMLParagraphElement | null = null;
 
 async function loadPortfolioGallery(): Promise<void> {
@@ -20,32 +24,33 @@ async function loadPortfolioGallery(): Promise<void> {
 
   try {
     const response = await fetch("/api/portfolio/photos");
-    const photos = (await response.json()) as PhotoEntry[];
+    const mediaEntries = (await response.json()) as PortfolioMediaEntry[];
 
-    if (!photos.length) {
+    if (!mediaEntries.length) {
       portfolioGalleryRoot.innerHTML = `
         <p class="message">
-          No photos have been added yet. Drop image files into
+          No photos or videos have been added yet. Drop image files or MP4 videos into
           <code>frontend/data/photos</code> and they will appear here automatically.
         </p>
       `;
       return;
     }
 
-    portfolioGalleryRoot.innerHTML = photos
+    portfolioGalleryRoot.innerHTML = mediaEntries
       .map(
-        (photo) => `
+        (mediaEntry) => `
           <button
             class="gallery-card"
             type="button"
-            data-photo-url="${photo.url}"
-            data-photo-name="${escapeHtml(photo.name)}"
-            data-photo-filename="${escapeHtml(photo.filename)}"
+            aria-label="${escapeHtml(mediaEntry.name)}"
+            data-media-url="${escapeHtml(mediaEntry.url)}"
+            data-media-name="${escapeHtml(mediaEntry.name)}"
+            data-media-filename="${escapeHtml(mediaEntry.filename)}"
+            data-media-type="${mediaEntry.mediaType}"
           >
-            <img src="${photo.url}" alt="${photo.name}" loading="lazy" />
-            <span class="gallery-card-copy">
-              <strong>${photo.name}</strong>
-              <span>${photo.filename}</span>
+            <span class="gallery-card-preview ${mediaEntry.mediaType === "video" ? "is-video" : ""}">
+              ${renderGalleryPreview(mediaEntry)}
+              ${mediaEntry.mediaType === "video" ? `<span class="gallery-card-play-icon" aria-hidden="true"></span>` : ""}
             </span>
           </button>
         `
@@ -55,15 +60,32 @@ async function loadPortfolioGallery(): Promise<void> {
     portfolioGalleryRoot.querySelectorAll<HTMLButtonElement>(".gallery-card").forEach((card) => {
       card.addEventListener("click", () => {
         openLightbox(
-          card.dataset.photoUrl || "",
-          card.dataset.photoName || "Photo",
-          card.dataset.photoFilename || ""
+          card.dataset.mediaUrl || "",
+          card.dataset.mediaName || "Media",
+          card.dataset.mediaFilename || "",
+          toMediaType(card.dataset.mediaType)
         );
       });
     });
   } catch (error) {
     portfolioGalleryRoot.innerHTML = `<p class="message">Unable to load the portfolio gallery right now.</p>`;
   }
+}
+
+function renderGalleryPreview(mediaEntry: PortfolioMediaEntry): string {
+  if (mediaEntry.mediaType === "video") {
+    return `
+      <video
+        src="${escapeHtml(`${mediaEntry.url}#t=0.1`)}"
+        muted
+        playsinline
+        preload="metadata"
+        aria-hidden="true"
+      ></video>
+    `;
+  }
+
+  return `<img src="${escapeHtml(mediaEntry.url)}" alt="${escapeHtml(mediaEntry.name)}" loading="lazy" />`;
 }
 
 function ensureLightbox(): void {
@@ -76,15 +98,19 @@ function ensureLightbox(): void {
   lightboxElement.setAttribute("aria-hidden", "true");
   lightboxElement.innerHTML = `
     <div class="lightbox-backdrop" data-lightbox-close="true"></div>
-    <div class="lightbox-dialog" role="dialog" aria-modal="true" aria-label="Photo viewer">
-      <button class="lightbox-close" type="button" aria-label="Close photo viewer">Close</button>
-      <img class="lightbox-image" alt="" />
+    <div class="lightbox-dialog" role="dialog" aria-modal="true" aria-label="Portfolio media viewer">
+      <button class="lightbox-close" type="button" aria-label="Close media viewer">Close</button>
+      <div class="lightbox-media">
+        <img class="lightbox-image" alt="" hidden />
+        <video class="lightbox-video" controls playsinline preload="metadata" hidden></video>
+      </div>
       <p class="lightbox-caption"></p>
     </div>
   `;
   document.body.appendChild(lightboxElement);
 
   lightboxImage = lightboxElement.querySelector(".lightbox-image");
+  lightboxVideo = lightboxElement.querySelector(".lightbox-video");
   lightboxCaption = lightboxElement.querySelector(".lightbox-caption");
 
   lightboxElement.addEventListener("click", (event) => {
@@ -101,13 +127,35 @@ function ensureLightbox(): void {
   });
 }
 
-function openLightbox(url: string, name: string, filename: string): void {
-  if (!lightboxElement || !lightboxImage || !lightboxCaption) {
+function openLightbox(
+  url: string,
+  name: string,
+  filename: string,
+  mediaType: PortfolioMediaType
+): void {
+  if (!lightboxElement || !lightboxImage || !lightboxVideo || !lightboxCaption) {
     return;
   }
 
-  lightboxImage.src = url;
-  lightboxImage.alt = name;
+  if (mediaType === "video") {
+    lightboxImage.hidden = true;
+    lightboxImage.src = "";
+    lightboxImage.alt = "";
+
+    lightboxVideo.hidden = false;
+    lightboxVideo.src = url;
+    lightboxVideo.load();
+  } else {
+    lightboxVideo.pause();
+    lightboxVideo.hidden = true;
+    lightboxVideo.removeAttribute("src");
+    lightboxVideo.load();
+
+    lightboxImage.hidden = false;
+    lightboxImage.src = url;
+    lightboxImage.alt = name;
+  }
+
   lightboxCaption.textContent = filename ? `${name} - ${filename}` : name;
   lightboxElement.classList.add("is-open");
   lightboxElement.setAttribute("aria-hidden", "false");
@@ -115,7 +163,7 @@ function openLightbox(url: string, name: string, filename: string): void {
 }
 
 function closeLightbox(): void {
-  if (!lightboxElement || !lightboxImage || !lightboxCaption) {
+  if (!lightboxElement || !lightboxImage || !lightboxVideo || !lightboxCaption) {
     return;
   }
 
@@ -123,8 +171,17 @@ function closeLightbox(): void {
   lightboxElement.setAttribute("aria-hidden", "true");
   lightboxImage.src = "";
   lightboxImage.alt = "";
+  lightboxImage.hidden = true;
+  lightboxVideo.pause();
+  lightboxVideo.hidden = true;
+  lightboxVideo.removeAttribute("src");
+  lightboxVideo.load();
   lightboxCaption.textContent = "";
   document.body.classList.remove("lightbox-open");
+}
+
+function toMediaType(value: string | undefined): PortfolioMediaType {
+  return value === "video" ? "video" : "image";
 }
 
 function escapeHtml(value: string): string {
