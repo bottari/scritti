@@ -139,7 +139,7 @@ p {
 }
 
 .family-layout {
-  grid-template-columns: 1.1fr 0.9fr;
+  grid-template-columns: 1fr;
 }
 
 .panel {
@@ -349,37 +349,164 @@ select {
 }
 
 .tree-root {
-  overflow-x: auto;
-  padding-bottom: 0.25rem;
-}
-
-.tree-forest {
   display: grid;
   gap: 1rem;
 }
 
-.tree-cluster {
-  padding: 1rem;
-  border-radius: 22px;
-  border: 1px solid var(--line);
-  background:
-    linear-gradient(180deg, rgba(255, 250, 244, 0.98) 0%, rgba(246, 237, 225, 0.92) 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+.tree-explorer {
+  display: grid;
+  gap: 1rem;
 }
 
-.tree-branch {
+.tree-explorer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.tree-explorer-copy h3 {
+  margin-bottom: 0.35rem;
+}
+
+.tree-explorer-summary,
+.tree-explorer-hint {
+  margin: 0.2rem 0 0;
+  color: var(--muted);
+}
+
+.tree-explorer-actions {
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.tree-action-button,
+.tree-root-pill,
+.desc-tree-toggle {
+  border: 1px solid rgba(74, 52, 37, 0.12);
+  background: var(--surface-strong);
+  color: var(--text);
+}
+
+.tree-action-button {
+  border-radius: 999px;
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
+}
+
+.tree-action-button:hover,
+.tree-root-pill:hover,
+.desc-tree-toggle:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(63, 42, 28, 0.08);
+  border-color: rgba(138, 75, 43, 0.28);
+}
+
+.tree-root-switcher {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.tree-root-pill {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 14rem;
+  padding: 0.95rem 1rem;
+  border-radius: 18px;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease, background 140ms ease;
+}
+
+.tree-root-pill strong {
+  font-size: 0.96rem;
+}
+
+.tree-root-pill.is-active {
+  border-color: rgba(138, 75, 43, 0.4);
+  background: linear-gradient(180deg, rgba(255, 250, 244, 1) 0%, rgba(243, 229, 214, 0.92) 100%);
+  box-shadow: 0 16px 28px rgba(63, 42, 28, 0.12);
+}
+
+.tree-root-meta {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.tree-canvas {
+  overflow: auto;
+  padding: 1.25rem;
+  border-radius: 24px;
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(180deg, rgba(255, 250, 244, 0.98) 0%, rgba(245, 236, 224, 0.94) 100%),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0,
+      transparent 119px,
+      rgba(138, 75, 43, 0.04) 120px,
+      rgba(138, 75, 43, 0.04) 121px
+    );
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.desc-tree-branch {
   position: relative;
 }
 
-.tree-family {
+.desc-tree-family {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.desc-tree-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.desc-tree-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  border-radius: 999px;
+  padding: 0.55rem 0.8rem;
+  cursor: pointer;
+  transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
+}
+
+.desc-tree-toggle-icon {
+  font-size: 0.9rem;
+  color: var(--accent);
+}
+
+.desc-tree-toggle-label {
+  font-size: 0.88rem;
+}
+
+.desc-tree-toggle-count,
+.desc-tree-leaf {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.desc-tree-leaf {
+  display: inline-flex;
+  padding: 0.4rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(138, 75, 43, 0.08);
+}
+
+.desc-tree-couple {
   display: inline-flex;
   align-items: stretch;
   flex-wrap: wrap;
   gap: 0.75rem;
-}
-
-.tree-family-root {
-  margin-bottom: 0.15rem;
 }
 
 .tree-family-connector {
@@ -417,19 +544,19 @@ select {
   display: inline-flex;
   flex-direction: column;
   gap: 0.28rem;
-  min-width: min(100%, 13rem);
-  padding: 0.85rem 1rem;
-  border-radius: 16px;
+  min-width: min(100%, 14rem);
+  padding: 0.9rem 1rem;
+  border-radius: 18px;
   text-decoration: none;
-  background: var(--surface-strong);
+  background: rgba(255, 250, 244, 0.98);
   border: 1px solid rgba(74, 52, 37, 0.12);
-  box-shadow: 0 10px 18px rgba(63, 42, 28, 0.08);
+  box-shadow: 0 12px 22px rgba(63, 42, 28, 0.08);
   transition: transform 140ms ease, box-shadow 140ms ease;
 }
 
 .tree-person:hover {
   transform: translateY(-2px);
-  box-shadow: 0 14px 24px rgba(63, 42, 28, 0.12);
+  box-shadow: 0 16px 26px rgba(63, 42, 28, 0.12);
 }
 
 .tree-person.is-static {
@@ -451,47 +578,43 @@ select {
   letter-spacing: 0.08em;
 }
 
-.tree-children {
+.desc-tree-children {
   position: relative;
   display: grid;
-  gap: 1rem;
-  margin-top: 1rem;
+  gap: 1.25rem;
+  margin-top: 1.2rem;
   margin-left: 1.5rem;
-  padding-left: 1.6rem;
+  padding-left: 1.8rem;
 }
 
-.tree-children::before {
+.desc-tree-children::before {
   content: "";
   position: absolute;
   left: 0;
   top: 0;
-  bottom: 1.35rem;
+  bottom: 1.6rem;
   width: 2px;
-  background: linear-gradient(180deg, rgba(193, 123, 70, 0.58), rgba(193, 123, 70, 0.18));
+  background: linear-gradient(180deg, rgba(193, 123, 70, 0.58), rgba(193, 123, 70, 0.16));
 }
 
-.tree-child {
-  position: relative;
-}
-
-.tree-child::before {
+.desc-tree-children > .desc-tree-branch::before {
   content: "";
   position: absolute;
-  left: -1.6rem;
-  top: 1.35rem;
-  width: 1.6rem;
+  left: -1.8rem;
+  top: 2rem;
+  width: 1.8rem;
   height: 2px;
   background: rgba(193, 123, 70, 0.45);
 }
 
-.tree-child:last-child::after {
+.desc-tree-children > .desc-tree-branch:last-child::after {
   content: "";
   position: absolute;
-  left: -1.6rem;
-  top: 1.35rem;
-  bottom: -1rem;
+  left: -1.8rem;
+  top: 2rem;
+  bottom: -1.2rem;
   width: 2px;
-  background: rgba(250, 244, 236, 0.98);
+  background: rgba(245, 236, 224, 0.96);
 }
 
 .branch-tag {
@@ -551,7 +674,20 @@ select {
     flex-direction: column;
   }
 
-  .tree-family {
+  .tree-explorer-header {
+    flex-direction: column;
+  }
+
+  .tree-explorer-actions {
+    justify-content: flex-start;
+  }
+
+  .tree-root-pill {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .desc-tree-couple {
     display: grid;
   }
 
@@ -576,7 +712,7 @@ select {
     width: 100%;
   }
 
-  .tree-children {
+  .desc-tree-children {
     margin-left: 0.5rem;
   }
 }
