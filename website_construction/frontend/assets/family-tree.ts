@@ -17,6 +17,7 @@ type DescendancyNode = {
   children: DescendancyNode[];
 };
 
+const FAMILY_DATA_CHANGED_EVENT = "family-data-changed";
 const treeRoot = document.getElementById("family-tree-root");
 const peopleById = new Map<string, PersonSummary>();
 const peopleByName = new Map<string, PersonSummary>();
@@ -36,6 +37,9 @@ async function loadFamilyTree(): Promise<void> {
 
   try {
     const response = await fetch("/api/family");
+    if (!response.ok) {
+      throw new Error("Unable to load family data");
+    }
     const people = (await response.json()) as PersonSummary[];
 
     populatePeopleMaps(people);
@@ -530,3 +534,6 @@ function capitalize(value: string): string {
 }
 
 loadFamilyTree();
+window.addEventListener(FAMILY_DATA_CHANGED_EVENT, () => {
+  void loadFamilyTree();
+});

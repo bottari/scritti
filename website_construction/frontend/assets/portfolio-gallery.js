@@ -1,3 +1,23 @@
+const LAYOUT_VARIANT_CYCLE = [
+  "featured",
+  "standard",
+  "compact",
+  "wide",
+  "tall",
+  "compact",
+  "standard",
+  "wide",
+  "standard",
+  "tall",
+  "compact",
+  "wide",
+];
+const SMALL_GALLERY_VARIANTS = {
+  1: ["featured"],
+  2: ["featured", "wide"],
+  3: ["featured", "standard", "compact"],
+  4: ["featured", "standard", "compact", "wide"],
+};
 const portfolioGalleryRoot = document.getElementById("portfolio-gallery-root");
 let lightboxElement = null;
 let lightboxImage = null;
@@ -8,9 +28,13 @@ async function loadPortfolioGallery() {
     return;
   }
   ensureLightbox();
+  portfolioGalleryRoot.dataset.itemCount = "0";
   portfolioGalleryRoot.innerHTML = `<p class="message">Loading gallery...</p>`;
   try {
     const response = await fetch("/api/portfolio/photos");
+    if (!response.ok) {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
     const mediaEntries = await response.json();
     if (!mediaEntries.length) {
       portfolioGalleryRoot.innerHTML = `
@@ -21,27 +45,11 @@ async function loadPortfolioGallery() {
       `;
       return;
     }
+    portfolioGalleryRoot.dataset.itemCount = String(mediaEntries.length);
     portfolioGalleryRoot.innerHTML = mediaEntries
-      .map(
-        (mediaEntry) => `
-          <button
-            class="gallery-card"
-            type="button"
-            aria-label="${escapeHtml(mediaEntry.name)}"
-            data-media-url="${escapeHtml(mediaEntry.url)}"
-            data-media-name="${escapeHtml(mediaEntry.name)}"
-            data-media-filename="${escapeHtml(mediaEntry.filename)}"
-            data-media-type="${mediaEntry.mediaType}"
-          >
-            <span class="gallery-card-preview ${mediaEntry.mediaType === "video" ? "is-video" : ""}">
-              ${renderGalleryPreview(mediaEntry)}
-              ${mediaEntry.mediaType === "video" ? `<span class="gallery-card-play-icon" aria-hidden="true"></span>` : ""}
-            </span>
-          </button>
-        `
-      )
+      .map((mediaEntry, index) => renderGalleryItem(mediaEntry, index, mediaEntries.length))
       .join("");
-    portfolioGalleryRoot.querySelectorAll(".gallery-card").forEach((card) => {
+    portfolioGalleryRoot.querySelectorAll(".portfolio-item").forEach((card) => {
       card.addEventListener("click", () => {
         openLightbox(card.dataset.mediaUrl || "", card.dataset.mediaName || "Media", card.dataset.mediaFilename || "", toMediaType(card.dataset.mediaType));
       });
@@ -50,7 +58,33 @@ async function loadPortfolioGallery() {
     portfolioGalleryRoot.innerHTML = `<p class="message">Unable to load the portfolio gallery right now.</p>`;
   }
 }
-function renderGalleryPreview(mediaEntry) {
+function renderGalleryItem(mediaEntry, index, totalItems) {
+  const layoutVariant = getLayoutVariant(index, totalItems, mediaEntry.mediaType);
+  const badge = getItemBadge(mediaEntry.mediaType, layoutVariant);
+  const mediaTypeClass = mediaEntry.mediaType === "video" ? "portfolio-item--video" : "portfolio-item--image";
+  return `
+    <button
+      class="portfolio-item ${mediaTypeClass} portfolio-item--${layoutVariant}"
+      type="button"
+      aria-label="${escapeHtml(mediaEntry.name)}"
+      data-media-url="${escapeHtml(mediaEntry.url)}"
+      data-media-name="${escapeHtml(mediaEntry.name)}"
+      data-media-filename="${escapeHtml(mediaEntry.filename)}"
+      data-media-type="${mediaEntry.mediaType}"
+    >
+      <span class="portfolio-item__media ${mediaEntry.mediaType === "video" ? "is-video" : ""}">
+        ${renderGalleryPreview(mediaEntry, index)}
+        ${mediaEntry.mediaType === "video" ? `<span class="portfolio-item__play-icon" aria-hidden="true"></span>` : ""}
+      </span>
+      <span class="portfolio-item__meta">
+        ${badge ? `<span class="portfolio-item__badge">${badge}</span>` : ""}
+        <span class="portfolio-item__title">${escapeHtml(mediaEntry.name)}</span>
+        <span class="portfolio-item__hint">${mediaEntry.mediaType === "video" ? "Play in viewer" : "Open in viewer"}</span>
+      </span>
+    </button>
+  `;
+}
+function renderGalleryPreview(mediaEntry, index) {
   if (mediaEntry.mediaType === "video") {
     return `
       <video
@@ -62,7 +96,39 @@ function renderGalleryPreview(mediaEntry) {
       ></video>
     `;
   }
-  return `<img src="${escapeHtml(mediaEntry.url)}" alt="${escapeHtml(mediaEntry.name)}" loading="lazy" />`;
+  const loadingStrategy = index < 3 ? "eager" : "lazy";
+  const fetchPriority = index === 0 ? ` fetchpriority="high"` : "";
+  return `
+    <img
+      src="${escapeHtml(mediaEntry.url)}"
+      alt="${escapeHtml(mediaEntry.name)}"
+      loading="${loadingStrategy}"
+      decoding="async"${fetchPriority}
+    />
+  `;
+}
+function getLayoutVariant(index, totalItems, mediaType) {
+  const variantSource = SMALL_GALLERY_VARIANTS[totalItems] || LAYOUT_VARIANT_CYCLE;
+  const preferredVariant = variantSource[index % variantSource.length] || "standard";
+  return normalizeLayoutVariant(preferredVariant, mediaType);
+}
+function normalizeLayoutVariant(variant, mediaType) {
+  if (mediaType !== "video") {
+    return variant;
+  }
+  if (variant === "tall") {
+    return "wide";
+  }
+  return variant;
+}
+function getItemBadge(mediaType, layoutVariant) {
+  if (mediaType === "video") {
+    return "Video";
+  }
+  if (layoutVariant === "featured") {
+    return "Featured";
+  }
+  return "";
 }
 function ensureLightbox() {
   if (lightboxElement) {

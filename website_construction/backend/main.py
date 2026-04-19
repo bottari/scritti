@@ -1,15 +1,21 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 from urllib.parse import quote
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import Depends, FastAPI, Header, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from llama_cpp import Llama
 
-from services.family_loader import FamilyRepository
+from models import Person
+from services.family_loader import (
+    FamilyNotFoundError,
+    FamilyRepository,
+    FamilyValidationError,
+)
 from services.whitman_pipeline import (
     DEFAULT_FALLBACK_RESPONSE,
     build_formatted_prompt,
@@ -90,6 +96,38 @@ def _get_portfolio_media_type(file_path: Path) -> str:
     return "image"
 
 
+def _extract_bearer_token(authorization: str | None) -> str | None:
+    if not authorization:
+        return None
+    if not authorization.lower().startswith("bearer "):
+        return None
+    return authorization.split(" ", 1)[1].strip() or None
+
+
+def require_family_edit_token(
+    x_family_edit_token: str | None = Header(default=None),
+    authorization: str | None = Header(default=None),
+) -> None:
+    configured_token = os.getenv("FAMILY_EDIT_TOKEN", "").strip()
+    if not configured_token:
+        raise HTTPException(
+            status_code=503,
+            detail="Family editing is not configured on this server. Set FAMILY_EDIT_TOKEN first.",
+        )
+
+    provided_token = x_family_edit_token or _extract_bearer_token(authorization)
+    if provided_token != configured_token:
+        raise HTTPException(status_code=401, detail="Invalid family edit token")
+
+
+def _raise_family_http_error(error: Exception) -> None:
+    if isinstance(error, FamilyNotFoundError):
+        raise HTTPException(status_code=404, detail=str(error)) from error
+    if isinstance(error, FamilyValidationError):
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    raise error
+
+
 # --- PAGE ROUTES ---
 @app.get("/")
 def root() -> FileResponse:
@@ -142,6 +180,24 @@ async def get_whitman_response(prompt: str = Query(..., min_length=1)):
 @app.get("/api/family")
 def get_family():
     return [person.model_dump() for person in repository.list_people()]
+
+
+@app.post("/api/family", dependencies=[Depends(require_family_edit_token)])
+def create_family_person(person: Person):
+    try:
+        saved_person = repository.create_person(person)
+    except Exception as error:  # pragma: no cover - small wrapper over repository behavior
+        _raise_family_http_error(error)
+    return saved_person.model_dump()
+
+
+@app.put("/api/family/{person_id}", dependencies=[Depends(require_family_edit_token)])
+def update_family_person(person_id: str, person: Person):
+    try:
+        saved_person = repository.update_person(person_id, person)
+    except Exception as error:  # pragma: no cover - small wrapper over repository behavior
+        _raise_family_http_error(error)
+    return saved_person.model_dump()
 
 
 @app.get("/api/person/{person_id}")
