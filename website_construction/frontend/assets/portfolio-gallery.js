@@ -60,7 +60,6 @@ async function loadPortfolioGallery() {
 }
 function renderGalleryItem(mediaEntry, index, totalItems) {
   const layoutVariant = getLayoutVariant(index, totalItems, mediaEntry.mediaType);
-  const badge = getItemBadge(mediaEntry.mediaType, layoutVariant);
   const mediaTypeClass = mediaEntry.mediaType === "video" ? "portfolio-item--video" : "portfolio-item--image";
   return `
     <button
@@ -75,11 +74,6 @@ function renderGalleryItem(mediaEntry, index, totalItems) {
       <span class="portfolio-item__media ${mediaEntry.mediaType === "video" ? "is-video" : ""}">
         ${renderGalleryPreview(mediaEntry, index)}
         ${mediaEntry.mediaType === "video" ? `<span class="portfolio-item__play-icon" aria-hidden="true"></span>` : ""}
-      </span>
-      <span class="portfolio-item__meta">
-        ${badge ? `<span class="portfolio-item__badge">${badge}</span>` : ""}
-        <span class="portfolio-item__title">${escapeHtml(mediaEntry.name)}</span>
-        <span class="portfolio-item__hint">${mediaEntry.mediaType === "video" ? "Play in viewer" : "Open in viewer"}</span>
       </span>
     </button>
   `;
@@ -120,15 +114,6 @@ function normalizeLayoutVariant(variant, mediaType) {
     return "wide";
   }
   return variant;
-}
-function getItemBadge(mediaType, layoutVariant) {
-  if (mediaType === "video") {
-    return "Video";
-  }
-  if (layoutVariant === "featured") {
-    return "Featured";
-  }
-  return "";
 }
 function ensureLightbox() {
   if (lightboxElement) {

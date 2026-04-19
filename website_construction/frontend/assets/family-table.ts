@@ -21,7 +21,6 @@ type PersonRecord = {
   [key: string]: unknown;
 };
 
-const FAMILY_DATA_CHANGED_EVENT = "family-data-changed";
 const TOKEN_STORAGE_KEY = "family-edit-token";
 
 const tableBody = document.getElementById("family-table-body");
@@ -471,7 +470,7 @@ async function handleEditorSubmit(event: Event): Promise<void> {
       "success"
     );
     await loadFamilyTable();
-    window.dispatchEvent(new CustomEvent(FAMILY_DATA_CHANGED_EVENT));
+    window.dispatchEvent(new CustomEvent("family-data-changed"));
   } catch (error) {
     setFeedback(getErrorMessage(error), "error");
   }

@@ -91,7 +91,6 @@ function renderGalleryItem(
   totalItems: number
 ): string {
   const layoutVariant = getLayoutVariant(index, totalItems, mediaEntry.mediaType);
-  const badge = getItemBadge(mediaEntry.mediaType, layoutVariant);
   const mediaTypeClass = mediaEntry.mediaType === "video" ? "portfolio-item--video" : "portfolio-item--image";
 
   return `
@@ -107,11 +106,6 @@ function renderGalleryItem(
       <span class="portfolio-item__media ${mediaEntry.mediaType === "video" ? "is-video" : ""}">
         ${renderGalleryPreview(mediaEntry, index)}
         ${mediaEntry.mediaType === "video" ? `<span class="portfolio-item__play-icon" aria-hidden="true"></span>` : ""}
-      </span>
-      <span class="portfolio-item__meta">
-        ${badge ? `<span class="portfolio-item__badge">${badge}</span>` : ""}
-        <span class="portfolio-item__title">${escapeHtml(mediaEntry.name)}</span>
-        <span class="portfolio-item__hint">${mediaEntry.mediaType === "video" ? "Play in viewer" : "Open in viewer"}</span>
       </span>
     </button>
   `;
@@ -166,21 +160,6 @@ function normalizeLayoutVariant(
   }
 
   return variant;
-}
-
-function getItemBadge(
-  mediaType: PortfolioMediaType,
-  layoutVariant: PortfolioLayoutVariant
-): string {
-  if (mediaType === "video") {
-    return "Video";
-  }
-
-  if (layoutVariant === "featured") {
-    return "Featured";
-  }
-
-  return "";
 }
 
 function ensureLightbox(): void {

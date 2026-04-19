@@ -1,4 +1,3 @@
-const FAMILY_DATA_CHANGED_EVENT = "family-data-changed";
 const treeRoot = document.getElementById("family-tree-root");
 const peopleById = new Map();
 const peopleByName = new Map();
@@ -398,6 +397,6 @@ function capitalize(value) {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
 loadFamilyTree();
-window.addEventListener(FAMILY_DATA_CHANGED_EVENT, () => {
+window.addEventListener("family-data-changed", () => {
   void loadFamilyTree();
 });

@@ -17,7 +17,6 @@ type DescendancyNode = {
   children: DescendancyNode[];
 };
 
-const FAMILY_DATA_CHANGED_EVENT = "family-data-changed";
 const treeRoot = document.getElementById("family-tree-root");
 const peopleById = new Map<string, PersonSummary>();
 const peopleByName = new Map<string, PersonSummary>();
@@ -534,6 +533,6 @@ function capitalize(value: string): string {
 }
 
 loadFamilyTree();
-window.addEventListener(FAMILY_DATA_CHANGED_EVENT, () => {
+window.addEventListener("family-data-changed", () => {
   void loadFamilyTree();
 });

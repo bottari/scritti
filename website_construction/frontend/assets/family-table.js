@@ -1,4 +1,3 @@
-const FAMILY_DATA_CHANGED_EVENT = "family-data-changed";
 const TOKEN_STORAGE_KEY = "family-edit-token";
 const tableBody = document.getElementById("family-table-body");
 const searchInput = document.getElementById("family-search");
@@ -395,7 +394,7 @@ async function handleEditorSubmit(event) {
     closeEditor();
     setFeedback(mode === "edit" ? `Saved changes for ${payload.name}.` : `Created ${payload.name}.`, "success");
     await loadFamilyTable();
-    window.dispatchEvent(new CustomEvent(FAMILY_DATA_CHANGED_EVENT));
+    window.dispatchEvent(new CustomEvent("family-data-changed"));
   } catch (error) {
     setFeedback(getErrorMessage(error), "error");
   }
