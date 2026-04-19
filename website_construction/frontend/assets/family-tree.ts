@@ -11,6 +11,8 @@ type PersonSummary = {
   birthYear?: number;
   deathYear?: number;
   spouse?: string;
+  parents?: string[];
+  children?: string[];
   branch?: string;
 };
 
@@ -44,7 +46,7 @@ async function loadFamilyTree(): Promise<void> {
     const forest = document.createElement("div");
     forest.className = "tree-forest";
 
-    const displayRoots = groupRootNodes(sortNodes(tree));
+    const displayRoots = buildVisibleRoots(sortNodes(tree));
     displayRoots.forEach((node) => forest.appendChild(renderBranch(node, true)));
 
     treeRoot.innerHTML = "";
@@ -64,37 +66,9 @@ function populatePeopleMaps(people: PersonSummary[]): void {
   });
 }
 
-function groupRootNodes(nodes: TreeNode[]): TreeNode[] {
+function buildVisibleRoots(nodes: TreeNode[]): TreeNode[] {
   const rootsById = new Map(nodes.map((node) => [node.id, node]));
-  const groupedRoots: TreeNode[] = [];
-  const pairedRoots = new Set<string>();
-
-  nodes.forEach((node) => {
-    if (pairedRoots.has(node.id)) {
-      return;
-    }
-
-    const person = peopleById.get(node.id);
-    const spouse = getSpousePerson(person?.spouse);
-
-    if (spouse && rootsById.has(spouse.id) && !pairedRoots.has(spouse.id)) {
-      const spouseNode = rootsById.get(spouse.id);
-      if (spouseNode) {
-        pairedRoots.add(node.id);
-        pairedRoots.add(spouse.id);
-        groupedRoots.push({
-          ...cloneNode(node),
-          children: mergeChildren(node.children || [], spouseNode.children || []),
-        });
-        return;
-      }
-    }
-
-    pairedRoots.add(node.id);
-    groupedRoots.push(cloneNode(node));
-  });
-
-  return groupedRoots;
+  return nodes.filter((node) => !shouldSuppressRoot(node, rootsById));
 }
 
 function renderBranch(node: TreeNode, isRoot = false): HTMLElement {
@@ -198,32 +172,6 @@ function createPersonCard(
   return card;
 }
 
-function mergeChildren(...childLists: TreeNode[][]): TreeNode[] {
-  const merged = new Map<string, TreeNode>();
-
-  childLists.flat().forEach((child) => {
-    const existing = merged.get(child.id);
-    if (!existing) {
-      merged.set(child.id, cloneNode(child));
-      return;
-    }
-
-    merged.set(child.id, {
-      ...existing,
-      children: mergeChildren(existing.children || [], child.children || []),
-    });
-  });
-
-  return sortNodes(Array.from(merged.values()));
-}
-
-function cloneNode(node: TreeNode): TreeNode {
-  return {
-    ...node,
-    children: (node.children || []).map((child) => cloneNode(child)),
-  };
-}
-
 function sortNodes(nodes: TreeNode[]): TreeNode[] {
   return [...nodes]
     .map((node) => ({
@@ -242,6 +190,26 @@ function compareNodes(left: TreeNode, right: TreeNode): number {
   }
 
   return left.name.localeCompare(right.name);
+}
+
+function shouldSuppressRoot(node: TreeNode, rootsById: Map<string, TreeNode>): boolean {
+  const person = peopleById.get(node.id);
+  const spouse = getSpousePerson(person?.spouse);
+
+  if (!person || !spouse) {
+    return false;
+  }
+
+  const spouseRoot = rootsById.get(spouse.id);
+  if (spouseRoot) {
+    return compareNodes(node, spouseRoot) > 0;
+  }
+
+  return hasKnownParent(spouse);
+}
+
+function hasKnownParent(person: PersonSummary): boolean {
+  return (person.parents || []).some((parentId) => peopleById.has(parentId));
 }
 
 function getSpousePerson(spouseName: string | undefined): PersonSummary | undefined {

@@ -20,7 +20,7 @@ async function loadFamilyTree() {
     }
     const forest = document.createElement("div");
     forest.className = "tree-forest";
-    const displayRoots = groupRootNodes(sortNodes(tree));
+    const displayRoots = buildVisibleRoots(sortNodes(tree));
     displayRoots.forEach((node) => forest.appendChild(renderBranch(node, true)));
     treeRoot.innerHTML = "";
     treeRoot.appendChild(forest);
@@ -36,32 +36,9 @@ function populatePeopleMaps(people) {
     peopleByName.set(normalizeName(person.name), person);
   });
 }
-function groupRootNodes(nodes) {
+function buildVisibleRoots(nodes) {
   const rootsById = new Map(nodes.map((node) => [node.id, node]));
-  const groupedRoots = [];
-  const pairedRoots = new Set();
-  nodes.forEach((node) => {
-    if (pairedRoots.has(node.id)) {
-      return;
-    }
-    const person = peopleById.get(node.id);
-    const spouse = getSpousePerson(person?.spouse);
-    if (spouse && rootsById.has(spouse.id) && !pairedRoots.has(spouse.id)) {
-      const spouseNode = rootsById.get(spouse.id);
-      if (spouseNode) {
-        pairedRoots.add(node.id);
-        pairedRoots.add(spouse.id);
-        groupedRoots.push({
-          ...cloneNode(node),
-          children: mergeChildren(node.children || [], spouseNode.children || []),
-        });
-        return;
-      }
-    }
-    pairedRoots.add(node.id);
-    groupedRoots.push(cloneNode(node));
-  });
-  return groupedRoots;
+  return nodes.filter((node) => !shouldSuppressRoot(node, rootsById));
 }
 function renderBranch(node, isRoot = false) {
   const branch = document.createElement(isRoot ? "section" : "div");
@@ -131,27 +108,6 @@ function createPersonCard(id, name, branch, person, isSpouse) {
   }
   return card;
 }
-function mergeChildren(...childLists) {
-  const merged = new Map();
-  childLists.flat().forEach((child) => {
-    const existing = merged.get(child.id);
-    if (!existing) {
-      merged.set(child.id, cloneNode(child));
-      return;
-    }
-    merged.set(child.id, {
-      ...existing,
-      children: mergeChildren(existing.children || [], child.children || []),
-    });
-  });
-  return sortNodes(Array.from(merged.values()));
-}
-function cloneNode(node) {
-  return {
-    ...node,
-    children: (node.children || []).map((child) => cloneNode(child)),
-  };
-}
 function sortNodes(nodes) {
   return [...nodes]
     .map((node) => ({
@@ -167,6 +123,21 @@ function compareNodes(left, right) {
     return leftBirthYear - rightBirthYear;
   }
   return left.name.localeCompare(right.name);
+}
+function shouldSuppressRoot(node, rootsById) {
+  const person = peopleById.get(node.id);
+  const spouse = getSpousePerson(person?.spouse);
+  if (!person || !spouse) {
+    return false;
+  }
+  const spouseRoot = rootsById.get(spouse.id);
+  if (spouseRoot) {
+    return compareNodes(node, spouseRoot) > 0;
+  }
+  return hasKnownParent(spouse);
+}
+function hasKnownParent(person) {
+  return (person.parents || []).some((parentId) => peopleById.has(parentId));
 }
 function getSpousePerson(spouseName) {
   if (!spouseName) {

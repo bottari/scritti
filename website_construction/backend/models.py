@@ -11,6 +11,7 @@ class Person(BaseModel):
     birthYear: Optional[int] = None
     deathYear: Optional[int] = None
     bio: Optional[str] = None
+    spouse: Optional[str] = None
     parents: List[str] = Field(default_factory=list)
     children: List[str] = Field(default_factory=list)
     branch: Optional[str] = "other"
