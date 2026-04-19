@@ -23,6 +23,14 @@
       <main class="family-layout">
         <section class="panel">
           <div class="section-heading">
+            <h2>Tree View</h2>
+            <p class="subtle">Choose an ancestor line, then expand or collapse generations to explore descendants.</p>
+          </div>
+          <div id="family-tree-root" class="tree-root"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-heading">
             <h2>Family Table</h2>
             <div class="filters">
               <input id="family-search" type="search" placeholder="Search family members" />
@@ -44,14 +52,6 @@
               <tbody id="family-table-body"></tbody>
             </table>
           </div>
-        </section>
-
-        <section class="panel">
-          <div class="section-heading">
-            <h2>Tree View</h2>
-            <p class="subtle">Choose an ancestor line, then expand or collapse generations to explore descendants.</p>
-          </div>
-          <div id="family-tree-root" class="tree-root"></div>
         </section>
       </main>
     </div>
