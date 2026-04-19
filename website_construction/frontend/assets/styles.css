@@ -348,38 +348,150 @@ select {
   background: rgba(193, 123, 70, 0.1);
 }
 
-.tree-root ul {
-  list-style: none;
-  margin: 0;
-  padding-left: 1.2rem;
-  border-left: 1px solid var(--line);
+.tree-root {
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
 }
 
-.tree-root li {
-  margin: 0.6rem 0;
-  padding-left: 1rem;
+.tree-forest {
+  display: grid;
+  gap: 1rem;
+}
+
+.tree-cluster {
+  padding: 1rem;
+  border-radius: 22px;
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(180deg, rgba(255, 250, 244, 0.98) 0%, rgba(246, 237, 225, 0.92) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+.tree-branch {
   position: relative;
 }
 
-.tree-root li::before {
-  content: "";
-  position: absolute;
-  left: -1px;
-  top: 0.9rem;
-  width: 0.75rem;
-  height: 1px;
-  background: var(--line);
+.tree-family {
+  display: inline-flex;
+  align-items: stretch;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
-.tree-node {
+.tree-family-root {
+  margin-bottom: 0.15rem;
+}
+
+.tree-family-connector {
+  position: relative;
+  flex: 0 0 2rem;
+  width: 2rem;
+  min-height: 100%;
+}
+
+.tree-family-connector::before {
+  content: "";
+  position: absolute;
+  left: 0.2rem;
+  right: 0.2rem;
+  top: 50%;
+  height: 2px;
+  transform: translateY(-50%);
+  background: linear-gradient(90deg, rgba(193, 123, 70, 0.3), rgba(193, 123, 70, 0.6));
+}
+
+.tree-family-connector::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  border: 2px solid var(--accent-soft);
+  background: var(--surface-strong);
+  transform: translate(-50%, -50%);
+}
+
+.tree-person {
   display: inline-flex;
   flex-direction: column;
-  gap: 0.2rem;
-  padding: 0.7rem 0.9rem;
-  border-radius: 14px;
+  gap: 0.28rem;
+  min-width: min(100%, 13rem);
+  padding: 0.85rem 1rem;
+  border-radius: 16px;
   text-decoration: none;
   background: var(--surface-strong);
-  border: 1px solid var(--line);
+  border: 1px solid rgba(74, 52, 37, 0.12);
+  box-shadow: 0 10px 18px rgba(63, 42, 28, 0.08);
+  transition: transform 140ms ease, box-shadow 140ms ease;
+}
+
+.tree-person:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 24px rgba(63, 42, 28, 0.12);
+}
+
+.tree-person.is-static {
+  cursor: default;
+}
+
+.tree-person.is-static:hover {
+  transform: none;
+}
+
+.tree-person-role,
+.tree-life-span {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.tree-person-role {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.tree-children {
+  position: relative;
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+  margin-left: 1.5rem;
+  padding-left: 1.6rem;
+}
+
+.tree-children::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 1.35rem;
+  width: 2px;
+  background: linear-gradient(180deg, rgba(193, 123, 70, 0.58), rgba(193, 123, 70, 0.18));
+}
+
+.tree-child {
+  position: relative;
+}
+
+.tree-child::before {
+  content: "";
+  position: absolute;
+  left: -1.6rem;
+  top: 1.35rem;
+  width: 1.6rem;
+  height: 2px;
+  background: rgba(193, 123, 70, 0.45);
+}
+
+.tree-child:last-child::after {
+  content: "";
+  position: absolute;
+  left: -1.6rem;
+  top: 1.35rem;
+  bottom: -1rem;
+  width: 2px;
+  background: rgba(250, 244, 236, 0.98);
 }
 
 .branch-tag {
@@ -437,5 +549,34 @@ select {
 
   .section-heading {
     flex-direction: column;
+  }
+
+  .tree-family {
+    display: grid;
+  }
+
+  .tree-family-connector {
+    justify-self: center;
+    width: 1rem;
+    min-height: 1.25rem;
+  }
+
+  .tree-family-connector::before {
+    left: 50%;
+    right: auto;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    height: auto;
+    transform: translateX(-50%);
+  }
+
+  .tree-person {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .tree-children {
+    margin-left: 0.5rem;
   }
 }

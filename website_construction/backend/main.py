@@ -27,6 +27,14 @@ MODEL_PATH = BASE_DIR / "models" / "mini-whitman-q4.gguf"
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg"}
 VIDEO_EXTENSIONS = {".mp4", ".webm", ".ogg"}
 PORTFOLIO_MEDIA_EXTENSIONS = IMAGE_EXTENSIONS | VIDEO_EXTENSIONS
+CACHE_CONTROL_NO_CACHE = "no-cache"
+
+class NoCacheStaticFiles(StaticFiles):
+    async def get_response(self, path: str, scope):
+        response = await super().get_response(path, scope)
+        response.headers["Cache-Control"] = CACHE_CONTROL_NO_CACHE
+        return response
+
 
 # --- QWEN 3.5 INITIALIZATION ---
 llm = Llama(
@@ -49,12 +57,15 @@ app.add_middleware(
 repository = FamilyRepository(DATA_PATH)
 
 # --- STATIC FILES ---
-app.mount("/assets", StaticFiles(directory=ASSETS_DIR), name="assets")
+app.mount("/assets", NoCacheStaticFiles(directory=ASSETS_DIR), name="assets")
 app.mount("/data", StaticFiles(directory=FRONTEND_DATA_DIR), name="data")
 
 
 def _page_response(page_name: str) -> FileResponse:
-    return FileResponse(FRONTEND_DIR / page_name)
+    return FileResponse(
+        FRONTEND_DIR / page_name,
+        headers={"Cache-Control": CACHE_CONTROL_NO_CACHE},
+    )
 
 
 def _generate_whitman_response(prompt: str, *, retry: bool = False) -> str:
