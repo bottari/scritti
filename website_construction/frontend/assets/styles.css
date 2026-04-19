@@ -303,6 +303,10 @@ select {
   min-height: 240px;
 }
 
+.lightbox-media [hidden] {
+  display: none !important;
+}
+
 .lightbox-image,
 .lightbox-video {
   display: block;
