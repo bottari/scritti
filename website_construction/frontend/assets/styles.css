@@ -234,7 +234,7 @@ textarea {
   position: relative;
   display: block;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 4 / 5;
   overflow: hidden;
   background:
     linear-gradient(135deg, rgba(230, 220, 207, 0.96), rgba(255, 250, 244, 0.9)),
@@ -322,14 +322,14 @@ textarea {
 
 @media (min-width: 560px) {
   .portfolio-gallery {
-    grid-template-columns: repeat(auto-fit, 220px);
+    grid-template-columns: repeat(auto-fit, 200px);
     justify-content: center;
   }
 }
 
 @media (min-width: 1040px) {
   .portfolio-gallery {
-    grid-template-columns: repeat(auto-fit, 240px);
+    grid-template-columns: repeat(auto-fit, 220px);
   }
 }
 
