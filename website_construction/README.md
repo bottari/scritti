@@ -26,23 +26,7 @@ Delete is intentionally not exposed yet. The current schema stores spouse links 
 
 ## Family Editing Auth
 
-If you want to save Family page edits from the browser, set `FAMILY_EDIT_TOKEN` before starting the backend.
-
-### PowerShell
-
-```powershell
-$env:FAMILY_EDIT_TOKEN = "choose-a-long-random-token"
-uvicorn main:app --reload
-```
-
-### Bash
-
-```bash
-export FAMILY_EDIT_TOKEN="choose-a-long-random-token"
-uvicorn main:app --reload
-```
-
-The Family page sends the token in the `X-Family-Edit-Token` header for `POST` and `PUT` requests. The page keeps the token in browser local storage for convenience on that machine.
+Family write endpoints are currently open for local development, so the Family page can save edits without a token.
 
 ## Run Locally
 

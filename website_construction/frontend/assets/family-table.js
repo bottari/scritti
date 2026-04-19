@@ -1,8 +1,6 @@
-const TOKEN_STORAGE_KEY = "family-edit-token";
 const tableBody = document.getElementById("family-table-body");
 const searchInput = document.getElementById("family-search");
 const branchFilter = document.getElementById("branch-filter");
-const tokenInput = document.getElementById("family-edit-token");
 const addButton = document.getElementById("family-add-button");
 const feedbackRoot = document.getElementById("family-feedback");
 const editorRoot = document.getElementById("family-editor");
@@ -369,12 +367,6 @@ async function handleEditorSubmit(event) {
     setFeedback("This record could not be found anymore. Reload the page and try again.", "error");
     return;
   }
-  const token = tokenInput?.value.trim() || readStoredToken();
-  if (!token) {
-    setFeedback("Enter the family edit token before saving changes.", "error");
-    tokenInput?.focus();
-    return;
-  }
   const payload = buildPayloadFromForm(form, existingRecord);
   const url = mode === "edit" ? `/api/family/${encodeURIComponent(personId)}` : "/api/family";
   const method = mode === "edit" ? "PUT" : "POST";
@@ -383,14 +375,12 @@ async function handleEditorSubmit(event) {
       method,
       headers: {
         "Content-Type": "application/json",
-        "X-Family-Edit-Token": token,
       },
       body: JSON.stringify(payload),
     });
     if (!response.ok) {
       throw new Error(await extractErrorMessage(response));
     }
-    writeStoredToken(token);
     closeEditor();
     setFeedback(mode === "edit" ? `Saved changes for ${payload.name}.` : `Created ${payload.name}.`, "success");
     await loadFamilyTable();
@@ -563,25 +553,6 @@ function clearFeedback() {
   feedbackRoot.classList.add("is-hidden");
   feedbackRoot.classList.remove("is-success", "is-error");
 }
-function writeStoredToken(token) {
-  try {
-    window.localStorage.setItem(TOKEN_STORAGE_KEY, token);
-  } catch (error) {
-    // Ignore storage failures and keep the current page usable.
-  }
-}
-function readStoredToken() {
-  try {
-    return window.localStorage.getItem(TOKEN_STORAGE_KEY) || "";
-  } catch (error) {
-    return "";
-  }
-}
-function restoreStoredToken() {
-  if (tokenInput && !tokenInput.value) {
-    tokenInput.value = readStoredToken();
-  }
-}
 async function extractErrorMessage(response) {
   try {
     const payload = await response.json();
@@ -628,9 +599,6 @@ function capitalize(value) {
 }
 searchInput?.addEventListener("input", applyFilters);
 branchFilter?.addEventListener("change", applyFilters);
-if (tokenInput) {
-  tokenInput.addEventListener("input", () => writeStoredToken(tokenInput.value.trim()));
-}
 tableBody?.addEventListener("click", handleTableInteraction);
 addButton?.addEventListener("click", openCreateEditor);
 editorRoot?.addEventListener("submit", (event) => {
@@ -639,5 +607,4 @@ editorRoot?.addEventListener("submit", (event) => {
 editorRoot?.addEventListener("click", handleEditorClick);
 editorRoot?.addEventListener("input", handleEditorInput);
 editorRoot?.addEventListener("change", handleEditorChange);
-restoreStoredToken();
 void loadFamilyTable();

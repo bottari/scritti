@@ -1,23 +1,3 @@
-const LAYOUT_VARIANT_CYCLE = [
-  "featured",
-  "standard",
-  "compact",
-  "wide",
-  "tall",
-  "compact",
-  "standard",
-  "wide",
-  "standard",
-  "tall",
-  "compact",
-  "wide",
-];
-const SMALL_GALLERY_VARIANTS = {
-  1: ["featured"],
-  2: ["featured", "wide"],
-  3: ["featured", "standard", "compact"],
-  4: ["featured", "standard", "compact", "wide"],
-};
 const portfolioGalleryRoot = document.getElementById("portfolio-gallery-root");
 let lightboxElement = null;
 let lightboxImage = null;
@@ -47,7 +27,7 @@ async function loadPortfolioGallery() {
     }
     portfolioGalleryRoot.dataset.itemCount = String(mediaEntries.length);
     portfolioGalleryRoot.innerHTML = mediaEntries
-      .map((mediaEntry, index) => renderGalleryItem(mediaEntry, index, mediaEntries.length))
+      .map((mediaEntry, index) => renderGalleryItem(mediaEntry, index))
       .join("");
     portfolioGalleryRoot.querySelectorAll(".portfolio-item").forEach((card) => {
       card.addEventListener("click", () => {
@@ -58,12 +38,11 @@ async function loadPortfolioGallery() {
     portfolioGalleryRoot.innerHTML = `<p class="message">Unable to load the portfolio gallery right now.</p>`;
   }
 }
-function renderGalleryItem(mediaEntry, index, totalItems) {
-  const layoutVariant = getLayoutVariant(index, totalItems, mediaEntry.mediaType);
+function renderGalleryItem(mediaEntry, index) {
   const mediaTypeClass = mediaEntry.mediaType === "video" ? "portfolio-item--video" : "portfolio-item--image";
   return `
     <button
-      class="portfolio-item ${mediaTypeClass} portfolio-item--${layoutVariant}"
+      class="portfolio-item ${mediaTypeClass}"
       type="button"
       aria-label="${escapeHtml(mediaEntry.name)}"
       data-media-url="${escapeHtml(mediaEntry.url)}"
@@ -100,20 +79,6 @@ function renderGalleryPreview(mediaEntry, index) {
       decoding="async"${fetchPriority}
     />
   `;
-}
-function getLayoutVariant(index, totalItems, mediaType) {
-  const variantSource = SMALL_GALLERY_VARIANTS[totalItems] || LAYOUT_VARIANT_CYCLE;
-  const preferredVariant = variantSource[index % variantSource.length] || "standard";
-  return normalizeLayoutVariant(preferredVariant, mediaType);
-}
-function normalizeLayoutVariant(variant, mediaType) {
-  if (mediaType !== "video") {
-    return variant;
-  }
-  if (variant === "tall") {
-    return "wide";
-  }
-  return variant;
 }
 function ensureLightbox() {
   if (lightboxElement) {

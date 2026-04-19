@@ -7,30 +7,6 @@ type PortfolioMediaEntry = {
   mediaType: PortfolioMediaType;
 };
 
-type PortfolioLayoutVariant = "featured" | "wide" | "tall" | "standard" | "compact";
-
-const LAYOUT_VARIANT_CYCLE: PortfolioLayoutVariant[] = [
-  "featured",
-  "standard",
-  "compact",
-  "wide",
-  "tall",
-  "compact",
-  "standard",
-  "wide",
-  "standard",
-  "tall",
-  "compact",
-  "wide",
-];
-
-const SMALL_GALLERY_VARIANTS: Record<number, PortfolioLayoutVariant[]> = {
-  1: ["featured"],
-  2: ["featured", "wide"],
-  3: ["featured", "standard", "compact"],
-  4: ["featured", "standard", "compact", "wide"],
-};
-
 const portfolioGalleryRoot = document.getElementById("portfolio-gallery-root");
 let lightboxElement: HTMLDivElement | null = null;
 let lightboxImage: HTMLImageElement | null = null;
@@ -67,7 +43,7 @@ async function loadPortfolioGallery(): Promise<void> {
 
     portfolioGalleryRoot.dataset.itemCount = String(mediaEntries.length);
     portfolioGalleryRoot.innerHTML = mediaEntries
-      .map((mediaEntry, index) => renderGalleryItem(mediaEntry, index, mediaEntries.length))
+      .map((mediaEntry, index) => renderGalleryItem(mediaEntry, index))
       .join("");
 
     portfolioGalleryRoot.querySelectorAll<HTMLButtonElement>(".portfolio-item").forEach((card) => {
@@ -87,15 +63,13 @@ async function loadPortfolioGallery(): Promise<void> {
 
 function renderGalleryItem(
   mediaEntry: PortfolioMediaEntry,
-  index: number,
-  totalItems: number
+  index: number
 ): string {
-  const layoutVariant = getLayoutVariant(index, totalItems, mediaEntry.mediaType);
   const mediaTypeClass = mediaEntry.mediaType === "video" ? "portfolio-item--video" : "portfolio-item--image";
 
   return `
     <button
-      class="portfolio-item ${mediaTypeClass} portfolio-item--${layoutVariant}"
+      class="portfolio-item ${mediaTypeClass}"
       type="button"
       aria-label="${escapeHtml(mediaEntry.name)}"
       data-media-url="${escapeHtml(mediaEntry.url)}"
@@ -135,31 +109,6 @@ function renderGalleryPreview(mediaEntry: PortfolioMediaEntry, index: number): s
       decoding="async"${fetchPriority}
     />
   `;
-}
-
-function getLayoutVariant(
-  index: number,
-  totalItems: number,
-  mediaType: PortfolioMediaType
-): PortfolioLayoutVariant {
-  const variantSource = SMALL_GALLERY_VARIANTS[totalItems] || LAYOUT_VARIANT_CYCLE;
-  const preferredVariant = variantSource[index % variantSource.length] || "standard";
-  return normalizeLayoutVariant(preferredVariant, mediaType);
-}
-
-function normalizeLayoutVariant(
-  variant: PortfolioLayoutVariant,
-  mediaType: PortfolioMediaType
-): PortfolioLayoutVariant {
-  if (mediaType !== "video") {
-    return variant;
-  }
-
-  if (variant === "tall") {
-    return "wide";
-  }
-
-  return variant;
 }
 
 function ensureLightbox(): void {
