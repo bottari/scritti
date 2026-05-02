@@ -130,7 +130,7 @@ Important note:
 - `call` is optional in an interactive prompt. It is mainly useful inside another batch file.
 
 ---
-## ⚖️ **NEW: Evaluation Pipeline**
+## ⚖️ **Evaluation Pipeline**
 
 This evaluation pipeline compares a base model, a LoRA-finetuned variant, and an optional human poetry reference set. It focuses on raw creative language properties before any downstream post-processing into strict forms.
 
@@ -176,7 +176,7 @@ The `eval_config_sweep.yaml` file drives a lightweight prompt‑sweep harness in
 python eval_runner.py --config eval_config_sweep.yaml
 ```
 
-## ⚖️ New: Human Evaluation & Side-by-Side Comparison
+## ⚖️ Human Evaluation & Side-by-Side Comparison
 
 The latest evolution of **scritti** moves beyond automated metrics into **Human-in-the-Loop (HITL) evaluation**. I have implemented a Flask-based review application to perform rigorous side-by-side (A/B) testing between different model architectures.
 
