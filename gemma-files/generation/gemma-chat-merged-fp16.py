@@ -149,13 +149,22 @@ def encode_seed(tokenizer, seed_text: str, device: torch.device) -> torch.Tensor
     if bos and not text.startswith(bos):
         text = bos + text
 
-    encoded = tokenizer(
-        text,
-        return_tensors="pt",
-        add_special_tokens=False,
-        truncation=True,
-        max_length=MAX_SEQ_LENGTH,
-    )
+    try:
+        encoded = tokenizer(
+            text=text,
+            return_tensors="pt",
+            add_special_tokens=False,
+            truncation=True,
+            max_length=MAX_SEQ_LENGTH,
+        )
+    except TypeError:
+        encoded = tokenizer(
+            text,
+            return_tensors="pt",
+            add_special_tokens=False,
+            truncation=True,
+            max_length=MAX_SEQ_LENGTH,
+        )
     input_ids = encoded["input_ids"] if isinstance(encoded, dict) else encoded.input_ids
     return input_ids.to(device)
 
