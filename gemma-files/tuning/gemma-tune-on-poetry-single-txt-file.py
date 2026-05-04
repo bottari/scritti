@@ -51,11 +51,11 @@ from preprocess_whitman_clm_jsonl import (
 
 POETRY_FILE = r"C:\Users\micha\Desktop\projects\mercury\Leaves_of_Grass_1882.txt"
 
-OUTPUT_DIR = r"D:\models\gemma4-poetry-finetune-whitmanv3"
+OUTPUT_DIR = r"D:\models\gemma4-poetry-finetune-whitmanv6"
 DATASET_CACHE = r"D:\models\whitman_clm_training_data.jsonl"
 USE_EXISTING_DATASET_CACHE = True
 
-MODEL_NAME = "google/gemma-4-E2B-it"
+MODEL_NAME = "google/gemma-4-E2B"
 MAX_SEQ_LENGTH = 2048
 
 MIN_CHUNK_TOKENS = 200
@@ -71,7 +71,7 @@ LORA_RANK = 64
 TRAIN_LAST_N_BASE_LAYERS = 2
 TRAIN_EMBEDDINGS = False
 TRAIN_LM_HEAD = True
-SAVE_MERGED_MODEL = False
+SAVE_MERGED_MODEL = True
 
 BATCH_SIZE = 1
 GRAD_ACCUM = 4

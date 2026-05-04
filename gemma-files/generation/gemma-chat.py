@@ -39,7 +39,7 @@ from unsloth import FastLanguageModel
 
 
 # Configuration
-DEFAULT_MODEL = r"D:\models\gemma4-poetry-finetune-whitmanv3\checkpoint-400"
+DEFAULT_MODEL = r"D:\models\gemma4-poetry-merged"
 MAX_SEQ_LENGTH = 2048
 
 # Generation defaults (tweak these freely)

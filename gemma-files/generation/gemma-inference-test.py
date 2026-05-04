@@ -2,7 +2,7 @@ import torch
 from unsloth import FastLanguageModel
 
 model, tokenizer = FastLanguageModel.from_pretrained(
-    model_name     = r"D:\models\gemma4-poetry-finetune-whitmanv3\checkpoint-400",
+    model_name     = r"D:\models\gemma4-poetry-finetune-whitman\merged_fp16",
     max_seq_length = 2048,
     load_in_4bit   = True,
 )
