@@ -21,7 +21,8 @@ from pathlib import Path
 # compiled fused-loss path. These are runtime stability flags, not tuning
 # hyperparameters, and must be set before importing unsloth/torch.
 os.environ.setdefault("UNSLOTH_COMPILE_DISABLE", "1")
-os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
+if os.name != "nt":
+    os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
 
 import unsloth
 from unsloth import FastLanguageModel
@@ -220,6 +221,17 @@ def unfreeze_more_model(model) -> None:
                 print(f"Unfroze language-model head at {name}.")
 
 
+def save_merged_16bit_model(model, tokenizer, merged_dir: str) -> None:
+    """Merge LoRA into the live model without using Unsloth's merged-save path."""
+    print("\nSaving merged 16-bit model via PEFT merge_and_unload()...")
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+
+    merged_model = model.merge_and_unload()
+    merged_model.save_pretrained(merged_dir, safe_serialization=True)
+    tokenizer.save_pretrained(merged_dir)
+
+
 # ---------------------------------------------------------------------------
 # 4. Model, trainer, save
 # ---------------------------------------------------------------------------
@@ -328,7 +340,9 @@ print(f"\nLoRA adapter saved -> {adapter_dir}")
 
 if SAVE_MERGED_MODEL:
     merged_dir = os.path.join(OUTPUT_DIR, "merged_fp16")
-    model.save_pretrained_merged(merged_dir, tokenizer, save_method="merged_16bit")
+    trainer.optimizer = None
+    trainer.lr_scheduler = None
+    save_merged_16bit_model(model, tokenizer, merged_dir)
     print(f"Merged fp16 model saved -> {merged_dir}")
 else:
     print("\nSkipped merged fp16 export because SAVE_MERGED_MODEL = False.")
