@@ -17,6 +17,12 @@ import os
 import random
 from pathlib import Path
 
+# Avoid a Windows / RTX 50-series Torch Inductor cuBLAS crash in Unsloth's
+# compiled fused-loss path. These are runtime stability flags, not tuning
+# hyperparameters, and must be set before importing unsloth/torch.
+os.environ.setdefault("UNSLOTH_COMPILE_DISABLE", "1")
+os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
+
 import unsloth
 from unsloth import FastLanguageModel
 import torch
