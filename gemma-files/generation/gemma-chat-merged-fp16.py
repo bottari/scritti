@@ -219,18 +219,68 @@ def ensure_chat_template(tokenizer, template_source: str) -> None:
 
 def build_messages(history: list[tuple[str, str]], user_input: str, system: str) -> list[dict]:
     messages = []
+    if system:
+        messages.append({"role": "system", "content": _content_parts(system)})
+
     for user_turn, assistant_turn in history:
         messages.append({"role": "user", "content": _content_parts(user_turn)})
         messages.append({"role": "assistant", "content": _content_parts(assistant_turn)})
 
-    current_user_text = user_input
-    if system:
-        current_user_text = (
-            f"Conversation instruction:\n{system}\n\n"
-            f"User request:\n{user_input}"
-        )
-    messages.append({"role": "user", "content": _content_parts(current_user_text)})
+    messages.append({"role": "user", "content": _content_parts(user_input)})
     return messages
+
+
+def message_text(message: dict) -> str:
+    content = message.get("content", "")
+    if isinstance(content, str):
+        return content.strip()
+    if isinstance(content, list):
+        parts = []
+        for item in content:
+            if isinstance(item, dict) and item.get("type") == "text":
+                parts.append(str(item.get("text", "")))
+            elif isinstance(item, str):
+                parts.append(item)
+        return "\n".join(part.strip() for part in parts if part.strip())
+    return str(content).strip()
+
+
+def render_gemma4_chat_prompt(messages: list[dict], thinking: bool) -> str:
+    """Fallback Gemma 4 turn format for merged folders missing chat_template."""
+    chunks = []
+    has_system = any(message.get("role") == "system" for message in messages)
+
+    if thinking and not has_system:
+        chunks.append("<|turn>system\n<|think|><turn|>\n")
+
+    for message in messages:
+        role = message.get("role", "user")
+        turn = "model" if role == "assistant" else role
+        text = message_text(message)
+        if role == "system" and thinking and not text.startswith("<|think|>"):
+            text = f"<|think|>{text}"
+        chunks.append(f"<|turn>{turn}\n{text}<turn|>\n")
+
+    chunks.append("<|turn>model\n")
+    return "".join(chunks)
+
+
+def encode_text_prompt(tokenizer, prompt: str, device: torch.device) -> torch.Tensor:
+    try:
+        encoded = tokenizer(
+            text=prompt,
+            return_tensors="pt",
+            add_special_tokens=False,
+        )
+    except TypeError:
+        encoded = tokenizer(
+            prompt,
+            return_tensors="pt",
+            add_special_tokens=False,
+        )
+
+    input_ids = encoded["input_ids"] if isinstance(encoded, dict) else encoded.input_ids
+    return input_ids.to(device)
 
 
 def format_thinking(text: str, user_input: str = "") -> str:
@@ -364,6 +414,11 @@ def apply_chat_template(tokenizer, messages: list[dict], thinking: bool, device:
             add_generation_prompt=True,
             return_tensors="pt",
         ).to(device)
+    except ValueError as exc:
+        if "chat template" not in str(exc).lower():
+            raise
+        prompt = render_gemma4_chat_prompt(messages, thinking)
+        return encode_text_prompt(tokenizer, prompt, device)
 
 
 def main() -> None:
@@ -453,16 +508,7 @@ def main() -> None:
             continue
 
         messages = build_messages(history, user_input, system)
-        try:
-            input_ids = apply_chat_template(tokenizer, messages, thinking, model.device)
-        except ValueError as exc:
-            if "chat template" not in str(exc).lower():
-                raise
-            print(
-                f"{C.RED}No chat template found. Pass --template-source pointing to "
-                f"the working chat model folder, for example D:\\models\\gemma4-poetry-merged.{C.RESET}"
-            )
-            continue
+        input_ids = apply_chat_template(tokenizer, messages, thinking, model.device)
 
         streamer = TextIteratorStreamer(
             tokenizer,
