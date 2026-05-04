@@ -33,3 +33,6 @@ venv/
 *.pfx
 
 artifacts/
+
+# Ignore unsloth files 
+unsloth_compiled_cache/
