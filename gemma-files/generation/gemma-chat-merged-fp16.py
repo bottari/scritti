@@ -173,6 +173,84 @@ def build_messages(history: list[tuple[str, str]], user_input: str, system: str)
     return messages
 
 
+def message_text(message: dict) -> str:
+    content = message.get("content", "")
+    if isinstance(content, str):
+        return content.strip()
+    if isinstance(content, list):
+        parts = []
+        for item in content:
+            if isinstance(item, dict) and item.get("type") == "text":
+                parts.append(str(item.get("text", "")))
+            elif isinstance(item, str):
+                parts.append(item)
+        return "\n".join(part.strip() for part in parts if part.strip())
+    return str(content).strip()
+
+
+def fallback_chat_prompt(messages: list[dict], tokenizer, add_generation_prompt: bool = True) -> str:
+    """Gemma-style prompt for merged models whose tokenizer lost chat_template."""
+    bos = getattr(tokenizer, "bos_token", None) or ""
+    chunks = [bos] if bos else []
+
+    for message in messages:
+        role = message.get("role", "user")
+        turn = "model" if role == "assistant" else "user"
+        text = message_text(message)
+        chunks.append(f"<start_of_turn>{turn}\n{text}<end_of_turn>\n")
+
+    if add_generation_prompt:
+        chunks.append("<start_of_turn>model\n")
+
+    return "".join(chunks)
+
+
+def encode_prompt(tokenizer, prompt: str, device: torch.device) -> torch.Tensor:
+    try:
+        encoded = tokenizer(
+            text=prompt,
+            return_tensors="pt",
+            add_special_tokens=False,
+        )
+    except TypeError:
+        encoded = tokenizer(
+            prompt,
+            return_tensors="pt",
+            add_special_tokens=False,
+        )
+
+    input_ids = encoded["input_ids"] if isinstance(encoded, dict) else encoded.input_ids
+    return input_ids.to(device)
+
+
+def apply_chat_or_fallback(
+    tokenizer,
+    messages: list[dict],
+    model_device: torch.device,
+    thinking: bool,
+) -> torch.Tensor:
+    try:
+        return tokenizer.apply_chat_template(
+            messages,
+            tokenize=True,
+            add_generation_prompt=True,
+            return_tensors="pt",
+            enable_thinking=thinking,
+        ).to(model_device)
+    except TypeError:
+        return tokenizer.apply_chat_template(
+            messages,
+            tokenize=True,
+            add_generation_prompt=True,
+            return_tensors="pt",
+        ).to(model_device)
+    except ValueError as exc:
+        if "chat template" not in str(exc).lower():
+            raise
+        prompt = fallback_chat_prompt(messages, tokenizer)
+        return encode_prompt(tokenizer, prompt, model_device)
+
+
 def format_thinking(text: str, user_input: str = "") -> str:
     text = strip_markdown(clean_tokens(text))
     if user_input:
@@ -372,21 +450,7 @@ def main() -> None:
             continue
 
         messages = build_messages(history, user_input, system)
-        try:
-            input_ids = tokenizer.apply_chat_template(
-                messages,
-                tokenize=True,
-                add_generation_prompt=True,
-                return_tensors="pt",
-                enable_thinking=thinking,
-            ).to(model.device)
-        except TypeError:
-            input_ids = tokenizer.apply_chat_template(
-                messages,
-                tokenize=True,
-                add_generation_prompt=True,
-                return_tensors="pt",
-            ).to(model.device)
+        input_ids = apply_chat_or_fallback(tokenizer, messages, model.device, thinking)
 
         attention_mask = torch.ones_like(input_ids, device=model.device)
         streamer = TextIteratorStreamer(
