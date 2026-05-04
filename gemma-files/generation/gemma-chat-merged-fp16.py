@@ -182,7 +182,16 @@ def load_chat_template(template_source: str) -> str | None:
 
     for loader in (AutoProcessor, AutoTokenizer):
         try:
-            loaded = loader.from_pretrained(template_source, trust_remote_code=True)
+            loaded = loader.from_pretrained(
+                template_source,
+                trust_remote_code=True,
+                fix_mistral_regex=True,
+            )
+        except TypeError:
+            try:
+                loaded = loader.from_pretrained(template_source, trust_remote_code=True)
+            except Exception:
+                continue
         except Exception:
             continue
         template = object_chat_template(loaded)
@@ -308,7 +317,7 @@ def stream_response(streamer, thinking_enabled: bool, user_input: str) -> str:
                 buf = ""
 
             elif len(buf) > 32 and not any(
-                any(tag[:4] in buf for tag in OPEN_TAGS + CLOSE_TAGS)
+                tag[:4] in buf for tag in OPEN_TAGS + CLOSE_TAGS
             ):
                 enter_response(buf)
                 buf = ""
