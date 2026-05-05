@@ -43,8 +43,8 @@ DEFAULT_MODEL = r"D:\models\gemma4-poetry-merged"
 MAX_SEQ_LENGTH = 2048
 
 # Generation defaults (tweak these freely)
-MAX_NEW_TOKENS = 350
-TEMPERATURE = 0.25
+MAX_NEW_TOKENS = 450
+TEMPERATURE = 0.5
 TOP_P = 0.88
 TOP_K = 50
 REP_PENALTY = 1.22
